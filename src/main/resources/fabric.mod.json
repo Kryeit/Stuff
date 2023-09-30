@@ -1,0 +1,29 @@
+{
+  "schemaVersion": 1,
+  "id": "stuff",
+  "version": "${version}",
+  "name": "Stuff",
+  "description": "",
+  "authors": [
+    "MuriPlz"
+  ],
+  "contact": {
+    "repo": "https://github.com/Kryeit/Stuff-Refabricated"
+  },
+  "license": "MIT",
+  "icon": "assets/stuff-refabricated/icon.png",
+  "environment": "server",
+  "entrypoints": {
+    "main": [
+      "com.kryeit.stuff.Stuff"
+    ]
+  },
+  "mixins": [
+    "stuff.mixins.json"
+  ],
+  "depends": {
+    "fabricloader": ">=${loader_version}",
+    "fabric": "*",
+    "minecraft": "${minecraft_version}"
+  }
+}
