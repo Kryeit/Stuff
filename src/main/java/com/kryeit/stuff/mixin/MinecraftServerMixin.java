@@ -1,7 +1,6 @@
 package com.kryeit.stuff.mixin;
 
 import com.kryeit.stuff.MinecraftServerSupplier;
-import net.minecraft.network.message.SignedMessage;
 import net.minecraft.server.MinecraftServer;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
