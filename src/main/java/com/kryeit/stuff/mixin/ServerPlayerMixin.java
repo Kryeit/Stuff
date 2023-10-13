@@ -73,9 +73,7 @@ public abstract class ServerPlayerMixin extends Entity implements AfkPlayer {
         if (Config.PlayerListOptions.enableListDisplay && isAfk) {
             Formatting color = Formatting.byName(Config.PlayerListOptions.afkColor);
             if (color == null) color = Formatting.RESET;
-
-            Text listEntry = Text.of(Config.PlayerListOptions.afkPlayerName);
-            cir.setReturnValue(listEntry.copy().formatted(color));
+            cir.setReturnValue(player.getName().copy().formatted(color));
         }
 
     }
