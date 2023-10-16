@@ -1,7 +1,7 @@
 package com.kryeit.stuff;
 
-import com.kryeit.stuff.listener.PlayerLogin;
 import net.fabricmc.api.DedicatedServerModInitializer;
+import com.kryeit.stuff.listener.ServerLogin;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
 
 public class Stuff implements DedicatedServerModInitializer {
@@ -11,6 +11,6 @@ public class Stuff implements DedicatedServerModInitializer {
     }
 
     public void registerEvents() {
-        ServerPlayConnectionEvents.JOIN.register(new PlayerLogin());
+        ServerPlayConnectionEvents.INIT.register(new ServerLogin());
     }
 }

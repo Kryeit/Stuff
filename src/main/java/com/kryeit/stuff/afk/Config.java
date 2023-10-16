@@ -4,7 +4,7 @@ package com.kryeit.stuff.afk;
 // https://github.com/beabfc/afkdisplay
 public class Config {
     public static class PacketOptions {
-        public static int timeoutSeconds = 180;
+        public static int timeoutSeconds = 300;
         public static boolean resetOnMovement = true;
         public static boolean resetOnLook = true;
     }
@@ -12,6 +12,5 @@ public class Config {
     public static class PlayerListOptions {
         public static boolean enableListDisplay = true;
         public static String afkColor = "gray";
-        public static String afkPlayerName = "[AFK] %player:displayname%";
     }
 }
