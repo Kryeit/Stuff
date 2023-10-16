@@ -1,13 +1,16 @@
 package com.kryeit.stuff;
 
-import net.fabricmc.api.ModInitializer;
+import com.kryeit.stuff.listener.PlayerLogin;
+import net.fabricmc.api.DedicatedServerModInitializer;
+import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
 
-public class Stuff implements ModInitializer {
+public class Stuff implements DedicatedServerModInitializer {
     @Override
-    public void onInitialize() {
+    public void onInitializeServer() {
         registerEvents();
     }
 
     public void registerEvents() {
+        ServerPlayConnectionEvents.JOIN.register(new PlayerLogin());
     }
 }

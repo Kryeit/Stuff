@@ -8,8 +8,6 @@
     "ServerPlayerMixin",
     "ServerPlayNetworkMixin"
   ],
-  "client": [
-  ],
   "injectors": {
     "defaultRequire": 1
   }
