@@ -21,7 +21,8 @@ public class Rules {
             return 0;
         }
 
-        player.sendMessage(Text.of("Rules -> https://discord.com/channels/910626990468497439/1097952697820389467"));
+        player.sendMessage(Text.literal("Rules -> https://discord.com/channels/910626990468497439/1097952697820389467")
+                .setStyle(Style.EMPTY.withClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, "https://discord.com/channels/910626990468497439/1097952697820389467"))));
         return Command.SINGLE_SUCCESS;
     }
 

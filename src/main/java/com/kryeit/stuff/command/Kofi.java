@@ -21,7 +21,8 @@ public class Kofi {
             return 0;
         }
 
-        player.sendMessage(Text.of("Kofi -> https://ko-fi.com/kryeit"));
+        player.sendMessage(Text.literal("Kofi -> https://ko-fi.com/kryeit")
+                .setStyle(Style.EMPTY.withClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, "https://ko-fi.com/kryeit"))));
         return Command.SINGLE_SUCCESS;
     }
 

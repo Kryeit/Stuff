@@ -21,7 +21,8 @@ public class Vote {
             return 0;
         }
 
-        player.sendMessage(Text.of("Planet Minecraft -> https://www.planetminecraft.com/server/kryeit-5584167/vote"));
+        player.sendMessage(Text.literal("Planet Minecraft -> https://www.planetminecraft.com/server/kryeit-5584167/vote")
+                .setStyle(Style.EMPTY.withClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, "https://www.planetminecraft.com/server/kryeit-5584167/vote"))));
         return Command.SINGLE_SUCCESS;
     }
 

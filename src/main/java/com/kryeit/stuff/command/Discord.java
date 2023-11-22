@@ -21,7 +21,8 @@ public class Discord {
             return 0;
         }
 
-        player.sendMessage(Text.of("Discord -> https://discord.gg/5zQ8RVEzvw"));
+        player.sendMessage(Text.literal("Discord -> https://discord.gg/5zQ8RVEzvw")
+                .setStyle(Style.EMPTY.withClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, "https://discord.gg/5zQ8RVEzvw"))));
         return Command.SINGLE_SUCCESS;
     }
 

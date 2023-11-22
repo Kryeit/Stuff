@@ -23,7 +23,8 @@ public class Map {
             return 0;
         }
 
-        player.sendMessage(Text.of("Bluemap -> https://map.kryeit.com/"));
+        player.sendMessage(Text.literal("Bluemap -> https://map.kryeit.com/")
+                .setStyle(Style.EMPTY.withClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, "https://map.kryeit.com/"))));
         return Command.SINGLE_SUCCESS;
     }
 
