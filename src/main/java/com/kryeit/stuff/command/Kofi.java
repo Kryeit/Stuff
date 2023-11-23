@@ -23,7 +23,14 @@ public class Kofi {
             return 0;
         }
 
-        player.sendMessage(Text.literal("Kofi -> https://ko-fi.com/kryeit")
+        player.sendMessage(Text.literal("Kofi -> https://ko-fi.com/kryeit\n\n" +
+                        "Collaborator advantages:" +
+                        "- Color name both on Discord and in Minecraft\n" +
+                        "- Claiming advantages:\n" +
+                        "    · 300CB/hour instead of 200\n" +
+                        "    · 5.000.000 max CB instead of 2.000.000\n" +
+                        "    · Claims expire after 365  days of inactiveness instead of 120\n" +
+                        " - Won't get kicked by the AFK system when the server is full")
                 .setStyle(Style.EMPTY.withClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, "https://ko-fi.com/kryeit"))));
         return Command.SINGLE_SUCCESS;
     }
