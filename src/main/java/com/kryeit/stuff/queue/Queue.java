@@ -30,10 +30,6 @@ public class Queue {
         return -1;
     }
 
-    public UUID get(int i) {
-        return queue.keySet().stream().toList().get(i);
-    }
-
     public int size() {
         return queue.size();
     }
