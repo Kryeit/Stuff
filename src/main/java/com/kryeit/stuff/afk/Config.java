@@ -4,7 +4,7 @@ package com.kryeit.stuff.afk;
 // https://github.com/beabfc/afkdisplay
 public class Config {
     public static class PacketOptions {
-        public static int timeoutSeconds = 300;
+        public static int timeoutSeconds = 5;
         public static boolean resetOnMovement = true;
         public static boolean resetOnLook = true;
     }

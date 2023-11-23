@@ -35,30 +35,34 @@ public abstract class ServerPlayerMixin extends Entity implements AfkPlayer {
         super(type, world);
     }
 
-    public boolean isAfk() {
+    @Unique
+    public boolean stuff$isAfk() {
         return this.isAfk;
     }
 
-    public void enableAfk() {
-        if (isAfk()) return;
+    @Unique
+    public void stuff$enableAfk() {
+        if (stuff$isAfk()) return;
         setAfk(true);
     }
 
-    public void disableAfk() {
+    @Unique
+    public void stuff$disableAfk() {
         if (!isAfk) return;
         setAfk(false);
     }
 
+    @Unique
     private void setAfk(boolean isAfk) {
         this.isAfk = isAfk;
         this.server
-            .getPlayerManager()
-            .sendToAll(new PlayerListS2CPacket(PlayerListS2CPacket.Action.UPDATE_DISPLAY_NAME, player));
+                .getPlayerManager()
+                .sendToAll(new PlayerListS2CPacket(PlayerListS2CPacket.Action.UPDATE_DISPLAY_NAME, player));
     }
 
     @Inject(method = "updateLastActionTime", at = @At("TAIL"))
     private void onActionTimeUpdate(CallbackInfo ci) {
-        disableAfk();
+        stuff$disableAfk();
     }
 
     public void setPosition(double x, double y, double z) {

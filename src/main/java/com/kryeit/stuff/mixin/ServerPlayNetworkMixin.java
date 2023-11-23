@@ -26,12 +26,12 @@ public abstract class ServerPlayNetworkMixin {
     private void updateAfkStatus(CallbackInfo ci) {
         AfkPlayer afkPlayer = (AfkPlayer) player;
         int timeoutSeconds = Config.PacketOptions.timeoutSeconds;
-        if (afkPlayer.isAfk() || timeoutSeconds <= 0) return;
+        if (afkPlayer.stuff$isAfk() || timeoutSeconds <= 0) return;
         long afkDuration = Util.getMeasuringTimeMs() - this.player.getLastActionTime();
         if (afkDuration > timeoutSeconds * 1000L) {
-            afkPlayer.enableAfk();
-            if (Utils.isServerFullEnough() && !Permissions.check(player, "stuff.afk", false)) {
-                player.networkHandler.disconnect(Text.of("You've been kicked to leave room for other players"));
+            afkPlayer.stuff$enableAfk();
+            if (!Permissions.check(player, "stuff.afk", false)) {
+                this.player.networkHandler.disconnect(Text.of("You've been kicked to leave room for other players"));
             }
         }
     }
