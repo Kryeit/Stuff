@@ -2,6 +2,8 @@ package com.kryeit.stuff;
 
 import com.kryeit.stuff.command.*;
 import com.kryeit.stuff.listener.PlayerDeath;
+import com.kryeit.stuff.queue.QueueHandler;
+import com.kryeit.stuff.queue.Queue;
 import net.fabricmc.api.DedicatedServerModInitializer;
 import com.kryeit.stuff.listener.ServerLogin;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
@@ -9,6 +11,8 @@ import net.fabricmc.fabric.api.entity.event.v1.ServerLivingEntityEvents;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
 
 public class Stuff implements DedicatedServerModInitializer {
+
+    public static Queue queue = new Queue();
     @Override
     public void onInitializeServer() {
         registerEvents();
@@ -17,6 +21,7 @@ public class Stuff implements DedicatedServerModInitializer {
 
     public void registerEvents() {
         ServerPlayConnectionEvents.INIT.register(new ServerLogin());
+        ServerPlayConnectionEvents.INIT.register(new QueueHandler());
         ServerLivingEntityEvents.AFTER_DEATH.register(new PlayerDeath());
     }
 
