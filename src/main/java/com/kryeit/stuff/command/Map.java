@@ -9,9 +9,7 @@ import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.ClickEvent;
 import net.minecraft.text.Style;
 import net.minecraft.text.Text;
-import net.minecraft.util.math.Vec3d;
 
-import java.awt.*;
 import java.util.function.Supplier;
 
 public class Map {

@@ -1,6 +1,5 @@
 package com.kryeit.stuff.mixin;
 
-import com.kryeit.stuff.MinecraftServerSupplier;
 import com.kryeit.stuff.Utils;
 import com.kryeit.stuff.afk.AfkPlayer;
 import com.kryeit.stuff.afk.Config;
