@@ -2,11 +2,14 @@ package com.kryeit.stuff.mixin;
 
 import com.kryeit.stuff.afk.AfkPlayer;
 import com.kryeit.stuff.afk.Config;
+import me.lucko.fabric.api.permissions.v0.Permissions;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.network.packet.s2c.play.PlayerListS2CPacket;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.text.MutableText;
+import net.minecraft.text.Style;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 import net.minecraft.world.World;
@@ -74,11 +77,18 @@ public abstract class ServerPlayerMixin extends Entity implements AfkPlayer {
 
     @Inject(method = "getPlayerListName", at = @At("RETURN"), cancellable = true)
     private void replacePlayerListName(CallbackInfoReturnable<Text> cir) {
+        MutableText cog = Text.literal("⚙").setStyle(Style.EMPTY.withBold(true)).setStyle(Style.EMPTY.withFormatting(Formatting.GOLD));
+        MutableText text = player.getName().copy();
         if (Config.PlayerListOptions.enableListDisplay && isAfk) {
             Formatting color = Formatting.byName(Config.PlayerListOptions.afkColor);
             if (color == null) color = Formatting.RESET;
-            cir.setReturnValue(player.getName().copy().formatted(color));
+            text = text.formatted(color);
         }
 
+        if (Permissions.check(player, "group.kryeitor")) {
+            cir.setReturnValue(cog.append(text));
+        } else {
+            cir.setReturnValue(text);
+        }
     }
 }
