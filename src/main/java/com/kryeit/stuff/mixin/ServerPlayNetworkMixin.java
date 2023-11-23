@@ -1,5 +1,6 @@
 package com.kryeit.stuff.mixin;
 
+import com.kryeit.stuff.MinecraftServerSupplier;
 import com.kryeit.stuff.Utils;
 import com.kryeit.stuff.afk.AfkPlayer;
 import com.kryeit.stuff.afk.Config;
@@ -30,8 +31,8 @@ public abstract class ServerPlayNetworkMixin {
         long afkDuration = Util.getMeasuringTimeMs() - this.player.getLastActionTime();
         if (afkDuration > timeoutSeconds * 1000L) {
             afkPlayer.stuff$enableAfk();
-            if (!Permissions.check(player, "stuff.afk", false)) {
-                this.player.networkHandler.disconnect(Text.of("You've been kicked to leave room for other players"));
+            if (Utils.isServerFull() && !Permissions.check(player, "stuff.afk", false)) {
+                player.networkHandler.disconnect(Text.of("You've been kicked to leave room for other players"));
             }
         }
     }
