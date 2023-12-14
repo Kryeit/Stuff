@@ -10,9 +10,14 @@ import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 import net.fabricmc.fabric.api.entity.event.v1.ServerLivingEntityEvents;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
 
+import java.util.HashMap;
+import java.util.UUID;
+
 public class Stuff implements DedicatedServerModInitializer {
 
     public static Queue queue = new Queue();
+    public static HashMap<UUID, Long> lastActiveTime = new HashMap<>();
+
     @Override
     public void onInitializeServer() {
         registerEvents();
