@@ -46,12 +46,12 @@ public class ServerLoginNetworkHandlerMixin {
 
         // Has NOT joined before
         MinecraftServerSupplier.getServer().getPlayerManager().broadcast(
-                Text.literal("Welcome " + name + " to Kryeitive!").setStyle(Style.EMPTY.withColor(Formatting.AQUA)),
+                Text.literal("Welcome " + name + " to Kryei!").setStyle(Style.EMPTY.withColor(Formatting.AQUA)),
                 false
         );
 
         assert player != null;
-        player.sendMessage(Text.literal("Welcome to Kryeitive! Happy building :).").setStyle(Style.EMPTY.withColor(Formatting.AQUA)));
+        player.sendMessage(Text.literal("Welcome to Kryeit!").setStyle(Style.EMPTY.withColor(Formatting.AQUA)));
 
     }
 }

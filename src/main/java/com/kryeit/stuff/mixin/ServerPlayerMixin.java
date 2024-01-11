@@ -78,7 +78,7 @@ public abstract class ServerPlayerMixin extends Entity implements AfkPlayer {
     @Inject(method = "getPlayerListName", at = @At("RETURN"), cancellable = true)
     private void replacePlayerListName(CallbackInfoReturnable<Text> cir) {
         MutableText cog = Text.literal("⚙").setStyle(Style.EMPTY.withBold(true)).setStyle(Style.EMPTY.withFormatting(Formatting.GOLD));
-        MutableText text = player.getName().copy();
+        MutableText text = player.getName().copy().setStyle(Style.EMPTY.withFormatting(Formatting.WHITE));
         if (Config.PlayerListOptions.enableListDisplay && isAfk) {
             Formatting color = Formatting.byName(Config.PlayerListOptions.afkColor);
             if (color == null) color = Formatting.RESET;
