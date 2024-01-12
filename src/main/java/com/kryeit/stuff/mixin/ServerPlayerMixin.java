@@ -1,8 +1,8 @@
 package com.kryeit.stuff.mixin;
 
+import com.kryeit.stuff.Utils;
 import com.kryeit.stuff.afk.AfkPlayer;
 import com.kryeit.stuff.afk.Config;
-import me.lucko.fabric.api.permissions.v0.Permissions;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.network.packet.s2c.play.PlayerListS2CPacket;
@@ -77,22 +77,15 @@ public abstract class ServerPlayerMixin extends Entity implements AfkPlayer {
 
     @Inject(method = "getPlayerListName", at = @At("RETURN"), cancellable = true)
     private void replacePlayerListName(CallbackInfoReturnable<Text> cir) {
-        MutableText cog = Text.literal("⚙").setStyle(Style.EMPTY.withBold(true)).setStyle(Style.EMPTY.withFormatting(Formatting.GOLD));
-        MutableText anchor = Text.literal("⚓").setStyle(Style.EMPTY.withBold(true)).setStyle(Style.EMPTY.withFormatting(Formatting.RED));
 
-        MutableText text = player.getName().copy().setStyle(Style.EMPTY.withFormatting(Formatting.WHITE));
+        MutableText name = player.getName().copy().setStyle(Style.EMPTY.withFormatting(Formatting.WHITE));
+
         if (Config.PlayerListOptions.enableListDisplay && isAfk) {
             Formatting color = Formatting.byName(Config.PlayerListOptions.afkColor);
             if (color == null) color = Formatting.RESET;
-            text = text.formatted(color);
+            name = name.formatted(color);
         }
 
-        if (Permissions.check(player, "group.kryeitor")) {
-            cir.setReturnValue(cog.append(text));
-        } else if (Permissions.check(player, "group.postbuilder")) {
-            cir.setReturnValue(anchor.append(text));
-        }else {
-            cir.setReturnValue(text);
-        }
+        cir.setReturnValue(Utils.prefix(player).append(name));
     }
 }
