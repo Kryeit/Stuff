@@ -78,6 +78,8 @@ public abstract class ServerPlayerMixin extends Entity implements AfkPlayer {
     @Inject(method = "getPlayerListName", at = @At("RETURN"), cancellable = true)
     private void replacePlayerListName(CallbackInfoReturnable<Text> cir) {
         MutableText cog = Text.literal("⚙").setStyle(Style.EMPTY.withBold(true)).setStyle(Style.EMPTY.withFormatting(Formatting.GOLD));
+        MutableText anchor = Text.literal("⚓").setStyle(Style.EMPTY.withBold(true)).setStyle(Style.EMPTY.withFormatting(Formatting.DARK_GREEN));
+
         MutableText text = player.getName().copy().setStyle(Style.EMPTY.withFormatting(Formatting.WHITE));
         if (Config.PlayerListOptions.enableListDisplay && isAfk) {
             Formatting color = Formatting.byName(Config.PlayerListOptions.afkColor);
@@ -87,7 +89,9 @@ public abstract class ServerPlayerMixin extends Entity implements AfkPlayer {
 
         if (Permissions.check(player, "group.kryeitor")) {
             cir.setReturnValue(cog.append(text));
-        } else {
+        } else if (Permissions.check(player, "group.postbuilder")) {
+            cir.setReturnValue(anchor.append(text));
+        }else {
             cir.setReturnValue(text);
         }
     }
