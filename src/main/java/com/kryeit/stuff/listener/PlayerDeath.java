@@ -14,9 +14,9 @@ public class PlayerDeath implements ServerLivingEntityEvents.AfterDeath {
     public void afterDeath(LivingEntity entity, DamageSource damageSource) {
         if (entity instanceof ServerPlayerEntity player) {
             player.sendMessage(Text.literal("You've died on: (" +
-                    player.getPos().getX() + ", " +
-                    player.getPos().getY() + ", " +
-                    player.getPos().getZ() + ")").setStyle(Style.EMPTY.withColor(Formatting.GRAY)));
+                    (int) player.getPos().getX() + ", " +
+                    (int) player.getPos().getY() + ", " +
+                    (int) player.getPos().getZ() + ")").setStyle(Style.EMPTY.withColor(Formatting.GRAY)));
         }
     }
 }
