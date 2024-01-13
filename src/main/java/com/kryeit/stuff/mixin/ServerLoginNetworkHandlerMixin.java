@@ -46,12 +46,15 @@ public class ServerLoginNetworkHandlerMixin {
 
         // Has NOT joined before
         MinecraftServerSupplier.getServer().getPlayerManager().broadcast(
-                Text.literal("Welcome " + name + " to Kryei!").setStyle(Style.EMPTY.withColor(Formatting.AQUA)),
+                Text.literal("Welcome " + name + " to Kryeit!").setStyle(Style.EMPTY.withColor(Formatting.AQUA)),
                 false
         );
 
         assert player != null;
-        player.sendMessage(Text.literal("Welcome to Kryeit!").setStyle(Style.EMPTY.withColor(Formatting.AQUA)));
-
+        player.sendMessage(Text.literal("Kryeit uses custom systems, you should look at information about:").setStyle(Style.EMPTY.withColor(Formatting.AQUA)));
+        player.sendMessage(Text.literal(" - Claim system").setStyle(Style.EMPTY.withColor(Formatting.AQUA)));
+        player.sendMessage(Text.literal(" - Mission system").setStyle(Style.EMPTY.withColor(Formatting.AQUA)));
+        player.sendMessage(Text.literal(" - Teleport system (through posts)").setStyle(Style.EMPTY.withColor(Formatting.AQUA)));
+        player.sendMessage(Text.literal("For more information:  https://discord.com/channels/910626990468497439/1166089413403623575").setStyle(Style.EMPTY.withColor(Formatting.AQUA)));
     }
 }
