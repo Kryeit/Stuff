@@ -51,10 +51,10 @@ public class ServerLoginNetworkHandlerMixin {
         );
 
         assert player != null;
-        player.sendMessage(Text.literal("Kryeit uses custom systems, you should look at information about:").setStyle(Style.EMPTY.withColor(Formatting.AQUA)));
+        player.sendMessage(Text.literal("Kryeit if fairly vanilla, but it has custom systems:").setStyle(Style.EMPTY.withColor(Formatting.AQUA)));
         player.sendMessage(Text.literal(" - Claim system (use /claim)").setStyle(Style.EMPTY.withColor(Formatting.AQUA)));
         player.sendMessage(Text.literal(" - Mission system (use /missions)").setStyle(Style.EMPTY.withColor(Formatting.AQUA)));
-        player.sendMessage(Text.literal(" - Teleport system (through posts, use /post)").setStyle(Style.EMPTY.withColor(Formatting.AQUA)));
+        player.sendMessage(Text.literal(" - Teleport system (use /post)").setStyle(Style.EMPTY.withColor(Formatting.AQUA)));
         player.sendMessage(Text.literal("For more information:  https://discord.com/channels/910626990468497439/1166089413403623575").setStyle(Style.EMPTY.withColor(Formatting.AQUA)));
     }
 }
