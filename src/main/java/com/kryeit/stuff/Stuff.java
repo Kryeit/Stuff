@@ -14,7 +14,7 @@ import java.util.UUID;
 
 public class Stuff implements DedicatedServerModInitializer {
 
-    public static Queue queue = new Queue();
+    //public static Queue queue = new Queue();
     public static HashMap<UUID, Long> lastActiveTime = new HashMap<>();
 
     @Override
