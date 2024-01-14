@@ -4,6 +4,7 @@ import com.kryeit.stuff.MinecraftServerSupplier;
 import com.mojang.authlib.GameProfile;
 import net.minecraft.server.network.ServerLoginNetworkHandler;
 import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.text.ClickEvent;
 import net.minecraft.text.Style;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
@@ -55,7 +56,9 @@ public class ServerLoginNetworkHandlerMixin {
         player.sendMessage(Text.literal(" - Claim system (use /claim)").setStyle(Style.EMPTY.withColor(Formatting.AQUA)));
         player.sendMessage(Text.literal(" - Mission system (use /missions)").setStyle(Style.EMPTY.withColor(Formatting.AQUA)));
         player.sendMessage(Text.literal(" - Teleport system (use /post)").setStyle(Style.EMPTY.withColor(Formatting.AQUA)));
-        player.sendMessage(Text.literal("For more information: https://kryeit.com/discord").setStyle(Style.EMPTY.withColor(Formatting.AQUA)));
+        player.sendMessage(Text.literal("For more information: https://kryeit.com/discord")
+                .setStyle(Style.EMPTY.withColor(Formatting.AQUA))
+                .setStyle(Style.EMPTY.withClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, "https://kryeit.com/discord"))));
         player.sendMessage(Text.literal("Read the /rules and have fun!").setStyle(Style.EMPTY.withColor(Formatting.AQUA)));
     }
 }

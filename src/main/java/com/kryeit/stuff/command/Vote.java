@@ -23,8 +23,8 @@ public class Vote {
             return 0;
         }
 
-        player.sendMessage(Text.literal("Planet Minecraft -> https://www.planetminecraft.com/server/kryeit-5584167/vote")
-                .setStyle(Style.EMPTY.withClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, "https://www.planetminecraft.com/server/kryeit-5584167/vote"))));
+        player.sendMessage(Text.literal("FindMCServers -> https://findmcserver.com/server/147JP5hsZZ")
+                .setStyle(Style.EMPTY.withClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, "https://findmcserver.com/server/147JP5hsZZ"))));
         return Command.SINGLE_SUCCESS;
     }
 
