@@ -14,10 +14,16 @@ public class Utils {
     }
 
     public static MutableText prefix(ServerPlayerEntity player) {
+        MutableText balanza = Text.literal("⚖").setStyle(Style.EMPTY.withBold(true)).setStyle(Style.EMPTY.withFormatting(Formatting.GREEN));
         MutableText cog = Text.literal("⚙").setStyle(Style.EMPTY.withBold(true)).setStyle(Style.EMPTY.withFormatting(Formatting.GOLD));
         MutableText anchor = Text.literal("⚓").setStyle(Style.EMPTY.withBold(true)).setStyle(Style.EMPTY.withFormatting(Formatting.RED));
 
+
         MutableText text = Text.literal("");
+
+        if (Permissions.check(player, "group.staff")) {
+            text.append(balanza);
+        }
 
         if (Permissions.check(player, "group.kryeitor")) {
             text.append(cog);
