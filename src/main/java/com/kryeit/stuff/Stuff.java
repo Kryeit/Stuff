@@ -24,7 +24,7 @@ public class Stuff implements DedicatedServerModInitializer {
     }
 
     public void registerEvents() {
-        ServerPlayConnectionEvents.INIT.register(new QueueHandler());
+        //ServerPlayConnectionEvents.INIT.register(new QueueHandler());
         ServerLivingEntityEvents.AFTER_DEATH.register(new PlayerDeath());
     }
 
