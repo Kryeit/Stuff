@@ -1,5 +1,6 @@
 package com.kryeit.stuff.command;
 
+import com.kryeit.stuff.Utils;
 import com.mojang.brigadier.Command;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.context.CommandContext;
@@ -24,7 +25,7 @@ public class Map {
         }
 
         player.sendMessage(Text.literal("Bluemap -> https://map.kryeit.com/")
-                .setStyle(Style.EMPTY.withClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, "https://map.kryeit.com/"))));
+                .setStyle(Style.EMPTY.withClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, Utils.getMapLink(player)))));
         return Command.SINGLE_SUCCESS;
     }
 

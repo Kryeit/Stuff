@@ -6,6 +6,7 @@ import net.minecraft.text.MutableText;
 import net.minecraft.text.Style;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
+import net.minecraft.world.World;
 
 public class Utils {
 
@@ -34,5 +35,14 @@ public class Utils {
         }
 
         return text.append(" ");
+    }
+
+    public static String getMapLink(ServerPlayerEntity player) {
+        // example link https://map.kryeit.com/#overworld:-3664:0:8222:58252:-0.39:0:0:0:perspective
+        int x = (int) player.getPos().getX();
+        int z = (int) player.getPos().getZ();
+
+
+        return  "https://map.kryeit.com/#overworld:" + x + ":0:" + z + ":0:0:0:0:0:perspective";
     }
 }
