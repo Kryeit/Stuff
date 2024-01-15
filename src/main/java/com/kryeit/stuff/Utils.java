@@ -19,11 +19,11 @@ public class Utils {
 
         MutableText text = Text.literal("");
 
-        if (Permissions.check(player, "group.kryeitor")) {
+        if (Permissions.check(player, "group.kryeitor", false)) {
             text.append(cog);
         }
 
-        if (Permissions.check(player, "group.postbuilder")) {
+        if (Permissions.check(player, "group.postbuilder", false)) {
             text.append(anchor);
         }
 
@@ -40,11 +40,11 @@ public class Utils {
     }
 
     public static Formatting getFormattingForTab(ServerPlayerEntity player) {
-        if (Permissions.check(player, "group.staff")) {
+        if (Permissions.check(player, "group.staff", false)) {
             return Formatting.GREEN;
         }
 
-        if (Permissions.check(player, "group.kryeitor")) {
+        if (Permissions.check(player, "group.kryeitor", false)) {
             return Formatting.GOLD;
         }
 
