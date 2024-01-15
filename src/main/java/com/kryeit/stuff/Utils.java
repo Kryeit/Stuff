@@ -38,16 +38,4 @@ public class Utils {
 
         return  "https://map.kryeit.com/#overworld:" + x + ":0:" + z + ":0:0:0:0:0:perspective";
     }
-
-    public static Formatting getFormattingForTab(ServerPlayerEntity player) {
-        if (Permissions.check(player, "group.staff", false)) {
-            return Formatting.GREEN;
-        }
-
-        if (Permissions.check(player, "group.kryeitor", false)) {
-            return Formatting.GOLD;
-        }
-
-        return Formatting.WHITE;
-    }
 }
