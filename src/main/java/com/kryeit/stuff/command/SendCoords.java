@@ -36,9 +36,8 @@ public class SendCoords {
             return 0;
         }
 
-        receiver.sendMessage(Text.literal(player.getName() + " has sent you their coordinates: (" +
-                        player.getX() + ", " + player.getY() + ", " + player.getZ() + ")")
-                .setStyle(Style.EMPTY.withFormatting(Formatting.GREEN))
+        receiver.sendMessage(Text.literal(player.getName().getString() + " has sent you their coordinates: (" +
+                (int) player.getX() + ", " + (int) player.getY() + ", " + (int) player.getZ() + ")")
                 .setStyle(Style.EMPTY.withClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, Utils.getMapLink(player)))));
         return Command.SINGLE_SUCCESS;
     }
