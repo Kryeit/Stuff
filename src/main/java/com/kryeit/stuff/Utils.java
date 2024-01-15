@@ -8,6 +8,8 @@ import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 import net.minecraft.world.World;
 
+import java.text.Normalizer;
+
 public class Utils {
 
     public static boolean isServerFull() {
@@ -15,16 +17,10 @@ public class Utils {
     }
 
     public static MutableText prefix(ServerPlayerEntity player) {
-        MutableText balanza = Text.literal("⚖").setStyle(Style.EMPTY.withBold(true)).setStyle(Style.EMPTY.withFormatting(Formatting.GREEN));
         MutableText cog = Text.literal("⛭").setStyle(Style.EMPTY.withBold(true)).setStyle(Style.EMPTY.withFormatting(Formatting.GOLD));
         MutableText anchor = Text.literal("⚓").setStyle(Style.EMPTY.withBold(true)).setStyle(Style.EMPTY.withFormatting(Formatting.RED));
-
-
+        
         MutableText text = Text.literal("");
-
-        if (Permissions.check(player, "group.staff")) {
-            text.append(balanza);
-        }
 
         if (Permissions.check(player, "group.kryeitor")) {
             text.append(cog);
@@ -44,5 +40,17 @@ public class Utils {
 
 
         return  "https://map.kryeit.com/#overworld:" + x + ":0:" + z + ":0:0:0:0:0:perspective";
+    }
+
+    public static Formatting getFormattingForTab(ServerPlayerEntity player) {
+        if (Permissions.check(player, "group.staff")) {
+            return Formatting.GREEN;
+        }
+
+        if (Permissions.check(player, "group.kryeitor")) {
+            return Formatting.GOLD;
+        }
+
+        return Formatting.WHITE;
     }
 }
