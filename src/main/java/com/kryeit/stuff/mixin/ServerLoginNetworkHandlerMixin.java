@@ -49,18 +49,18 @@ public class ServerLoginNetworkHandlerMixin {
 
         // Has NOT joined before
         MinecraftServerSupplier.getServer().getPlayerManager().broadcast(
-                Text.literal("Welcome " + name + " to Kryeit!").setStyle(Style.EMPTY.withColor(Formatting.AQUA)),
+                Text.literal("Welcome " + name + " to Kryeit!").formatted(Formatting.AQUA),
                 false
         );
 
         assert player != null;
-        player.sendMessage(Text.literal("Kryeit if fairly vanilla, but it has custom systems:").setStyle(Style.EMPTY.withColor(Formatting.AQUA)));
-        player.sendMessage(Text.literal(" - Claim system (use /claim)").setStyle(Style.EMPTY.withColor(Formatting.AQUA)));
-        player.sendMessage(Text.literal(" - Mission system (use /missions)").setStyle(Style.EMPTY.withColor(Formatting.AQUA)));
-        player.sendMessage(Text.literal(" - Teleport system (use /post)").setStyle(Style.EMPTY.withColor(Formatting.AQUA)));
+        player.sendMessage(Text.literal("Kryeit if fairly vanilla, but it has custom systems:").formatted(Formatting.AQUA));
+        player.sendMessage(Text.literal(" - Claim system (use /claim)").formatted(Formatting.AQUA));
+        player.sendMessage(Text.literal(" - Mission system (use /missions)").formatted(Formatting.AQUA));
+        player.sendMessage(Text.literal(" - Teleport system (use /post)").formatted(Formatting.AQUA));
         player.sendMessage(Text.literal("For more information: https://kryeit.com/discord")
                 .setStyle(Style.EMPTY.withClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, "https://kryeit.com/discord")))
         );
-        player.sendMessage(Text.literal("Read the /rules and have fun!").setStyle(Style.EMPTY.withColor(Formatting.AQUA)));
+        player.sendMessage(Text.literal("Read the /rules and have fun!").formatted(Formatting.AQUA));
     }
 }
