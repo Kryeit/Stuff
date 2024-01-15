@@ -60,7 +60,6 @@ public class ServerLoginNetworkHandlerMixin {
         player.sendMessage(Text.literal(" - Teleport system (use /post)").setStyle(Style.EMPTY.withColor(Formatting.AQUA)));
         player.sendMessage(Text.literal("For more information: https://kryeit.com/discord")
                 .setStyle(Style.EMPTY.withClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, "https://kryeit.com/discord")))
-                .setStyle(Style.EMPTY.withColor(Formatting.GREEN))
         );
         player.sendMessage(Text.literal("Read the /rules and have fun!").setStyle(Style.EMPTY.withColor(Formatting.AQUA)));
     }
