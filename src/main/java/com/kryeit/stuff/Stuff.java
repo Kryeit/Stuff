@@ -34,6 +34,7 @@ public class Stuff implements DedicatedServerModInitializer {
             Vote.register(dispatcher);
             SendCoords.register(dispatcher);
             Reply.register(dispatcher);
+            Message.register(dispatcher);
         });
     }
 }
