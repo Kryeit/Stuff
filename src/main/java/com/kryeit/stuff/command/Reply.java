@@ -30,13 +30,13 @@ public class Reply {
             player.sendMessage(Text.literal("Player is not online."), false);
             return 1;
         }
-        String message = StringArgumentType.getString(context, "message");
-        Text formattedMessage = Text.literal(player.getName().getString() + " whispers: " + message).formatted(Formatting.LIGHT_PURPLE);
-        targetPlayer.sendMessage(formattedMessage, false);
 
-        Text confirmationMessage = Text.literal("You whispered to " + targetPlayer.getName().getString() + ": " + message).formatted(Formatting.GRAY)
-                .formatted(Formatting.LIGHT_PURPLE);
-        player.sendMessage(confirmationMessage, false);
+        String message = StringArgumentType.getString(context, "message");
+
+        // Simulate the whisper command
+        String command = String.format("/tell %s %s", targetPlayer.getName().getString(), message);
+        MinecraftServerSupplier.getServer().getCommandManager().executeWithPrefix(context.getSource(), command);
+
         lastMessageSender.put(targetUUID, playerUUID); // Update for reciprocal /reply
         return 1;
     }
