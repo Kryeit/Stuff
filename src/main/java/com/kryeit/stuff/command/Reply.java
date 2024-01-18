@@ -37,7 +37,7 @@ public class Reply {
         String command = String.format("/tell %s %s", targetPlayer.getName().getString(), message);
         MinecraftServerSupplier.getServer().getCommandManager().executeWithPrefix(context.getSource(), command);
 
-        lastMessageSender.put(targetUUID, playerUUID); // Update for reciprocal /reply
+        lastMessageSender.put(targetUUID, playerUUID);
         return 1;
     }
 
