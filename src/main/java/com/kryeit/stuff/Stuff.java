@@ -31,7 +31,6 @@ public class Stuff implements DedicatedServerModInitializer {
             Kofi.register(dispatcher);
             Map.register(dispatcher);
             Rules.register(dispatcher);
-            Vote.register(dispatcher);
             SendCoords.register(dispatcher);
             Reply.register(dispatcher);
             Message.register(dispatcher);
