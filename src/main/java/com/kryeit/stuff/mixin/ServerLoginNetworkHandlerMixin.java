@@ -42,7 +42,6 @@ public class ServerLoginNetworkHandlerMixin {
             UUID otherId = UUID.fromString(fileName.substring(0, fileName.length() - 4));
             if (id.equals(otherId)) {
                 // Has joined before
-                ((AfkPlayer) player).stuff$disableAfk();
                 return;
             }
         }
