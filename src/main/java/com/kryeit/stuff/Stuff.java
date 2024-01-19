@@ -30,7 +30,6 @@ public class Stuff implements DedicatedServerModInitializer {
 
     public void registerCommands() {
         CommandRegistrationCallback.EVENT.register((dispatcher, dedicatedServer, commandFunction) -> {
-            Discord.register(dispatcher);
             Kofi.register(dispatcher);
             Map.register(dispatcher);
             Rules.register(dispatcher);
