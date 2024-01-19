@@ -1,7 +1,6 @@
 package com.kryeit.stuff.mixin;
 
 import com.kryeit.stuff.MinecraftServerSupplier;
-import com.kryeit.stuff.afk.AfkPlayer;
 import com.mojang.authlib.GameProfile;
 import net.minecraft.server.network.ServerLoginNetworkHandler;
 import net.minecraft.server.network.ServerPlayerEntity;
