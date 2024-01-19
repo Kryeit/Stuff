@@ -35,7 +35,6 @@ public class Utils {
         int x = (int) player.getPos().getX();
         int z = (int) player.getPos().getZ();
 
-
         return  "https://map.kryeit.com/#overworld:" + x + ":0:" + z + ":0:0:0:0:0:perspective";
     }
 }

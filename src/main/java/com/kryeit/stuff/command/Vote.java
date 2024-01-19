@@ -23,8 +23,8 @@ public class Vote {
             return 0;
         }
 
-        player.sendMessage(Text.literal("FindMCServers -> https://findmcserver.com/server/147JP5hsZZ")
-                .setStyle(Style.EMPTY.withClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, "https://findmcserver.com/server/147JP5hsZZ"))));
+        player.sendMessage(Text.literal("FindMCServers -> https://findmcserver.com/server/147JP5hsZZ?vote=true")
+                .setStyle(Style.EMPTY.withClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, "https://findmcserver.com/server/147JP5hsZZ?vote=true"))));
         return Command.SINGLE_SUCCESS;
     }
 
