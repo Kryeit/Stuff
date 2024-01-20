@@ -14,7 +14,7 @@ import java.util.UUID;
 
 public class Stuff implements DedicatedServerModInitializer {
 
-    public static Queue queue = new Queue();
+   // public static Queue queue = new Queue();
     public static HashMap<UUID, Long> lastActiveTime = new HashMap<>();
 
     @Override
@@ -24,7 +24,7 @@ public class Stuff implements DedicatedServerModInitializer {
     }
 
     public void registerEvents() {
-        ServerPlayConnectionEvents.INIT.register(new QueueHandler(queue));
+   //     ServerPlayConnectionEvents.INIT.register(new QueueHandler(queue));
         ServerLivingEntityEvents.AFTER_DEATH.register(new PlayerDeath());
     }
 
