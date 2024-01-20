@@ -45,6 +45,7 @@ public class ServerLoginNetworkHandlerMixin {
             }
         }
 
+
         // Has NOT joined before
         MinecraftServerSupplier.getServer().getPlayerManager().broadcast(
                 Text.literal("Welcome " + name + " to Kryeit!").formatted(Formatting.AQUA),
