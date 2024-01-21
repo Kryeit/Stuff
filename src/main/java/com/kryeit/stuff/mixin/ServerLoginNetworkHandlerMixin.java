@@ -53,7 +53,7 @@ public class ServerLoginNetworkHandlerMixin {
         );
 
         assert player != null;
-        player.sendMessage(Text.literal("Kryeit if fairly vanilla, but it has custom systems:").formatted(Formatting.AQUA));
+        player.sendMessage(Text.literal("Kryeit is fairly vanilla, but it has custom systems:").formatted(Formatting.AQUA));
         player.sendMessage(Text.literal(" - Claim system (use /claim)").formatted(Formatting.AQUA));
         player.sendMessage(Text.literal(" - Mission system (use /missions)").formatted(Formatting.AQUA));
         player.sendMessage(Text.literal(" - Teleport system (use /post)").formatted(Formatting.AQUA));
