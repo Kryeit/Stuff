@@ -13,6 +13,11 @@ public class Utils {
         return MinecraftServerSupplier.getServer().getMaxPlayerCount() <= MinecraftServerSupplier.getServer().getCurrentPlayerCount();
     }
 
+    // Run a command as the server, arguments is a String, the command
+    public static void runCommand(String arguments) {
+        MinecraftServerSupplier.getServer().getCommandManager().executeWithPrefix(MinecraftServerSupplier.getServer().getCommandSource(), arguments);
+    }
+
     public static MutableText prefix(ServerPlayerEntity player) {
         MutableText cog = Text.literal("⛭").setStyle(Style.EMPTY.withBold(true)).formatted(Formatting.GOLD);
         MutableText anchor = Text.literal("⚓").formatted(Formatting.RED);

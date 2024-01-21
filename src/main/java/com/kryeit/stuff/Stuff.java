@@ -2,12 +2,11 @@ package com.kryeit.stuff;
 
 import com.kryeit.stuff.command.*;
 import com.kryeit.stuff.listener.PlayerDeath;
-import com.kryeit.stuff.queue.Queue;
-import com.kryeit.stuff.queue.QueueHandler;
+import com.kryeit.stuff.listener.PlayerVote;
+import com.kryeit.votifier.model.VotifierEvent;
 import net.fabricmc.api.DedicatedServerModInitializer;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 import net.fabricmc.fabric.api.entity.event.v1.ServerLivingEntityEvents;
-import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
 
 import java.util.HashMap;
 import java.util.UUID;
@@ -26,6 +25,7 @@ public class Stuff implements DedicatedServerModInitializer {
     public void registerEvents() {
    //     ServerPlayConnectionEvents.INIT.register(new QueueHandler(queue));
         ServerLivingEntityEvents.AFTER_DEATH.register(new PlayerDeath());
+        VotifierEvent.EVENT.register(new PlayerVote());
     }
 
     public void registerCommands() {

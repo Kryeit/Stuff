@@ -15,6 +15,16 @@ repositories {
         name = 'LuckPerms'
         url = 'https://oss.sonatype.org/content/repositories/snapshots'
     }
+    exclusiveContent {
+        forRepository {
+            maven {
+                url "https://cursemaven.com"
+            }
+        }
+        filter {
+            includeGroup "curse.maven"
+        }
+    }
 }
 
 dependencies {
@@ -27,6 +37,7 @@ dependencies {
     modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
 
     include(modImplementation("me.lucko:fabric-permissions-api:${luckperms_version}"))
+    modImplementation "curse.maven:votifier-for-fabric-963421:5048168"
 }
 
 processResources {
