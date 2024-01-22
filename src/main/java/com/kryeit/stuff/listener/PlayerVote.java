@@ -4,6 +4,7 @@ import com.kryeit.stuff.Utils;
 import com.kryeit.votifier.MinecraftServerSupplier;
 import com.kryeit.votifier.model.Vote;
 import com.kryeit.votifier.model.VotifierEvent;
+import me.lucko.fabric.api.permissions.v0.Permissions;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
@@ -14,10 +15,14 @@ public class PlayerVote implements VotifierEvent {
         String name = vote.getUsername();
         for (ServerPlayerEntity player : MinecraftServerSupplier.getServer().getPlayerManager().getPlayerList()) {
             if (!player.getName().getString().equals(name)) {
+                int cb = 60;
+                if (Permissions.check(player, "group.collaborator", false)) {
+                    cb = 70;
+                }
                 player.sendMessage(
-                        Text.literal("Someone voted! +60 CB").formatted(Formatting.GRAY),
+                        Text.literal("Someone voted! +" + cb + " CB").formatted(Formatting.GRAY),
                         true);
-                Utils.runCommand("/adjustclaimblocks " + player.getName().getString() + " 60");
+                Utils.runCommand("/adjustclaimblocks " + player.getName().getString() + " " + cb);
             }
         }
 
