@@ -1,6 +1,7 @@
 package com.kryeit.stuff.mixin;
 
 import com.kryeit.stuff.MinecraftServerSupplier;
+import com.kryeit.stuff.Stuff;
 import com.mojang.authlib.GameProfile;
 import net.minecraft.server.network.ServerLoginNetworkHandler;
 import net.minecraft.server.network.ServerPlayerEntity;
@@ -41,6 +42,7 @@ public class ServerLoginNetworkHandlerMixin {
             UUID otherId = UUID.fromString(fileName.substring(0, fileName.length() - 4));
             if (id.equals(otherId)) {
                 // Has joined before
+                Stuff.lastActiveTime.put(id, System.currentTimeMillis());
                 return;
             }
         }
