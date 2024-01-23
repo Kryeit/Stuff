@@ -21,11 +21,16 @@ public class Utils {
     public static MutableText prefix(ServerPlayerEntity player) {
         MutableText cog = Text.literal("⛭").setStyle(Style.EMPTY.withBold(true)).formatted(Formatting.GOLD);
         MutableText anchor = Text.literal("⚓").formatted(Formatting.RED);
+        MutableText diamond = Text.literal("♦").formatted(Formatting.LIGHT_PURPLE);
 
         MutableText text = Text.literal("");
 
         if (Permissions.check(player, "group.kryeitor", false)) {
             text.append(cog);
+        }
+
+        if (Permissions.check(player, "group.booster", false)) {
+            text.append(diamond);
         }
 
         if (Permissions.check(player, "group.postbuilder", false)) {
