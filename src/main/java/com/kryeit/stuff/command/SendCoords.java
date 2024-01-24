@@ -35,6 +35,8 @@ public class SendCoords {
             return 0;
         }
 
+        player.sendMessage(Text.literal("Sent coordinates to " + receiver.getName().getString()));
+
         receiver.sendMessage(Text.literal(player.getName().getString() + " has sent you their coordinates: (" +
                 (int) player.getX() + ", " + (int) player.getY() + ", " + (int) player.getZ() + ")")
                 .setStyle(Style.EMPTY.withClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, Utils.getMapLink(player)))));
