@@ -21,7 +21,7 @@ public class Utils {
     public static MutableText prefix(ServerPlayerEntity player) {
         MutableText cog = Text.literal("⛭").setStyle(Style.EMPTY.withBold(true)).formatted(Formatting.GOLD);
         MutableText anchor = Text.literal("⚓").formatted(Formatting.RED);
-        MutableText diamond = Text.literal("♦").formatted(Formatting.LIGHT_PURPLE);
+        MutableText diamond = Text.literal("♢").formatted(Formatting.LIGHT_PURPLE);
 
         MutableText text = Text.literal("");
 
