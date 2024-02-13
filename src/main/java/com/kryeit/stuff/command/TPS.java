@@ -8,12 +8,11 @@ public class TPS {
     public static void register(CommandDispatcher<ServerCommandSource> dispatcher) {
         dispatcher.register(CommandManager.literal("tps")
                 .executes(context -> {
-                    // Execute the /spark tps command programmatically
                     String command = "spark tps";
                     context.getSource().getServer().getCommandManager().executeWithPrefix(
                             context.getSource().withSilent(), command
                     );
-                    return 1; // Indicate success
+                    return 1;
                 })
         );
     }
