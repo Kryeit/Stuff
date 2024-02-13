@@ -15,9 +15,9 @@ public class PlayerVote implements VotifierEvent {
         String name = vote.getUsername();
         for (ServerPlayerEntity player : MinecraftServerSupplier.getServer().getPlayerManager().getPlayerList()) {
             if (!player.getName().getString().equals(name)) {
-                int cb = 60;
+                int cb = 40;
                 if (Permissions.check(player, "group.collaborator", false)) {
-                    cb = 70;
+                    cb = 50;
                 }
                 player.sendMessage(
                         Text.literal("Someone voted! +" + cb + " CB").formatted(Formatting.GRAY),
