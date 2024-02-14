@@ -36,6 +36,7 @@ public class Stuff implements DedicatedServerModInitializer {
             SendCoords.register(dispatcher);
             TPS.register(dispatcher);
             AFK.register(dispatcher);
+            Cities.register(dispatcher);
         });
     }
 }
