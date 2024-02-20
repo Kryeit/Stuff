@@ -31,7 +31,7 @@ public class ShowMe {
             e.printStackTrace();
         }
 
-        player.sendMessage(Text.literal("Now you won't be shown in the BlueMap"));
+        player.sendMessage(Text.literal("Now you are shown in the BlueMap"));
         return Command.SINGLE_SUCCESS;
     }
 
