@@ -6,7 +6,8 @@ import java.util.UUID;
 
 public class BluemapImpl {
     public static void changePlayerVisibility(UUID id, boolean visible) {
-        BlueMapAPI blueMapAPI = BlueMapAPI.getInstance().get();
-        blueMapAPI.getWebApp().setPlayerVisibility(id, visible);
+        BlueMapAPI.getInstance().ifPresent(api -> {
+            api.getWebApp().setPlayerVisibility(id, visible);
+        });
     }
 }

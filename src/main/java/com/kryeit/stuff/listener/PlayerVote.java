@@ -22,7 +22,6 @@ public class PlayerVote implements VotifierEvent {
                 player.sendMessage(
                         Text.literal("Someone voted! +" + cb + " CB").formatted(Formatting.GRAY),
                         true);
-                Utils.runCommand("/adjustclaimblocks " + player.getName().getString() + " " + cb);
             }
         }
 

@@ -6,6 +6,7 @@ import com.kryeit.stuff.listener.PlayerDeath;
 import com.kryeit.stuff.listener.PlayerVote;
 import com.kryeit.stuff.storage.MapVisibilityStorage;
 import com.kryeit.votifier.model.VotifierEvent;
+import de.bluecolored.bluemap.api.BlueMapAPI;
 import net.fabricmc.api.DedicatedServerModInitializer;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 import net.fabricmc.fabric.api.entity.event.v1.ServerLivingEntityEvents;
@@ -26,6 +27,7 @@ public class Stuff implements DedicatedServerModInitializer {
 
     @Override
     public void onInitializeServer() {
+
 
         try {
             Files.createDirectories(Paths.get("mods/stuff"));
@@ -57,6 +59,7 @@ public class Stuff implements DedicatedServerModInitializer {
             ShowMe.register(dispatcher);
             HideMe.register(dispatcher);
         });
+
 
         ServerLifecycleEvents.SERVER_STARTED.register(server -> {
             for (UUID id : hiddenPlayers.getPlayers()) {
