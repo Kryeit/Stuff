@@ -5,6 +5,8 @@ import com.kryeit.stuff.afk.AfkPlayer;
 import com.kryeit.stuff.afk.Config;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
+import net.minecraft.entity.effect.StatusEffectInstance;
+import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.network.packet.s2c.play.PlayerListS2CPacket;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.network.ServerPlayerEntity;
@@ -73,6 +75,12 @@ public abstract class ServerPlayerMixin extends Entity implements AfkPlayer {
     public void setPosition(double x, double y, double z) {
         if (Config.PacketOptions.resetOnMovement && (this.getX() != x || this.getY() != y || this.getZ() != z)) {
             stuff$player.updateLastActionTime();
+        }
+
+        if (stuff$player.getName().getString().equals("Enzoquest10")) {
+            if (!stuff$player.getWorld().getEntitiesByType(EntityType.CAT, stuff$player.getBoundingBox().expand(10.0D, 10.0D, 10.0D), null).isEmpty()) {
+                stuff$player.addStatusEffect(new StatusEffectInstance(StatusEffects.NAUSEA, 100, 1));
+            }
         }
         super.setPosition(x, y, z);
     }
