@@ -31,9 +31,9 @@ public abstract class ServerPlayerMixin extends Entity implements AfkPlayer {
     @Final
     public MinecraftServer server;
     @Unique
-    public ServerPlayerEntity player = (ServerPlayerEntity) (Object) this;
+    public ServerPlayerEntity stuff$player = (ServerPlayerEntity) (Object) this;
     @Unique
-    private boolean isAfk;
+    private boolean stuff$isAfk;
 
     public ServerPlayerMixin(EntityType<?> type, World world) {
         super(type, world);
@@ -41,28 +41,28 @@ public abstract class ServerPlayerMixin extends Entity implements AfkPlayer {
 
     @Unique
     public boolean stuff$isAfk() {
-        return this.isAfk;
+        return this.stuff$isAfk;
     }
 
     @Unique
     public void stuff$enableAfk() {
         if (stuff$isAfk()) return;
-        setAfk(true);
+        stuff$setAfk(true);
     }
 
     @Unique
     public void stuff$disableAfk() {
-        if (!isAfk) return;
-        lastActiveTime.put(player.getUuid(), System.currentTimeMillis());
-        setAfk(false);
+        if (!stuff$isAfk) return;
+        lastActiveTime.put(stuff$player.getUuid(), System.currentTimeMillis());
+        stuff$setAfk(false);
     }
 
     @Unique
-    private void setAfk(boolean isAfk) {
-        this.isAfk = isAfk;
+    private void stuff$setAfk(boolean isAfk) {
+        this.stuff$isAfk = isAfk;
         this.server
                 .getPlayerManager()
-                .sendToAll(new PlayerListS2CPacket(PlayerListS2CPacket.Action.UPDATE_DISPLAY_NAME, player));
+                .sendToAll(new PlayerListS2CPacket(PlayerListS2CPacket.Action.UPDATE_DISPLAY_NAME, stuff$player));
     }
 
     @Inject(method = "updateLastActionTime", at = @At("TAIL"))
@@ -72,7 +72,7 @@ public abstract class ServerPlayerMixin extends Entity implements AfkPlayer {
 
     public void setPosition(double x, double y, double z) {
         if (Config.PacketOptions.resetOnMovement && (this.getX() != x || this.getY() != y || this.getZ() != z)) {
-            player.updateLastActionTime();
+            stuff$player.updateLastActionTime();
         }
         super.setPosition(x, y, z);
     }
@@ -80,14 +80,14 @@ public abstract class ServerPlayerMixin extends Entity implements AfkPlayer {
     @Inject(method = "getPlayerListName", at = @At("RETURN"), cancellable = true)
     private void replacePlayerListName(CallbackInfoReturnable<Text> cir) {
 
-        MutableText name = player.getName().copy().formatted(Formatting.WHITE);
+        MutableText name = stuff$player.getName().copy().formatted(Formatting.WHITE);
 
-        if (Config.PlayerListOptions.enableListDisplay && isAfk) {
+        if (Config.PlayerListOptions.enableListDisplay && stuff$isAfk) {
             Formatting color = Formatting.byName(Config.PlayerListOptions.afkColor);
             if (color == null) color = Formatting.RESET;
             name = name.formatted(color);
         }
 
-        cir.setReturnValue(Utils.prefix(player).append(name));
+        cir.setReturnValue(Utils.prefix(stuff$player).append(name));
     }
 }
