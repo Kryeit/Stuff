@@ -30,6 +30,5 @@ public class PlayerVote implements VotifierEvent {
         player.sendMessage(
                 Text.literal("Thanks for voting! +200 CB").formatted(Formatting.GRAY),
                 false);
-        Utils.runCommand("/adjustclaimblocks " + player.getName().getString() + " 200");
     }
 }
