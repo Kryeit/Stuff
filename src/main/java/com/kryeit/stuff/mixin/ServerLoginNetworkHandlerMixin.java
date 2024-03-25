@@ -58,7 +58,7 @@ public class ServerLoginNetworkHandlerMixin {
         player.sendMessage(Text.literal(" - Claim system (use /claim and /abandon)").formatted(Formatting.AQUA));
         player.sendMessage(Text.literal(" - Mission system (use /missions)").formatted(Formatting.AQUA));
         player.sendMessage(Text.literal(" - Teleport system (use /post and /setpost)").formatted(Formatting.AQUA));
-        player.sendMessage(Text.literal("For more information: https://kryeit.com/discord, in #guides forum channel")
+        player.sendMessage(Text.literal("For more information: https://discord.gg/d3qXRGB8Uy, in #guides forum channel")
                 .setStyle(Style.EMPTY.withClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, "https://discord.gg/d3qXRGB8Uy")))
         );
         player.sendMessage(Text.literal("To contribute to Kryeit's development see /donate").formatted(Formatting.AQUA));
