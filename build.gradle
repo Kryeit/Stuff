@@ -26,6 +26,11 @@ repositories {
         }
     }
     maven { url 'https://jitpack.io' }
+
+    maven {
+        name = 'GriefDefender'
+        url = 'https://repo.glaremasters.me/repository/bloodshot'
+    }
 }
 
 dependencies {
@@ -41,6 +46,7 @@ dependencies {
     modImplementation "curse.maven:votifier-for-fabric-963421:5048168"
 
     compileOnly ("com.github.BlueMap-Minecraft:BlueMapAPI:v2.6.2")
+    compileOnly "com.griefdefender:api:${griefdefender_version}"
 }
 
 processResources {
