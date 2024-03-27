@@ -10,7 +10,7 @@ import net.minecraft.util.Formatting;
 public class Utils {
 
     public static boolean isServerFull() {
-        return MinecraftServerSupplier.getServer().getMaxPlayerCount() <= MinecraftServerSupplier.getServer().getCurrentPlayerCount();
+        return MinecraftServerSupplier.getServer().getMaxPlayerCount() < MinecraftServerSupplier.getServer().getCurrentPlayerCount();
     }
 
     // Run a command as the server, arguments is a String, the command
