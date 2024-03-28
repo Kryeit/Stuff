@@ -35,7 +35,7 @@ public class ChickensAI {
         Claim claim = GriefDefender.getCore().getClaimAt(GriefDefender.getCore().getWorldUniqueId(world)
                 , (int) player.getX(), (int) player.getY(), (int) player.getZ());
 
-        if (claim == null || !claim.canBreak(player, player.getBlockPos(), null)) {
+        if (claim == null || !claim.canBreak(player, player.getBlockPos(), null) || claim.isWilderness()) {
             Supplier<Text> message = () -> Text.of("You can't use this command here");
             source.sendFeedback(message, false);
             return 0;
