@@ -2,6 +2,7 @@ package com.kryeit.stuff.mixin;
 
 import com.kryeit.stuff.MinecraftServerSupplier;
 import com.kryeit.stuff.Stuff;
+import com.kryeit.stuff.Utils;
 import com.mojang.authlib.GameProfile;
 import net.minecraft.server.network.ServerLoginNetworkHandler;
 import net.minecraft.server.network.ServerPlayerEntity;
@@ -43,6 +44,7 @@ public class ServerLoginNetworkHandlerMixin {
             if (id.equals(otherId)) {
                 // Has joined before
                 Stuff.lastActiveTime.put(id, System.currentTimeMillis());
+                Utils.kickAFKPlayers();
                 return;
             }
         }

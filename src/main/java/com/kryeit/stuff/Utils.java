@@ -1,5 +1,6 @@
 package com.kryeit.stuff;
 
+import com.kryeit.stuff.afk.AfkPlayer;
 import me.lucko.fabric.api.permissions.v0.Permissions;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.MutableText;
@@ -46,5 +47,13 @@ public class Utils {
         int z = (int) player.getPos().getZ();
 
         return  "https://map.kryeit.com/#overworld:" + x + ":0:" + z + ":0:0:0:0:0:perspective";
+    }
+
+    public static void kickAFKPlayers() {
+        MinecraftServerSupplier.getServer().getPlayerManager().getPlayerList().forEach(player -> {
+            if (player instanceof AfkPlayer afkPlayer && afkPlayer.stuff$isAfk() && !Permissions.check(player, "stuff.afk", false)) {
+                player.networkHandler.disconnect(Text.of("You've been kicked to leave room for other players"));
+            }
+        });
     }
 }

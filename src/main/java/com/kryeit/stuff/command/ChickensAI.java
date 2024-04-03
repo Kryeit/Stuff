@@ -3,6 +3,7 @@ package com.kryeit.stuff.command;
 import com.griefdefender.api.GriefDefender;
 import com.griefdefender.api.User;
 import com.griefdefender.api.claim.Claim;
+import com.griefdefender.api.claim.TrustTypes;
 import com.kryeit.stuff.afk.AfkPlayer;
 import com.mojang.brigadier.Command;
 import com.mojang.brigadier.CommandDispatcher;
@@ -36,9 +37,8 @@ public class ChickensAI {
         Claim claim = GriefDefender.getCore().getClaimAt(GriefDefender.getCore().getWorldUniqueId(world)
                 , (int) player.getX(), (int) player.getY(), (int) player.getZ());
 
-        User user = GriefDefender.getCore().getUser(player.getUuid());
-        if (claim == null || !claim.canBreak(player, player.getBlockPos(), user) || claim.isWilderness()) {
-            Supplier<Text> message = () -> Text.of("You can't use this command here");
+        if (claim == null || !claim.isUserTrusted(player.getUuid(), TrustTypes.BUILDER) || claim.isWilderness()) {
+            Supplier<Text> message = () -> Text.of("You can't use this command here. Claim: " + claim);
             source.sendFeedback(message, false);
             return 0;
         }
