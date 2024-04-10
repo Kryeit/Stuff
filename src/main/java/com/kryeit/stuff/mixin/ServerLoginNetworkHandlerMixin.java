@@ -44,7 +44,10 @@ public class ServerLoginNetworkHandlerMixin {
             if (id.equals(otherId)) {
                 // Has joined before
                 Stuff.lastActiveTime.put(id, System.currentTimeMillis());
-                Utils.kickAFKPlayers();
+
+                if (Utils.isServerFull())
+                    Utils.kickAFKPlayers();
+
                 return;
             }
         }
