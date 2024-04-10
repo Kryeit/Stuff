@@ -4,6 +4,9 @@ import com.kryeit.stuff.Utils;
 import com.kryeit.stuff.afk.AfkPlayer;
 import com.kryeit.stuff.afk.Config;
 import me.lucko.fabric.api.permissions.v0.Permissions;
+import net.minecraft.entity.effect.StatusEffectInstance;
+import net.minecraft.entity.effect.StatusEffects;
+import net.minecraft.entity.passive.CatEntity;
 import net.minecraft.network.packet.c2s.play.PlayerMoveC2SPacket;
 import net.minecraft.server.network.ServerPlayNetworkHandler;
 import net.minecraft.server.network.ServerPlayerEntity;
@@ -45,6 +48,13 @@ public abstract class ServerPlayNetworkMixin {
             float yaw = player.getYaw();
             float pitch = player.getPitch();
             if (pitch != packet.getPitch(pitch) || yaw != packet.getYaw(yaw)) lastActiveTime.put(player.getUuid(), System.currentTimeMillis());
+        }
+
+        // Enzo's alergy
+        if (player.getName().getString().equals("Enzoquest10")) {
+            if (!player.getWorld().getEntitiesByClass(CatEntity.class, player.getBoundingBox().expand(10.0D, 10.0D, 10.0D), null).isEmpty()) {
+                player.addStatusEffect(new StatusEffectInstance(StatusEffects.WEAKNESS, 120, 1));
+            }
         }
     }
 }

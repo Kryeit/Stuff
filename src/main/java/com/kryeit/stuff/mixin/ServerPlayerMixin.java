@@ -78,11 +78,6 @@ public abstract class ServerPlayerMixin extends Entity implements AfkPlayer {
             stuff$player.updateLastActionTime();
         }
 
-        if (stuff$player.getName().getString().equals("Enzoquest10")) {
-            if (!stuff$player.getWorld().getEntitiesByClass(CatEntity.class, stuff$player.getBoundingBox().expand(10.0D, 10.0D, 10.0D), null).isEmpty()) {
-                stuff$player.addStatusEffect(new StatusEffectInstance(StatusEffects.WEAKNESS, 120, 1));
-            }
-        }
         super.setPosition(x, y, z);
     }
 
