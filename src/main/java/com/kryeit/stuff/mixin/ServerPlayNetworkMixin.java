@@ -51,10 +51,10 @@ public abstract class ServerPlayNetworkMixin {
         }
 
         // Enzo's alergy
-        if (player.getName().getString().equals("Enzoquest10")) {
-            if (!player.getWorld().getEntitiesByClass(CatEntity.class, player.getBoundingBox().expand(10.0D, 10.0D, 10.0D), null).isEmpty()) {
-                player.addStatusEffect(new StatusEffectInstance(StatusEffects.WEAKNESS, 120, 1));
-            }
-        }
+        //if (player.getName().getString().equals("Enzoquest10")) {
+        //    if (!player.getWorld().getEntitiesByClass(CatEntity.class, player.getBoundingBox().expand(10.0D, 10.0D, 10.0D), null).isEmpty()) {
+        //        player.addStatusEffect(new StatusEffectInstance(StatusEffects.WEAKNESS, 120, 1));
+        //    }
+        //}
     }
 }
