@@ -2,6 +2,7 @@ package com.kryeit.stuff;
 
 import com.kryeit.stuff.bluemap.BluemapImpl;
 import com.kryeit.stuff.command.*;
+import com.kryeit.stuff.listener.DragonDeath;
 import com.kryeit.stuff.listener.PlayerDeath;
 import com.kryeit.stuff.listener.PlayerVote;
 import com.kryeit.stuff.storage.MapVisibilityStorage;
@@ -38,13 +39,12 @@ public class Stuff implements DedicatedServerModInitializer {
 
         registerEvents();
         registerCommands();
-
-
     }
 
     public void registerEvents() {
    //     ServerPlayConnectionEvents.INIT.register(new QueueHandler(queue));
         ServerLivingEntityEvents.AFTER_DEATH.register(new PlayerDeath());
+        ServerLivingEntityEvents.AFTER_DEATH.register(new DragonDeath());
         VotifierEvent.EVENT.register(new PlayerVote());
     }
 
