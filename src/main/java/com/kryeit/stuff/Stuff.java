@@ -58,6 +58,7 @@ public class Stuff implements DedicatedServerModInitializer {
             AFK.register(dispatcher);
             ShowMe.register(dispatcher);
             HideMe.register(dispatcher);
+            NetherCoords.register(dispatcher);
 
             ChickensAI.register(dispatcher);
         });
