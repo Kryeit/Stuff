@@ -21,6 +21,7 @@ public class Utils {
 
     public static MutableText prefix(ServerPlayerEntity player) {
         MutableText cog = Text.literal("⛭").setStyle(Style.EMPTY.withBold(true)).formatted(Formatting.GOLD);
+        MutableText camera = Text.literal("📷").formatted(Formatting.GREEN);
         MutableText anchor = Text.literal("⚓").formatted(Formatting.RED);
         MutableText diamond = Text.literal("♢").formatted(Formatting.LIGHT_PURPLE);
 
@@ -28,6 +29,10 @@ public class Utils {
 
         if (Permissions.check(player, "group.kryeitor", false)) {
             text.append(cog);
+        }
+
+        if (Permissions.check(player, "group.photographer", false)) {
+            text.append(camera);
         }
 
         if (Permissions.check(player, "group.booster", false)) {
