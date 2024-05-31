@@ -1,6 +1,5 @@
 package com.kryeit.stuff.command;
 
-import com.kryeit.stuff.afk.AfkPlayer;
 import com.mojang.brigadier.Command;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.context.CommandContext;

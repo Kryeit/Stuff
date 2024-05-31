@@ -1,6 +1,5 @@
 package com.kryeit.stuff.listener;
 
-import com.kryeit.stuff.Utils;
 import com.kryeit.votifier.MinecraftServerSupplier;
 import com.kryeit.votifier.model.Vote;
 import com.kryeit.votifier.model.VotifierEvent;
