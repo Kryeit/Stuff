@@ -56,7 +56,8 @@ public class Utils {
 
     public static void kickAFKPlayers() {
         MinecraftServerSupplier.getServer().getPlayerManager().getPlayerList().forEach(player -> {
-            if (player instanceof AfkPlayer afkPlayer && afkPlayer.stuff$isAfk() && !Permissions.check(player, "stuff.afk", false)) {
+            AfkPlayer afkPlayer = (AfkPlayer) player;
+            if (afkPlayer != null && afkPlayer.stuff$isAfk() && !Permissions.check(player, "stuff.afk", false)) {
                 player.networkHandler.disconnect(Text.of("You've been kicked to leave room for other players"));
             }
         });
