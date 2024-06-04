@@ -2,19 +2,19 @@ package com.kryeit.stuff.queue;
 
 import net.minecraft.text.Text;
 
-import java.util.HashMap;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class Queue {
 
-    HashMap<UUID, Long> queue = new HashMap<>();
+    ConcurrentHashMap<UUID, Long> queue = new ConcurrentHashMap<>();
 
     public Queue() {
 
     }
 
     public void addPlayer(UUID id) {
-        if (!queue.containsKey(id)) queue.put(id, System.currentTimeMillis());
+        queue.putIfAbsent(id, System.currentTimeMillis());
     }
 
     public void removePlayer(UUID id) {
@@ -43,7 +43,7 @@ public class Queue {
     }
 
     public Text getKickMessage(UUID id) {
-        return  Text.of("Server is full!\n"
+        return Text.of("Server is full!\n"
                 + "You are in the queue, your position is "
                 + getPos(id) + " out of " + size()
                 + "\nReconnect within 3 minutes to keep your position");
