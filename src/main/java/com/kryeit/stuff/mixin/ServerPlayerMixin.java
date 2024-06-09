@@ -13,6 +13,7 @@ import net.minecraft.server.world.ServerWorld;
 import net.minecraft.text.MutableText;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
@@ -101,7 +102,12 @@ public abstract class ServerPlayerMixin extends Entity implements AfkPlayer {
         RegistryKey<World> fromWorldKey = player.getWorld().getRegistryKey();
         RegistryKey<World> toWorldKey = destination.getRegistryKey();
         if (fromWorldKey.equals(World.END) && toWorldKey.equals(World.OVERWORLD)) {
-            player.getWorld().getChunk(player.getBlockPos());
+            cir.cancel();
+            BlockPos spawnPoint = player.getSpawnPointPosition();
+            if (spawnPoint == null) {
+                spawnPoint = destination.getSpawnPos();
+            }
+            player.teleport(destination, spawnPoint.getX(), spawnPoint.getY(), spawnPoint.getZ(), player.getYaw(), player.getPitch());
         }
     }
 }
