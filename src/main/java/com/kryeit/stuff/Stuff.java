@@ -5,6 +5,7 @@ import com.kryeit.stuff.command.*;
 import com.kryeit.stuff.listener.DragonDeath;
 import com.kryeit.stuff.listener.PlayerDeath;
 import com.kryeit.stuff.listener.PlayerVote;
+import com.kryeit.stuff.storage.DragonKillers;
 import com.kryeit.stuff.storage.MapVisibilityStorage;
 import com.kryeit.votifier.model.VotifierEvent;
 import net.fabricmc.api.DedicatedServerModInitializer;
@@ -23,6 +24,8 @@ public class Stuff implements DedicatedServerModInitializer {
    // public static Queue queue = new Queue();
     public static HashMap<UUID, Long> lastActiveTime = new HashMap<>();
     public static MapVisibilityStorage hiddenPlayers;
+    public static DragonKillers dragonKillers = new DragonKillers();
+
 
 
     @Override
