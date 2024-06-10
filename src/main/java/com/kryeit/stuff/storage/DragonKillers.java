@@ -7,7 +7,7 @@ import java.util.Properties;
 import java.util.UUID;
 
 public class DragonKillers {
-    private static final String FILE_NAME = "dragon_killers.properties";
+    private static final String FILE_NAME = "mods/stuff/dragon_killers.properties";
     private Properties properties;
 
     public DragonKillers() {
