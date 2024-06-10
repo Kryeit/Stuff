@@ -14,6 +14,7 @@ import net.minecraft.text.MutableText;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Direction;
 import net.minecraft.world.World;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
@@ -104,7 +105,7 @@ public abstract class ServerPlayerMixin extends Entity implements AfkPlayer {
         if (fromWorldKey.equals(World.END) && toWorldKey.equals(World.OVERWORLD)) {
             cir.cancel();
             BlockPos spawnPoint = player.getSpawnPointPosition();
-            if (spawnPoint == null) {
+            if (spawnPoint == null || ((ServerPlayerAccessor)player).invokeIsBedObstructed(spawnPoint, Direction.NORTH)) {
                 spawnPoint = destination.getSpawnPos();
             }
             player.teleport(destination, spawnPoint.getX(), spawnPoint.getY(), spawnPoint.getZ(), player.getYaw(), player.getPitch());
