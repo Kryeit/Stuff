@@ -96,7 +96,7 @@ public abstract class ServerPlayerMixin extends Entity implements AfkPlayer {
     }
 
     // Solves End -> Overworld teleportation issue
-    @Inject(method = "moveToWorld", at = @At("HEAD"))
+    @Inject(method = "moveToWorld", at = @At("HEAD"), cancellable = true)
     private void onMoveToWorld(ServerWorld destination, CallbackInfoReturnable<ServerPlayerEntity> cir) {
         ServerPlayerEntity player = (ServerPlayerEntity) (Object) this;
         RegistryKey<World> fromWorldKey = player.getWorld().getRegistryKey();
