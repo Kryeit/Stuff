@@ -12,7 +12,7 @@ import net.minecraft.text.Text;
 
 import java.util.function.Supplier;
 
-public class Cities {
+public class Landmarks {
     public static int execute(CommandContext<ServerCommandSource> context) {
         ServerCommandSource source = context.getSource();
         ServerPlayerEntity player = source.getPlayer();
@@ -23,14 +23,18 @@ public class Cities {
             return 0;
         }
 
-        player.sendMessage(Text.literal("Cities -> https://kryeit.com/cities")
-                .setStyle(Style.EMPTY.withClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, "https://kryeit.com/cities"))));
+        player.sendMessage(Text.literal("Landmarks -> https://landmarks.kryeit.com")
+                .setStyle(Style.EMPTY.withClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, "https://landmarks.kryeit.com"))));
         return Command.SINGLE_SUCCESS;
     }
 
     public static void register(CommandDispatcher<ServerCommandSource> dispatcher) {
-        dispatcher.register(CommandManager.literal("cities")
-                .executes(Cities::execute)
+        dispatcher.register(CommandManager.literal("landmarks")
+                .executes(Landmarks::execute)
+        );
+
+        dispatcher.register(CommandManager.literal("forum")
+                .executes(Landmarks::execute)
         );
     }
 }
