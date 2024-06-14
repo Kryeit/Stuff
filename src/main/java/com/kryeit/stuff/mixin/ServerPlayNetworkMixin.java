@@ -4,6 +4,7 @@ import com.kryeit.stuff.Utils;
 import com.kryeit.stuff.afk.AfkPlayer;
 import com.kryeit.stuff.afk.Config;
 import me.lucko.fabric.api.permissions.v0.Permissions;
+import net.minecraft.network.packet.c2s.play.ChatMessageC2SPacket;
 import net.minecraft.network.packet.c2s.play.PlayerMoveC2SPacket;
 import net.minecraft.server.network.ServerPlayNetworkHandler;
 import net.minecraft.server.network.ServerPlayerEntity;
@@ -53,5 +54,10 @@ public abstract class ServerPlayNetworkMixin {
         //        player.addStatusEffect(new StatusEffectInstance(StatusEffects.WEAKNESS, 120, 1));
         //    }
         //}
+    }
+
+    @Inject(method = "onChatMessage", at = @At("HEAD"), cancellable = true)
+    private void onChatMessage(ChatMessageC2SPacket packet, CallbackInfo ci) {
+        if (Permissions.check(player, "stuff.muted")) ci.cancel();
     }
 }
