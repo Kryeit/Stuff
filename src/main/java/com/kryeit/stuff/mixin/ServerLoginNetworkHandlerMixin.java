@@ -6,6 +6,9 @@ import com.kryeit.stuff.Utils;
 import com.mojang.authlib.GameProfile;
 import net.minecraft.server.network.ServerLoginNetworkHandler;
 import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.stat.Stat;
+import net.minecraft.stat.StatType;
+import net.minecraft.stat.Stats;
 import net.minecraft.text.ClickEvent;
 import net.minecraft.text.Style;
 import net.minecraft.text.Text;
@@ -37,15 +40,18 @@ public class ServerLoginNetworkHandlerMixin {
 
         if (playerDataFiles == null) return;
 
+        assert player != null;
+        boolean hasPlayedMoreThanOneHour = player.getStatHandler().getStat(Stats.CUSTOM.getOrCreateStat(Stats.PLAY_TIME)) > 72000;
+
         for (File playerDataFile : playerDataFiles) {
             String fileName = playerDataFile.getName();
             if (!fileName.endsWith(".dat")) continue;
             UUID otherId = UUID.fromString(fileName.substring(0, fileName.length() - 4));
-            if (id.equals(otherId)) {
+            if (id.equals(otherId) && hasPlayedMoreThanOneHour) {
                 // Has joined before
                 Stuff.lastActiveTime.put(id, System.currentTimeMillis());
 
-                if (Utils.isServerFull())
+                if (Utils.isServerFullEnough())
                     Utils.kickAFKPlayers();
 
                 return;
@@ -57,8 +63,7 @@ public class ServerLoginNetworkHandlerMixin {
                 Text.literal("Welcome " + name + " to Kryeit!").formatted(Formatting.AQUA),
                 false
         );
-
-        assert player != null;
+        
         player.sendMessage(Text.literal("Kryeit is fairly vanilla, but it has custom systems:").formatted(Formatting.AQUA));
         player.sendMessage(Text.literal(" - Claim system (use /claim and /abandon)").formatted(Formatting.AQUA));
         player.sendMessage(Text.literal(" - Mission system (use /missions)").formatted(Formatting.AQUA));

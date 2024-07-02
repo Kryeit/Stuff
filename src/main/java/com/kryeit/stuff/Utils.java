@@ -10,7 +10,7 @@ import net.minecraft.util.Formatting;
 
 public class Utils {
 
-    public static boolean isServerFull() {
+    public static boolean isServerFullEnough() {
         return MinecraftServerSupplier.getServer().getMaxPlayerCount() < MinecraftServerSupplier.getServer().getCurrentPlayerCount();
     }
 
@@ -57,7 +57,7 @@ public class Utils {
     public static void kickAFKPlayers() {
         MinecraftServerSupplier.getServer().getPlayerManager().getPlayerList().forEach(player -> {
             AfkPlayer afkPlayer = (AfkPlayer) player;
-            if (afkPlayer != null && afkPlayer.stuff$isAfk() && !Permissions.check(player, "stuff.afk", false)) {
+            if (afkPlayer != null && afkPlayer.stuff$isAfk() && !Permissions.check(player, "stuff.afk")) {
                 player.networkHandler.disconnect(Text.of("You've been kicked to leave room for other players"));
             }
         });
