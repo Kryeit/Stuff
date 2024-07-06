@@ -12,6 +12,7 @@ import net.fabricmc.api.DedicatedServerModInitializer;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 import net.fabricmc.fabric.api.entity.event.v1.ServerLivingEntityEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
+import net.fabricmc.loader.api.FabricLoader;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -48,6 +49,7 @@ public class Stuff implements DedicatedServerModInitializer {
         ServerLivingEntityEvents.AFTER_DEATH.register(new PlayerDeath());
         ServerLivingEntityEvents.AFTER_DEATH.register(new DragonDeath());
         VotifierEvent.EVENT.register(new PlayerVote());
+
     }
 
     public void registerCommands() {

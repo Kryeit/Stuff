@@ -33,6 +33,9 @@ public class ServerLoginNetworkHandlerMixin {
         UUID id = this.profile.getId();
         String name = this.profile.getName();
 
+        if (Utils.isServerFullEnough())
+            Utils.kickAFKPlayers();
+
         ServerPlayerEntity player = MinecraftServerSupplier.getServer().getPlayerManager().getPlayer(id);
         File playerDataDirectory = new File("world/playerdata/");
 
@@ -50,10 +53,6 @@ public class ServerLoginNetworkHandlerMixin {
             if (id.equals(otherId) && hasPlayedMoreThanOneHour) {
                 // Has joined before
                 Stuff.lastActiveTime.put(id, System.currentTimeMillis());
-
-                if (Utils.isServerFullEnough())
-                    Utils.kickAFKPlayers();
-
                 return;
             }
         }
@@ -63,7 +62,7 @@ public class ServerLoginNetworkHandlerMixin {
                 Text.literal("Welcome " + name + " to Kryeit!").formatted(Formatting.AQUA),
                 false
         );
-        
+
         player.sendMessage(Text.literal("Kryeit is fairly vanilla, but it has custom systems:").formatted(Formatting.AQUA));
         player.sendMessage(Text.literal(" - Claim system (use /claim and /abandon)").formatted(Formatting.AQUA));
         player.sendMessage(Text.literal(" - Mission system (use /missions)").formatted(Formatting.AQUA));

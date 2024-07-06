@@ -5,6 +5,7 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.ModifyArg;
 
+// No-NaN-Mod ported to Fabric 1.20.1
 @Mixin(Entity.class)
 public abstract class EntityMixin {
     @ModifyArg(method = "readNbt", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/Entity;setPos(DDD)V"), index = 0)

@@ -4,6 +4,7 @@ import com.kryeit.stuff.Utils;
 import com.mojang.brigadier.Command;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.context.CommandContext;
+import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.server.command.CommandManager;
 import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.server.network.ServerPlayerEntity;
@@ -23,7 +24,6 @@ public class Map {
             source.sendFeedback(message, false);
             return 0;
         }
-
         player.sendMessage(Text.literal("Bluemap -> https://map.kryeit.com/")
                 .setStyle(Style.EMPTY.withClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, Utils.getMapLink(player)))));
         return Command.SINGLE_SUCCESS;

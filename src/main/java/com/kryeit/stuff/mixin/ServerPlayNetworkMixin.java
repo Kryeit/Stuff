@@ -33,7 +33,7 @@ public abstract class ServerPlayNetworkMixin {
         long afkDuration = System.currentTimeMillis() - lastActiveTime.get(player.getUuid());
         if (afkDuration > timeoutSeconds * 1000L) {
             afkPlayer.stuff$enableAfk();
-            if (Utils.isServerFull() && !Permissions.check(player, "stuff.afk", false)) {
+            if (Utils.isServerFullEnough() && !Permissions.check(player, "stuff.afk", false)) {
                 player.networkHandler.disconnect(Text.of("You've been kicked to leave room for other players"));
                 lastActiveTime.remove(player.getUuid());
             }
