@@ -1,6 +1,7 @@
 plugins {
     id 'fabric-loom' version '1.2-SNAPSHOT'
     id 'maven-publish'
+    id 'com.github.johnrengelman.shadow' version '7.1.2' // Add this line
 }
 
 version = project.mod_version
@@ -42,8 +43,11 @@ dependencies {
     // Fabric API. This is technically optional, but you probably want it anyway.
     modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
 
-    include(modImplementation("me.lucko:fabric-permissions-api:${luckperms_version}"))
+    modCompileOnly("me.lucko:fabric-permissions-api:${luckperms_version}")
     modImplementation "curse.maven:votifier-for-fabric-963421:5048168"
+
+    // Include org.json in the shadow jar
+    implementation('org.json:json:20240303')
 
     compileOnly ("com.github.BlueMap-Minecraft:BlueMapAPI:v2.6.2")
     compileOnly "com.griefdefender:api:${griefdefender_version}"
@@ -92,11 +96,26 @@ jar {
     }
 }
 
-// configure the maven publication
+// Configure the shadowJar task to bundle only specific dependencies
+shadowJar {
+    archiveClassifier.set('')
+    dependencies {
+        include(dependency('org.json:json:20240303'))
+    }
+}
+
+tasks.build {
+    dependsOn shadowJar
+}
+
+// Configure the maven publication
 publishing {
     publications {
         mavenJava(MavenPublication) {
             from components.java
+            artifact(tasks.shadowJar) {
+                classifier = null
+            }
         }
     }
 
