@@ -6,11 +6,14 @@ import com.kryeit.stuff.afk.Config;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.network.packet.s2c.play.PlayerListS2CPacket;
+import net.minecraft.registry.RegistryKey;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.server.world.ServerWorld;
 import net.minecraft.text.MutableText;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
@@ -93,5 +96,23 @@ public abstract class ServerPlayerMixin extends Entity implements AfkPlayer {
         }
 
         cir.setReturnValue(Utils.prefix(stuff$player).append(name));
+    }
+
+    // Solves End -> Overworld teleportation issue
+    @Inject(method = "moveToWorld", at = @At("HEAD"), cancellable = true)
+    private void onMoveToWorld(ServerWorld destination, CallbackInfoReturnable<ServerPlayerEntity> cir) {
+        ServerPlayerEntity player = (ServerPlayerEntity) (Object) this;
+        RegistryKey<World> fromWorldKey = player.getWorld().getRegistryKey();
+        RegistryKey<World> toWorldKey = destination.getRegistryKey();
+        if (fromWorldKey.equals(World.END) && toWorldKey.equals(World.OVERWORLD)) {
+            player.teleport(destination,
+                    destination.getSpawnPos().getX(),
+                    destination.getSpawnPos().getY(),
+                    destination.getSpawnPos().getZ(),
+                    player.getYaw(),
+                    player.getPitch());
+
+            cir.setReturnValue(player);
+        }
     }
 }
