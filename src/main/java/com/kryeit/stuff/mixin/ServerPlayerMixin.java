@@ -48,9 +48,6 @@ public abstract class ServerPlayerMixin extends Entity implements AfkPlayer {
     public void stuff$enableAfk() {
         if (stuff$isAfk()) return;
         stuff$setAfk(true);
-        if (Utils.isServerFullEnough()) {
-            Utils.kickAFKPlayers();
-        }
     }
 
     @Unique

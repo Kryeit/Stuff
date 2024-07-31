@@ -8,12 +8,11 @@ import net.minecraft.text.Style;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
+
 public class Utils {
-
-    public static boolean isServerFullEnough() {
-        return MinecraftServerSupplier.getServer().getCurrentPlayerCount() > MinecraftServerSupplier.getServer().getMaxPlayerCount();
-    }
-
     public static boolean isServerFull() {
         return MinecraftServerSupplier.getServer().getCurrentPlayerCount() >= MinecraftServerSupplier.getServer().getMaxPlayerCount();
     }
@@ -55,15 +54,23 @@ public class Utils {
         int x = (int) player.getPos().getX();
         int z = (int) player.getPos().getZ();
 
-        return  "https://map.kryeit.com/#overworld:" + x + ":0:" + z + ":0:0:0:0:0:perspective";
+        return "https://map.kryeit.com/#overworld:" + x + ":0:" + z + ":0:0:0:0:0:perspective";
     }
 
-    public static void kickAFKPlayers() {
+    public static List<ServerPlayerEntity> getAfkPlayers() {
+        List<ServerPlayerEntity> afkPlayers = new ArrayList<>();
         MinecraftServerSupplier.getServer().getPlayerManager().getPlayerList().forEach(player -> {
             AfkPlayer afkPlayer = (AfkPlayer) player;
             if (afkPlayer != null && afkPlayer.stuff$isAfk() && !Permissions.check(player, "stuff.afk")) {
-                player.networkHandler.disconnect(Text.of("You've been kicked to leave room for other players"));
+                afkPlayers.add(player);
             }
         });
+        return afkPlayers;
+    }
+
+    public static List<ServerPlayerEntity> getAfkPlayersSorted() {
+        List<ServerPlayerEntity> players = getAfkPlayers();
+        players.sort(Comparator.comparingLong(ServerPlayerEntity::getLastActionTime));
+        return players;
     }
 }

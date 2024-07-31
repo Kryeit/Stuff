@@ -1,6 +1,5 @@
 package com.kryeit.stuff.mixin;
 
-import com.kryeit.stuff.Utils;
 import com.kryeit.stuff.afk.AfkPlayer;
 import com.kryeit.stuff.afk.Config;
 import me.lucko.fabric.api.permissions.v0.Permissions;
@@ -8,7 +7,6 @@ import net.minecraft.network.packet.c2s.play.ChatMessageC2SPacket;
 import net.minecraft.network.packet.c2s.play.PlayerMoveC2SPacket;
 import net.minecraft.server.network.ServerPlayNetworkHandler;
 import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.text.Text;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
@@ -18,6 +16,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import static com.kryeit.stuff.Stuff.lastActiveTime;
 
 // This class has been mostly made by afkdisplay mod
+
 // https://github.com/beabfc/afkdisplay
 @Mixin(ServerPlayNetworkHandler.class)
 public abstract class ServerPlayNetworkMixin {
@@ -33,10 +32,6 @@ public abstract class ServerPlayNetworkMixin {
         long afkDuration = System.currentTimeMillis() - lastActiveTime.get(player.getUuid());
         if (afkDuration > timeoutSeconds * 1000L) {
             afkPlayer.stuff$enableAfk();
-            if (Utils.isServerFullEnough() && !Permissions.check(player, "stuff.afk", false)) {
-                player.networkHandler.disconnect(Text.of("You've been kicked to leave room for other players"));
-                lastActiveTime.remove(player.getUuid());
-            }
         }
     }
 
@@ -45,7 +40,8 @@ public abstract class ServerPlayNetworkMixin {
         if (Config.PacketOptions.resetOnLook && packet.changesLook()) {
             float yaw = player.getYaw();
             float pitch = player.getPitch();
-            if (pitch != packet.getPitch(pitch) || yaw != packet.getYaw(yaw)) lastActiveTime.put(player.getUuid(), System.currentTimeMillis());
+            if (pitch != packet.getPitch(pitch) || yaw != packet.getYaw(yaw))
+                lastActiveTime.put(player.getUuid(), System.currentTimeMillis());
         }
 
         // Enzo's alergy

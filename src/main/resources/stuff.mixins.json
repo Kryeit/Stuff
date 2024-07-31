@@ -3,10 +3,12 @@
   "minVersion": "0.8",
   "package": "com.kryeit.stuff.mixin",
   "compatibilityLevel": "JAVA_17",
+  "refmap": "Stuff-refmap.json",
   "mixins": [
     "EntityMixin",
     "MinecraftServerMixin",
     "PlayerInventoryMixin",
+    "PlayerManagerMixin",
     "ServerLoginNetworkHandlerMixin",
     "ServerPlayerMixin",
     "ServerPlayNetworkMixin"

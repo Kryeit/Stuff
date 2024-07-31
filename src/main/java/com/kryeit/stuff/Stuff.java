@@ -3,7 +3,6 @@ package com.kryeit.stuff;
 import com.kryeit.stuff.bluemap.BluemapImpl;
 import com.kryeit.stuff.command.*;
 import com.kryeit.stuff.listener.DragonDeath;
-import com.kryeit.stuff.listener.JoinDisconnectHandler;
 import com.kryeit.stuff.listener.PlayerDeath;
 import com.kryeit.stuff.listener.PlayerVote;
 import com.kryeit.stuff.storage.DragonKillers;
@@ -14,7 +13,6 @@ import net.fabricmc.api.DedicatedServerModInitializer;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 import net.fabricmc.fabric.api.entity.event.v1.ServerLivingEntityEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
-import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
 import org.slf4j.Logger;
 
 import java.io.IOException;
@@ -30,11 +28,8 @@ public class Stuff implements DedicatedServerModInitializer {
     public static MapVisibilityStorage hiddenPlayers;
     public static DragonKillers dragonKillers = new DragonKillers();
 
-
     @Override
     public void onInitializeServer() {
-
-
         try {
             Files.createDirectories(Paths.get("mods/stuff"));
             hiddenPlayers = new MapVisibilityStorage("mods/stuff/hiddenPlayers");
@@ -50,8 +45,6 @@ public class Stuff implements DedicatedServerModInitializer {
         //     ServerPlayConnectionEvents.INIT.register(new QueueHandler(queue));
         ServerLivingEntityEvents.AFTER_DEATH.register(new PlayerDeath());
         ServerLivingEntityEvents.AFTER_DEATH.register(new DragonDeath());
-        ServerPlayConnectionEvents.INIT.register(JoinDisconnectHandler::onJoin);
-        ServerPlayConnectionEvents.DISCONNECT.register(JoinDisconnectHandler::onDisconnect);
         VotifierEvent.EVENT.register(new PlayerVote());
     }
 

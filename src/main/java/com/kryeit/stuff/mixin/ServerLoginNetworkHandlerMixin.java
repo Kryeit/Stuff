@@ -1,19 +1,20 @@
 package com.kryeit.stuff.mixin;
 
+import com.kryeit.stuff.Analytics;
 import com.kryeit.stuff.MinecraftServerSupplier;
 import com.kryeit.stuff.Stuff;
-import com.kryeit.stuff.Utils;
 import com.mojang.authlib.GameProfile;
+import net.minecraft.network.ClientConnection;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.network.ServerLoginNetworkHandler;
 import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.stat.Stat;
-import net.minecraft.stat.StatType;
 import net.minecraft.stat.Stats;
 import net.minecraft.text.ClickEvent;
 import net.minecraft.text.Style;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 import org.jetbrains.annotations.Nullable;
+import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
@@ -26,7 +27,9 @@ import java.util.UUID;
 @Mixin(ServerLoginNetworkHandler.class)
 public class ServerLoginNetworkHandlerMixin {
 
-    @Shadow @Nullable private GameProfile profile;
+    @Shadow
+    @Final
+    MinecraftServer server;
 
     @Inject(at = @At("RETURN"), method = "acceptPlayer")
     private void init(CallbackInfo ci) {
@@ -43,19 +46,11 @@ public class ServerLoginNetworkHandlerMixin {
 
         if (playerDataFiles == null) return;
 
-        assert player != null;
-        boolean hasPlayedMoreThanOneHour = player.getStatHandler().getStat(Stats.CUSTOM.getOrCreateStat(Stats.PLAY_TIME)) > 72000;
+        ServerPlayerEntity player = server.getPlayerManager().getPlayer(id);
+        if (player == null || player.getStatHandler().getStat(Stats.CUSTOM.getOrCreateStat(Stats.PLAY_TIME)) <= 72000)
+            return;
 
-        for (File playerDataFile : playerDataFiles) {
-            String fileName = playerDataFile.getName();
-            if (!fileName.endsWith(".dat")) continue;
-            UUID otherId = UUID.fromString(fileName.substring(0, fileName.length() - 4));
-            if (id.equals(otherId) && hasPlayedMoreThanOneHour) {
-                // Has joined before
-                Stuff.lastActiveTime.put(id, System.currentTimeMillis());
-                return;
-            }
-        }
+        Stuff.lastActiveTime.put(id, System.currentTimeMillis());
 
         // Has NOT joined before
         MinecraftServerSupplier.getServer().getPlayerManager().broadcast(

@@ -2,23 +2,21 @@ package com.kryeit.stuff.listener;
 
 import net.minecraft.network.packet.s2c.play.PlayerListHeaderS2CPacket;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.server.network.ServerPlayNetworkHandler;
 import net.minecraft.text.MutableText;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 
 public class JoinDisconnectHandler {
-    public static void onJoin(ServerPlayNetworkHandler networkHandler, MinecraftServer server) {
-        int current = server.getCurrentPlayerCount() + 1;
+    public static void onJoin(MinecraftServer server) {
+        int current = server.getCurrentPlayerCount();
         int max = server.getMaxPlayerCount();
 
         PlayerListHeaderS2CPacket packet = getPacket(current, max);
         server.getPlayerManager().sendToAll(packet);
-        networkHandler.sendPacket(packet);
     }
 
-    public static void onDisconnect(ServerPlayNetworkHandler networkHandler, MinecraftServer server) {
-        int current = server.getCurrentPlayerCount() - 1;
+    public static void onDisconnect(MinecraftServer server) {
+        int current = server.getCurrentPlayerCount();
         int max = server.getMaxPlayerCount();
 
         server.getPlayerManager().sendToAll(getPacket(current, max));
