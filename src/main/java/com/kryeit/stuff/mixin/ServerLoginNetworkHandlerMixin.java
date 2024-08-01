@@ -47,7 +47,7 @@ public class ServerLoginNetworkHandlerMixin {
         if (playerDataFiles == null) return;
 
         ServerPlayerEntity player = server.getPlayerManager().getPlayer(id);
-        if (player == null || player.getStatHandler().getStat(Stats.CUSTOM.getOrCreateStat(Stats.PLAY_TIME)) <= 72000)
+        if (player == null || player.getStatHandler().getStat(Stats.CUSTOM.getOrCreateStat(Stats.PLAY_TIME)) > 72000)
             return;
 
         Stuff.lastActiveTime.put(id, System.currentTimeMillis());
