@@ -36,16 +36,6 @@ public class ServerLoginNetworkHandlerMixin {
         UUID id = this.profile.getId();
         String name = this.profile.getName();
 
-        if (Utils.isServerFullEnough())
-            Utils.kickAFKPlayers();
-
-        ServerPlayerEntity player = MinecraftServerSupplier.getServer().getPlayerManager().getPlayer(id);
-        File playerDataDirectory = new File("world/playerdata/");
-
-        File[] playerDataFiles = playerDataDirectory.listFiles();
-
-        if (playerDataFiles == null) return;
-
         ServerPlayerEntity player = server.getPlayerManager().getPlayer(id);
         if (player == null || player.getStatHandler().getStat(Stats.CUSTOM.getOrCreateStat(Stats.PLAY_TIME)) > 72000)
             return;
