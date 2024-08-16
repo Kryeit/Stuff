@@ -13,8 +13,7 @@ public class PlayerInventoryMixin {
     @Redirect(method = "dropAll", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/player/PlayerEntity;dropItem(Lnet/minecraft/item/ItemStack;ZZ)Lnet/minecraft/entity/ItemEntity;"))
     private ItemEntity dropItem(PlayerEntity player, ItemStack stack, boolean throwRandomly, boolean retainOwnership) {
         ItemEntity item = player.dropItem(stack, throwRandomly, retainOwnership);
-        item.setInvulnerable(true);
-        item.age = -30_000; // 30 minutes
+        item.age = -10_000; // 10 minutes
         return item;
     }
 }
