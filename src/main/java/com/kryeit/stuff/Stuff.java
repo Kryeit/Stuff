@@ -46,6 +46,11 @@ public class Stuff implements DedicatedServerModInitializer {
         ServerLivingEntityEvents.AFTER_DEATH.register(new PlayerDeath());
         ServerLivingEntityEvents.AFTER_DEATH.register(new DragonDeath());
         VotifierEvent.EVENT.register(new PlayerVote());
+        ServerLifecycleEvents.SERVER_STOPPING.register(server -> {
+            server.getPlayerManager().getPlayerList().forEach(player -> {
+                Analytics.storeSessionEnd(player.getUuid());
+            });
+        });
     }
 
     public void registerCommands() {
