@@ -1,5 +1,6 @@
 package com.kryeit.stuff.mixin;
 
+import com.kryeit.stuff.Analytics;
 import com.kryeit.stuff.Utils;
 import com.kryeit.stuff.listener.JoinDisconnectHandler;
 import net.minecraft.network.ClientConnection;
@@ -34,6 +35,8 @@ public abstract class PlayerManagerMixin {
     @Inject(method = "remove", at = @At("TAIL"))
     public void onPlayerDisconnect(ServerPlayerEntity player, CallbackInfo ci) {
         JoinDisconnectHandler.onDisconnect(getServer());
+
+        Analytics.storeSessionEnd(player.getUuid());
     }
 
     @Redirect(method = "checkCanJoin", at = @At(value = "INVOKE", target = "Ljava/util/List;size()I"))

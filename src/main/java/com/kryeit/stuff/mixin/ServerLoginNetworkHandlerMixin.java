@@ -21,11 +21,17 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import java.io.File;
+import java.net.InetSocketAddress;
 import java.util.UUID;
 
 @Mixin(ServerLoginNetworkHandler.class)
 public class ServerLoginNetworkHandlerMixin {
+    @Shadow
+    @Nullable
+    GameProfile profile;
+    @Final
+    @Shadow
+    ClientConnection connection;
 
     @Shadow
     @Final
@@ -35,6 +41,10 @@ public class ServerLoginNetworkHandlerMixin {
     private void init(CallbackInfo ci) {
         UUID id = this.profile.getId();
         String name = this.profile.getName();
+
+        if (connection.getAddress() instanceof InetSocketAddress address) {
+            Analytics.storeSessionStart(id, address.getAddress().getHostAddress());
+        }
 
         ServerPlayerEntity player = server.getPlayerManager().getPlayer(id);
         if (player == null || player.getStatHandler().getStat(Stats.CUSTOM.getOrCreateStat(Stats.PLAY_TIME)) > 72000)

@@ -1,6 +1,7 @@
 plugins {
     id 'fabric-loom' version '1.2-SNAPSHOT'
     id 'maven-publish'
+    id 'com.github.johnrengelman.shadow' version '7.0.0'
 }
 
 version = project.mod_version
@@ -47,6 +48,15 @@ dependencies {
 
     compileOnly ("com.github.BlueMap-Minecraft:BlueMapAPI:v2.6.2")
     compileOnly "com.griefdefender:api:${griefdefender_version}"
+
+    implementation 'com.clickhouse:clickhouse-jdbc:0.6.4:all'
+    shadow 'com.clickhouse:clickhouse-jdbc:0.6.4:all'
+
+    implementation 'org.jdbi:jdbi3-core:3.45.1'
+    shadow 'org.jdbi:jdbi3-core:3.45.1'
+
+    implementation 'com.zaxxer:HikariCP:5.1.0'
+    shadow 'com.zaxxer:HikariCP:5.1.0'
 }
 
 processResources {
@@ -61,6 +71,30 @@ processResources {
                 "loader_version": project.loader_version
     }
 }
+
+shadowJar {
+    configurations = [project.configurations.shadow]
+    exclude("META-INF")
+}
+
+remapJar {
+    // wait until the shadowJar is done
+    dependsOn(shadowJar)
+    mustRunAfter(shadowJar)
+    // Set the input jar for the task. Here use the shadow Jar that include the .class of the transitive dependency
+    inputFile = file(shadowJar.archivePath)
+}
+
+shadowJar {
+    configurations = [project.configurations.shadow]
+    mergeServiceFiles()  // Merges service files from dependencies
+    exclude("META-INF")
+}
+
+tasks.build {
+    dependsOn tasks.shadowJar  // Ensure shadowJar is built when running the build task
+}
+
 
 def targetJavaVersion = 17
 tasks.withType(JavaCompile).configureEach {
