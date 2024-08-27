@@ -27,6 +27,9 @@ public class Utils {
         MutableText camera = Text.literal("📷").formatted(Formatting.GREEN);
         MutableText anchor = Text.literal("⚓").formatted(Formatting.RED);
         MutableText diamond = Text.literal("♢").formatted(Formatting.LIGHT_PURPLE);
+        MutableText pig1 = Text.literal("\uD83D\uDC3D").formatted(Formatting.LIGHT_PURPLE);
+        MutableText pig2 = Text.literal("\uD83D\uDC3D").formatted(Formatting.GRAY);
+        MutableText pig3 = Text.literal("\uD83D\uDC3D").styled(s -> s.withColor(0xa95b0e));
 
         MutableText text = Text.literal("");
 
@@ -45,6 +48,10 @@ public class Utils {
         if (Permissions.check(player, "group.postbuilder", false)) {
             text.append(anchor);
         }
+
+        if (Permissions.check(player, "group.potato-war.winner", false)) text.append(pig1);
+        if (Permissions.check(player, "group.potato-war.2nd", false)) text.append(pig2);
+        if (Permissions.check(player, "group.potato-war.3rd", false)) text.append(pig3);
 
         return text.append(" ");
     }
