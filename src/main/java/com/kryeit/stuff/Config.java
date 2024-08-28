@@ -17,4 +17,5 @@ public class Config {
 
     public static final String ipqsKey = properties.getProperty("ipqsKey");
     public static final String clickHousePassword = properties.getProperty("clickhousePassword");
+    public static final boolean dev = Boolean.parseBoolean(properties.getProperty("dev", "false"));
 }

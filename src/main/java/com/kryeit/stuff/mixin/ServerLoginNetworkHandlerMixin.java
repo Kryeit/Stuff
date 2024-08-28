@@ -1,6 +1,7 @@
 package com.kryeit.stuff.mixin;
 
 import com.kryeit.stuff.Analytics;
+import com.kryeit.stuff.Config;
 import com.kryeit.stuff.MinecraftServerSupplier;
 import com.kryeit.stuff.Stuff;
 import com.mojang.authlib.GameProfile;
@@ -42,7 +43,7 @@ public class ServerLoginNetworkHandlerMixin {
         UUID id = this.profile.getId();
         String name = this.profile.getName();
 
-        if (connection.getAddress() instanceof InetSocketAddress address) {
+        if (connection.getAddress() instanceof InetSocketAddress address && !Config.dev) {
             Analytics.storeSessionStart(id, address.getAddress().getHostAddress());
         }
 

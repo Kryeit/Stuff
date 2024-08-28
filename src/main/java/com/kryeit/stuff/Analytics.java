@@ -1,9 +1,9 @@
 package com.kryeit.stuff;
 
-import com.kryeit.votifier.MinecraftServerSupplier;
 import com.kryeit.votifier.utils.JSONObject;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
+import net.minecraft.server.network.ServerPlayerEntity;
 import org.jdbi.v3.core.Jdbi;
 
 import java.net.URI;
@@ -28,22 +28,26 @@ public class Analytics {
         config.setPassword(Config.clickHousePassword);
         jdbi = Jdbi.create(new HikariDataSource(config));
 
-        playerTrackerTimer.scheduleAtFixedRate(new TimerTask() {
-            @Override
-            public void run() {
-                StringBuilder inserts = new StringBuilder();
-                MinecraftServerSupplier.getServer().getPlayerManager().getPlayerList().forEach(player -> {
-                    String insert = "('%s', %s, %s, %s), ".formatted(player.getUuidAsString(), player.getBlockX(), player.getBlockY(), player.getBlockZ());
-                    inserts.append(insert);
-                });
-                if (inserts.isEmpty()) return;
+        if (!Config.dev) {
+            playerTrackerTimer.scheduleAtFixedRate(new TimerTask() {
+                @Override
+                public void run() {
+                    StringBuilder inserts = new StringBuilder();
+                    List<ServerPlayerEntity> playerList = MinecraftServerSupplier.getServer().getPlayerManager().getPlayerList();
 
-                jdbi.useHandle(h -> h.createScript(
-                                "INSERT INTO kryeit.player_movement (player, x, y, z) FORMAT Values %s"
-                                        .formatted(inserts))
-                        .execute());
-            }
-        }, 0, 60_000);
+                    new ArrayList<>(playerList).forEach(player -> {
+                        String insert = "('%s', %s, %s, %s), ".formatted(player.getUuidAsString(), player.getBlockX(), player.getBlockY(), player.getBlockZ());
+                        inserts.append(insert);
+                    });
+                    if (inserts.isEmpty()) return;
+
+                    jdbi.useHandle(h -> h.createScript(
+                                    "INSERT INTO kryeit.player_movement (player, x, y, z) FORMAT Values %s"
+                                            .formatted(inserts))
+                            .execute());
+                }
+            }, 0, 60_000);
+        }
     }
 
     public static void storeSessionStart(UUID player, String ipAddress) {
