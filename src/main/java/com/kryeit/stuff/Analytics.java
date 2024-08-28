@@ -47,7 +47,6 @@ public class Analytics {
     }
 
     public static void storeSessionStart(UUID player, String ipAddress) {
-        ipAddress = "84.59.109.219";
         URI uri = URI.create("https://www.ipqualityscore.com/api/json/ip/%s/%s?strictness=0&allow_public_access_points=true&lighter_penalties=true"
                 .formatted(Config.ipqsKey, ipAddress));
 
