@@ -22,7 +22,7 @@ import java.util.HashMap;
 import java.util.UUID;
 
 public class Stuff implements DedicatedServerModInitializer {
-    private static final Logger LOGGER = LogUtils.getLogger();
+    public static final Logger LOGGER = LogUtils.getLogger();
     // public static Queue queue = new Queue();
     public static HashMap<UUID, Long> lastActiveTime = new HashMap<>();
     public static MapVisibilityStorage hiddenPlayers;
@@ -65,6 +65,8 @@ public class Stuff implements DedicatedServerModInitializer {
             ShowMe.register(dispatcher);
             HideMe.register(dispatcher);
             NetherCoords.register(dispatcher);
+
+            KickAFK.register(dispatcher);
 
             ChickensAI.register(dispatcher);
         });
