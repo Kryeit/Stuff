@@ -80,20 +80,4 @@ public class Utils {
         players.sort(Comparator.comparingLong(ServerPlayerEntity::getLastActionTime));
         return players;
     }
-
-    public static void kickAfkPlayers() {
-        Stuff.LOGGER.info("Starting kickAfkPlayers method");
-
-        List<ServerPlayerEntity> players = getAfkPlayersSorted();
-        Stuff.LOGGER.info("AFK players before sorting: " + getAfkPlayers().toString());
-        Stuff.LOGGER.info("Sorted AFK players: " + players.toString());
-
-        for (ServerPlayerEntity player : players) {
-            if (Permissions.check(player, "stuff.afk")) continue;
-            Stuff.LOGGER.info("Kicking player: " + player.getName().getString() + " for being AFK");
-            player.networkHandler.disconnect(Text.of("You have been kicked to leave room for other players."));
-        }
-
-        Stuff.LOGGER.info("Finished kickAfkPlayers method");
-    }
 }
