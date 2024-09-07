@@ -1,5 +1,10 @@
 package com.kryeit.stuff.storage;
 
+import com.kryeit.stuff.MinecraftServerSupplier;
+import com.kryeit.stuff.Stuff;
+import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.stat.Stats;
+
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -21,12 +26,24 @@ public class DragonKillers {
         }
     }
 
-    public boolean hasKilledDragon(UUID uuid) {
-        return properties.containsKey(uuid.toString());
+    public static boolean canKillAnotherDragon(UUID uuid) {
+        ServerPlayerEntity player = MinecraftServerSupplier.getServer().getPlayerManager().getPlayer(uuid);
+        long timePlayed = player.getStatHandler().getStat(Stats.CUSTOM.getOrCreateStat(Stats.PLAY_TIME));
+        int availableDragons = (int) (timePlayed / 72000);
+        return Stuff.dragonKillers.hasKilledDragons(uuid, availableDragons);
+    }
+
+    public boolean hasKilledDragons(UUID uuid, int amount) {
+        return getDragonDeaths(uuid) >= amount;
+    }
+
+    public int getDragonDeaths(UUID uuid) {
+        return Integer.parseInt(properties.getProperty(uuid.toString(), "0"));
     }
 
     public void addKiller(UUID uuid) {
-        properties.setProperty(uuid.toString(), "true");
+        int currentKills = getDragonDeaths(uuid);
+        properties.setProperty(uuid.toString(), Integer.toString(currentKills + 1));
         saveProperties();
     }
 

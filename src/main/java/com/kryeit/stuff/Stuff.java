@@ -72,7 +72,6 @@ public class Stuff implements DedicatedServerModInitializer {
             ChickensAI.register(dispatcher);
         });
 
-
         ServerLifecycleEvents.SERVER_STARTED.register(server -> {
             for (UUID id : hiddenPlayers.getPlayers()) {
                 BluemapImpl.changePlayerVisibility(id, false);
