@@ -38,7 +38,7 @@ public class Stuff implements DedicatedServerModInitializer {
             LOGGER.error("Failed to load map visibility storage", e);
         }
 
-        createConfigs();
+        //createConfigs();
 
         registerEvents();
         registerCommands();
