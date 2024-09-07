@@ -27,23 +27,19 @@ public class DragonKillers {
     }
 
     public static boolean canKillAnotherDragon(UUID uuid) {
-        ServerPlayerEntity player = MinecraftServerSupplier.getServer().getPlayerManager().getPlayer(uuid);
-        long timePlayed = player.getStatHandler().getStat(Stats.CUSTOM.getOrCreateStat(Stats.PLAY_TIME));
-        int availableDragons = (int) (timePlayed / 72000);
-        return Stuff.dragonKillers.hasKilledDragons(uuid, availableDragons);
+        long currentTime = System.currentTimeMillis();
+        long lastKillTime = Stuff.dragonKillers.getLastKillTime(uuid);
+        long hoursSinceLastKill = (currentTime - lastKillTime) / (1000 * 60 * 60);
+        return hoursSinceLastKill >= 100;
     }
 
-    public boolean hasKilledDragons(UUID uuid, int amount) {
-        return getDragonDeaths(uuid) >= amount;
-    }
-
-    public int getDragonDeaths(UUID uuid) {
-        return Integer.parseInt(properties.getProperty(uuid.toString(), "0"));
+    public long getLastKillTime(UUID uuid) {
+        return Long.parseLong(properties.getProperty(uuid.toString(), "0"));
     }
 
     public void addKiller(UUID uuid) {
-        int currentKills = getDragonDeaths(uuid);
-        properties.setProperty(uuid.toString(), Integer.toString(currentKills + 1));
+        long currentTime = System.currentTimeMillis();
+        properties.setProperty(uuid.toString(), Long.toString(currentTime));
         saveProperties();
     }
 
