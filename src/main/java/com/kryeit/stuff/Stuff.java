@@ -9,6 +9,7 @@ import com.kryeit.stuff.storage.DragonKillers;
 import com.kryeit.stuff.storage.MapVisibilityStorage;
 import com.kryeit.votifier.model.VotifierEvent;
 import com.mojang.logging.LogUtils;
+import com.simibubi.create.infrastructure.config.AllConfigs;
 import net.fabricmc.api.DedicatedServerModInitializer;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 import net.fabricmc.fabric.api.entity.event.v1.ServerLivingEntityEvents;
@@ -36,6 +37,8 @@ public class Stuff implements DedicatedServerModInitializer {
         } catch (IOException e) {
             LOGGER.error("Failed to load map visibility storage", e);
         }
+
+        createConfigs();
 
         registerEvents();
         registerCommands();
@@ -75,5 +78,10 @@ public class Stuff implements DedicatedServerModInitializer {
                 BluemapImpl.changePlayerVisibility(id, false);
             }
         });
+    }
+
+    public void createConfigs() {
+        AllConfigs.server().trains.maxTrackPlacementLength.set(64);
+        AllConfigs.server().schematics.maxSchematicPacketSize.set(1024 * 1024);
     }
 }

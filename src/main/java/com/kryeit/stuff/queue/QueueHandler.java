@@ -1,7 +1,6 @@
 package com.kryeit.stuff.queue;
 
 import com.kryeit.stuff.Utils;
-import net.fabricmc.fabric.api.networking.v1.FabricPacket;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.network.ServerPlayNetworkHandler;
