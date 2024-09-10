@@ -30,6 +30,9 @@ public class DragonKillers {
         ServerPlayerEntity player = MinecraftServerSupplier.getServer().getPlayerManager().getPlayer(uuid);
         long currentTimePlayed = player.getStatHandler().getStat(Stats.CUSTOM.getOrCreateStat(Stats.PLAY_TIME));
         long lastKillTime = Stuff.dragonKillers.getLastKillTime(uuid);
+
+        if (lastKillTime == 0) return true; // First time killing the dragon
+
         long ticksSinceLastKill = currentTimePlayed - lastKillTime;
         long hoursSinceLastKill = ticksSinceLastKill / (20 * 60 * 60); // Convert ticks to hours
         return hoursSinceLastKill >= 100;
