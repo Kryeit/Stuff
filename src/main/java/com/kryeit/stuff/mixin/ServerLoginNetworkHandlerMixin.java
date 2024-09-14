@@ -51,8 +51,6 @@ public class ServerLoginNetworkHandlerMixin {
         if (player == null || player.getStatHandler().getStat(Stats.CUSTOM.getOrCreateStat(Stats.PLAY_TIME)) > 72000)
             return;
 
-        Stuff.lastActiveTime.put(id, System.currentTimeMillis());
-
         // Has NOT joined before
         if (!Stuff.lastActiveTime.containsKey(id)) {
             MinecraftServerSupplier.getServer().getPlayerManager().broadcast(
@@ -61,6 +59,8 @@ public class ServerLoginNetworkHandlerMixin {
             );
         }
 
+        Stuff.lastActiveTime.put(id, System.currentTimeMillis());
+        
         player.sendMessage(Text.literal("Kryeit is fairly vanilla, but it has custom systems:").formatted(Formatting.AQUA));
         player.sendMessage(Text.literal(" - Claim system (use /claim and /abandon)").formatted(Formatting.AQUA));
         player.sendMessage(Text.literal(" - Mission system (use /missions)").formatted(Formatting.AQUA));
