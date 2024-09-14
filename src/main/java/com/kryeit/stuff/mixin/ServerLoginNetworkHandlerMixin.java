@@ -54,10 +54,12 @@ public class ServerLoginNetworkHandlerMixin {
         Stuff.lastActiveTime.put(id, System.currentTimeMillis());
 
         // Has NOT joined before
-        MinecraftServerSupplier.getServer().getPlayerManager().broadcast(
-                Text.literal("Welcome " + name + " to Kryeit!").formatted(Formatting.AQUA),
-                false
-        );
+        if (!Stuff.lastActiveTime.containsKey(id)) {
+            MinecraftServerSupplier.getServer().getPlayerManager().broadcast(
+                    Text.literal("Welcome " + name + " to Kryeit!").formatted(Formatting.AQUA),
+                    false
+            );
+        }
 
         player.sendMessage(Text.literal("Kryeit is fairly vanilla, but it has custom systems:").formatted(Formatting.AQUA));
         player.sendMessage(Text.literal(" - Claim system (use /claim and /abandon)").formatted(Formatting.AQUA));
