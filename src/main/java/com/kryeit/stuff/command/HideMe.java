@@ -1,7 +1,7 @@
 package com.kryeit.stuff.command;
 
 import com.kryeit.stuff.Stuff;
-import com.kryeit.stuff.bluemap.BluemapImpl;
+import com.kryeit.stuff.compat.BluemapImpl;
 import com.mojang.brigadier.Command;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.context.CommandContext;

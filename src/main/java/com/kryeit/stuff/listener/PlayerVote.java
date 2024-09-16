@@ -1,5 +1,6 @@
 package com.kryeit.stuff.listener;
 
+import com.kryeit.stuff.compat.GriefDefenderImpl;
 import com.kryeit.votifier.MinecraftServerSupplier;
 import com.kryeit.votifier.model.Vote;
 import com.kryeit.votifier.model.VotifierEvent;
@@ -21,6 +22,7 @@ public class PlayerVote implements VotifierEvent {
                 player.sendMessage(
                         Text.literal("Someone voted! +" + cb + " CB").formatted(Formatting.GRAY),
                         true);
+                GriefDefenderImpl.giveClaimBlocks(player.getUuid(), cb);
             }
         }
 
@@ -29,5 +31,6 @@ public class PlayerVote implements VotifierEvent {
         player.sendMessage(
                 Text.literal("Thanks for voting! +200 CB").formatted(Formatting.GRAY),
                 false);
+        GriefDefenderImpl.giveClaimBlocks(player.getUuid(), 200);
     }
 }

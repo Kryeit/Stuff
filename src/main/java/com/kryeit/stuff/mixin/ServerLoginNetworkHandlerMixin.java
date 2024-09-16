@@ -60,7 +60,7 @@ public class ServerLoginNetworkHandlerMixin {
         }
 
         Stuff.lastActiveTime.put(id, System.currentTimeMillis());
-        
+
         player.sendMessage(Text.literal("Kryeit is fairly vanilla, but it has custom systems:").formatted(Formatting.AQUA));
         player.sendMessage(Text.literal(" - Claim system (use /claim and /abandon)").formatted(Formatting.AQUA));
         player.sendMessage(Text.literal(" - Mission system (use /missions)").formatted(Formatting.AQUA));

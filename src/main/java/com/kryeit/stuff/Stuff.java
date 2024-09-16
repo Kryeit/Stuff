@@ -1,6 +1,6 @@
 package com.kryeit.stuff;
 
-import com.kryeit.stuff.bluemap.BluemapImpl;
+import com.kryeit.stuff.compat.BluemapImpl;
 import com.kryeit.stuff.command.*;
 import com.kryeit.stuff.listener.DragonDeath;
 import com.kryeit.stuff.listener.PlayerDeath;

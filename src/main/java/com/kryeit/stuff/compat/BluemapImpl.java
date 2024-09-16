@@ -1,4 +1,4 @@
-package com.kryeit.stuff.bluemap;
+package com.kryeit.stuff.compat;
 
 import de.bluecolored.bluemap.api.BlueMapAPI;
 
