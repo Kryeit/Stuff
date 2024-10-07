@@ -1,7 +1,7 @@
 package com.kryeit.stuff;
 
-import com.kryeit.stuff.compat.BluemapImpl;
 import com.kryeit.stuff.command.*;
+import com.kryeit.stuff.compat.BluemapImpl;
 import com.kryeit.stuff.listener.DragonDeath;
 import com.kryeit.stuff.listener.PlayerDeath;
 import com.kryeit.stuff.listener.PlayerVote;
@@ -69,6 +69,7 @@ public class Stuff implements DedicatedServerModInitializer {
             HideMe.register(dispatcher);
             NetherCoords.register(dispatcher);
             Login.register(dispatcher);
+            Trains.register(dispatcher);
 
             ChickensAI.register(dispatcher);
         });
