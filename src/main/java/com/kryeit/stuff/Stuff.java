@@ -38,8 +38,6 @@ public class Stuff implements DedicatedServerModInitializer {
             LOGGER.error("Failed to load map visibility storage", e);
         }
 
-        //createConfigs();
-
         registerEvents();
         registerCommands();
     }
@@ -49,6 +47,10 @@ public class Stuff implements DedicatedServerModInitializer {
         ServerLivingEntityEvents.AFTER_DEATH.register(new PlayerDeath());
         ServerLivingEntityEvents.AFTER_DEATH.register(new DragonDeath());
         VotifierEvent.EVENT.register(new PlayerVote());
+
+        ServerLifecycleEvents.SERVER_STARTED.register(server -> {
+            createModConfigs();
+        });
 
         ServerLifecycleEvents.SERVER_STOPPING.register(server -> {
             server.getPlayerManager().getPlayerList().forEach(player -> {
@@ -81,7 +83,8 @@ public class Stuff implements DedicatedServerModInitializer {
         });
     }
 
-    public void createConfigs() {
+    public void createModConfigs() {
+        AllConfigs.server().kinetics.maxBlocksMoved.set(6144);
         AllConfigs.server().trains.maxTrackPlacementLength.set(64);
         AllConfigs.server().schematics.maxSchematicPacketSize.set(1024 * 1024);
     }
