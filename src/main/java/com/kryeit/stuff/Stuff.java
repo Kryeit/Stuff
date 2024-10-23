@@ -86,6 +86,6 @@ public class Stuff implements DedicatedServerModInitializer {
     public void createModConfigs() {
         AllConfigs.server().kinetics.maxBlocksMoved.set(6144);
         AllConfigs.server().trains.maxTrackPlacementLength.set(128);
-        AllConfigs.server().schematics.maxSchematicPacketSize.set(1024 * 1024);
+        AllConfigs.server().schematics.maxSchematicPacketSize.set(1024);
     }
 }
