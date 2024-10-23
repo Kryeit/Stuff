@@ -85,7 +85,7 @@ public abstract class ServerPlayerMixin extends Entity implements AfkPlayer {
     private void replacePlayerListName(CallbackInfoReturnable<Text> cir) {
 
         if (Permissions.check(stuff$player, "group.staff")) {
-            cir.setReturnValue(null);
+            cir.setReturnValue(Text.of(""));
             return;
         }
 
