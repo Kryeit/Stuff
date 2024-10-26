@@ -2,11 +2,14 @@ package com.kryeit.stuff;
 
 import com.kryeit.stuff.afk.AfkPlayer;
 import me.lucko.fabric.api.permissions.v0.Permissions;
+import net.minecraft.item.ItemStack;
+import net.minecraft.registry.Registries;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.MutableText;
 import net.minecraft.text.Style;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
+import net.minecraft.util.Identifier;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -79,5 +82,9 @@ public class Utils {
         List<ServerPlayerEntity> players = getAfkPlayers();
         players.sort(Comparator.comparingLong(ServerPlayerEntity::getLastActionTime));
         return players;
+    }
+
+    public static ItemStack getItemStack(String namespace, String path) {
+        return Registries.ITEM.getOrEmpty(Identifier.of(namespace, path)).map(ItemStack::new).orElse(ItemStack.EMPTY);
     }
 }

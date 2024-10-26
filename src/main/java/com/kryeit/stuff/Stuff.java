@@ -72,6 +72,7 @@ public class Stuff implements DedicatedServerModInitializer {
             NetherCoords.register(dispatcher);
             Login.register(dispatcher);
             Trains.register(dispatcher);
+            Shop.register(dispatcher);
 
             ChickensAI.register(dispatcher);
         });

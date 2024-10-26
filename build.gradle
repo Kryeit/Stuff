@@ -32,6 +32,10 @@ repositories {
         name = 'GriefDefender'
         url = 'https://repo.glaremasters.me/repository/bloodshot'
     }
+    maven {
+        name = 'Patbox'
+        url = 'https://maven.nucleoid.xyz'
+    }
     maven { url = "https://mvn.devos.one/releases/" }
     maven { url = "https://mvn.devos.one/snapshots/" }
     maven { url = "https://raw.githubusercontent.com/Fuzss/modresources/main/maven/" }
@@ -65,6 +69,9 @@ dependencies {
 
     implementation 'com.zaxxer:HikariCP:5.1.0'
     shadow 'com.zaxxer:HikariCP:5.1.0'
+
+    // Patbox's server-side GUI API
+    modImplementation include("eu.pb4:sgui:${project.sgui_version}")
 }
 
 processResources {
