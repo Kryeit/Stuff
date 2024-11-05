@@ -17,6 +17,7 @@ import net.minecraft.text.ClickEvent;
 import net.minecraft.text.Style;
 import net.minecraft.text.Text;
 import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.math.Vec3i;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -58,8 +59,10 @@ public class Trains {
         source.getPlayer().sendMessage(Text.of("Found " + trains.size() + " trains:"));
 
         for (Train train : trains) {
-            source.getPlayer().sendMessage(Text.of("Train " + train.name + " at " + getTrainPosition(train))
-                    .copy().setStyle(Style.EMPTY.withClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/tp " + source.getPlayer().getName().getString() + " " + getTrainPosition(train).x + " " + getTrainPosition(train).y + " " + getTrainPosition(train).z))));
+            if (train == null) continue;
+            Vec3i trainPosition = getTrainPosition(train);
+            source.getPlayer().sendMessage(Text.of("Train " + train.name.getString() + " at " + trainPosition)
+                    .copy().setStyle(Style.EMPTY.withClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/tp " + source.getPlayer().getName().getString() + " " + trainPosition.getX() + " " + trainPosition.getY() + " " + trainPosition.getZ()))));
         }
 
         return Command.SINGLE_SUCCESS;
@@ -75,17 +78,19 @@ public class Trains {
         );
     }
 
-    public static Vec3d getTrainPosition(Train train) {
-        Vec3d position = Vec3d.ZERO;
+    public static Vec3i getTrainPosition(Train train) {
+        Vec3i position = Vec3i.ZERO;
         int count = 0;
 
         for (Carriage carriage : train.carriages) {
-            position = position.add(carriage.bogeys.get(true).getAnchorPosition());
+            Vec3d anchorPosition = carriage.bogeys.get(true).getAnchorPosition();
+            Vec3i carriagePosition = new Vec3i((int) anchorPosition.x, (int) anchorPosition.y, (int) anchorPosition.z);
+            position = position.add(carriagePosition);
             count++;
         }
 
         if (count > 0) {
-            position = position.multiply(1.0 / count); // Average position
+            position = new Vec3i(position.getX() / count, position.getY() / count, position.getZ() / count); // Average position
         }
 
         return position;
