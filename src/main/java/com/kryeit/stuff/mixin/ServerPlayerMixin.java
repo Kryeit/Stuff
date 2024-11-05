@@ -83,12 +83,6 @@ public abstract class ServerPlayerMixin extends Entity implements AfkPlayer {
 
     @Inject(method = "getPlayerListName", at = @At("RETURN"), cancellable = true)
     private void replacePlayerListName(CallbackInfoReturnable<Text> cir) {
-
-        if (Permissions.check(stuff$player, "group.staff")) {
-            cir.setReturnValue(Text.of(""));
-            return;
-        }
-
         MutableText name = stuff$player.getName().copy().formatted(Formatting.WHITE);
 
         if (Config.PlayerListOptions.enableListDisplay && stuff$isAfk) {
