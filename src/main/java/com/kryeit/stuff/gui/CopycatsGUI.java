@@ -79,7 +79,9 @@ public class CopycatsGUI extends SimpleGui {
 
     @Override
     public boolean onClick(int index, ClickType type, SlotActionType action, GuiElementInterface element) {
-        ItemStack clickedItem = this.getSlot(index).getItemStack();
+        GuiElementInterface slot = this.getSlot(index);
+        if (slot == null) return false;
+        ItemStack clickedItem = slot.getItemStack();
         if (clickedItem == null) return false;
 
         if (clickedItem.getItem() == Utils.getItemStack("createdeco", "decal_left").getItem()) {
