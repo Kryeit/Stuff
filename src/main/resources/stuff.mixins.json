@@ -9,6 +9,7 @@
     "MinecraftServerMixin",
     "PlayerInventoryMixin",
     "PlayerManagerMixin",
+    "PortingLibBaseMixin",
     "ServerLoginNetworkHandlerMixin",
     "ServerPlayerMixin",
     "ServerPlayNetworkMixin"
