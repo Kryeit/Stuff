@@ -9,6 +9,7 @@ import com.kryeit.stuff.storage.DragonKillers;
 import com.kryeit.stuff.storage.MapVisibilityStorage;
 import com.kryeit.votifier.model.VotifierEvent;
 import com.mojang.logging.LogUtils;
+import com.simibubi.create.content.fluids.transfer.FluidManipulationBehaviour;
 import com.simibubi.create.infrastructure.config.AllConfigs;
 import net.fabricmc.api.DedicatedServerModInitializer;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
@@ -88,5 +89,6 @@ public class Stuff implements DedicatedServerModInitializer {
         AllConfigs.server().kinetics.maxBlocksMoved.set(6144);
         AllConfigs.server().trains.maxTrackPlacementLength.set(128);
         AllConfigs.server().schematics.maxSchematicPacketSize.set(1024);
+        AllConfigs.server().fluids.bottomlessFluidMode.set(FluidManipulationBehaviour.BottomlessFluidMode.ALLOW_ALL);
     }
 }
