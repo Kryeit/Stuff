@@ -93,7 +93,7 @@ public class CopycatsGUI extends SimpleGui {
             return false;
         }
 
-        int requiredCoins = 1;
+        int requiredCoins = 5;
         int itemAmount = items.get(clickedItem.getItem());
 
         int playerCoins = getPlayerCoinCount();
