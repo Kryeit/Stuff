@@ -36,6 +36,8 @@ public class CopycatsGUI extends SimpleGui {
 
     private static final ItemStack IRON_COIN = Utils.getItemStack("createdeco", "iron_coin");
 
+    int REQUIRED_COINS = 5;
+
     public CopycatsGUI(ServerPlayerEntity player) {
         super(ScreenHandlerType.GENERIC_9X3, player, false);
 
@@ -63,7 +65,7 @@ public class CopycatsGUI extends SimpleGui {
             itemStack.setCustomName(Text.literal(itemStack.getName().getString()).formatted(Formatting.GOLD));
 
             NbtList loreList = new NbtList();
-            loreList.add(NbtString.of(Text.Serializer.toJson(Text.literal("Buy " + amount + " for 1 Iron coin").formatted(Formatting.LIGHT_PURPLE))));
+            loreList.add(NbtString.of(Text.Serializer.toJson(Text.literal("Buy " + amount + " for " + REQUIRED_COINS + " Iron coin").formatted(Formatting.LIGHT_PURPLE))));
 
             itemStack.getOrCreateSubNbt("display").put("Lore", loreList);
 
@@ -93,13 +95,12 @@ public class CopycatsGUI extends SimpleGui {
             return false;
         }
 
-        int requiredCoins = 5;
         int itemAmount = items.get(clickedItem.getItem());
 
         int playerCoins = getPlayerCoinCount();
-        if (playerCoins >= requiredCoins) {
+        if (playerCoins >= REQUIRED_COINS) {
             if (hasInventorySpace(clickedItem.getItem(), itemAmount)) {
-                removePlayerCoins(requiredCoins);
+                removePlayerCoins(REQUIRED_COINS);
                 player.giveItemStack(new ItemStack(clickedItem.getItem(), itemAmount));
 
                 player.sendMessage(Text.literal("Successfully purchased " + itemAmount + " " + clickedItem.getName().getString()), false);
