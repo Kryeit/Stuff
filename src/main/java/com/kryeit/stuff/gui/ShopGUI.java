@@ -46,6 +46,10 @@ public class ShopGUI extends SimpleGui {
             new CopycatsGUI(player);
         }
 
+        if (element.getItemStack().getItem() == STAFF_HEAD.getItem()) {
+            new PlayersGUI(player);
+        }
+
         return false;
     }
 
