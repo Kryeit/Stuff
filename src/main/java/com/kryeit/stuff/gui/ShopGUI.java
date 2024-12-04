@@ -27,7 +27,7 @@ public class ShopGUI extends SimpleGui {
         this.addSlot(copycats);
 
         ItemStack staff = STAFF_HEAD.setCustomName(Text.literal("Player head shop").formatted(Formatting.GOLD));
-        String[] playerNames = {"MuriPlz", "MrRedRhino", "_Tesseract"};
+        String[] playerNames = {"MuriPlz", "MrRedRhino", "__Tesseract"};
         String randomPlayerName = playerNames[new Random().nextInt(playerNames.length)];
 
         NbtCompound skullOwner = new NbtCompound();
