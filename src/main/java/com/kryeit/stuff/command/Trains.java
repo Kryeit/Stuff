@@ -1,6 +1,7 @@
 package com.kryeit.stuff.command;
 
 import com.kryeit.stuff.MinecraftServerSupplier;
+import com.kryeit.stuff.Utils;
 import com.kryeit.stuff.command.completion.PlayerAutocompletion;
 import com.mojang.authlib.GameProfile;
 import com.mojang.brigadier.Command;
@@ -16,6 +17,7 @@ import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.text.ClickEvent;
 import net.minecraft.text.Style;
 import net.minecraft.text.Text;
+import net.minecraft.util.Formatting;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.math.Vec3i;
 
@@ -61,20 +63,43 @@ public class Trains {
         for (Train train : trains) {
             if (train == null) continue;
             Vec3i trainPosition = getTrainPosition(train);
-            source.getPlayer().sendMessage(Text.of("Train " + train.name.getString() + " at " + trainPosition)
-                    .copy().setStyle(Style.EMPTY.withClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/tp " + source.getPlayer().getName().getString() + " " + trainPosition.getX() + " " + trainPosition.getY() + " " + trainPosition.getZ()))));
+            ClickEvent clickEvent;
+
+            if (Permissions.check(source.getPlayer(), "group.staff")) {
+                clickEvent = new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/tp " + source.getPlayer().getName().getString() + " " + trainPosition.getX() + " " + trainPosition.getY() + " " + trainPosition.getZ());
+            } else {
+                clickEvent = new ClickEvent(ClickEvent.Action.OPEN_URL, Utils.getMapLink(trainPosition));
+            }
+
+            source.getPlayer().sendMessage(Text.of("- ")
+                    .copy()
+                    .append(Text.of(train.name.getString())
+                            .copy()
+                            .setStyle(Style.EMPTY.withColor(Formatting.AQUA)))
+                    .append(Text.of(" at "))
+                    .append(Text.of(getFormattedCoords(trainPosition))
+                            .copy()
+                            .setStyle(Style.EMPTY.withColor(Formatting.GOLD)))
+                    .setStyle(Style.EMPTY.withClickEvent(clickEvent)
+            ));
+
         }
 
         return Command.SINGLE_SUCCESS;
     }
 
+    public static String getFormattedCoords(Vec3i position) {
+        return "(" + position.getX() + ", " + position.getY() + ", " + position.getZ() + ")";
+    }
+
     public static void register(CommandDispatcher<ServerCommandSource> dispatcher) {
         dispatcher.register(CommandManager.literal("trains")
+                .executes(context -> execute(context, context.getSource().getPlayer().getName().getString()))
+                .then(CommandManager.argument("name", StringArgumentType.word())
                         .requires(Permissions.require("group.staff"))
-                        .then(CommandManager.argument("name", StringArgumentType.word())
-                                .suggests(PlayerAutocompletion.suggestOnlinePlayers())
-                                .executes(context -> execute(context, StringArgumentType.getString(context, "name")))
-                        )
+                        .suggests(PlayerAutocompletion.suggestOnlinePlayers())
+                        .executes(context -> execute(context, StringArgumentType.getString(context, "name")))
+                )
         );
     }
 

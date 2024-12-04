@@ -10,6 +10,7 @@ import net.minecraft.text.Style;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.math.Vec3i;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -63,6 +64,14 @@ public class Utils {
         // example link https://map.kryeit.com/#overworld:-3664:0:8222:58252:-0.39:0:0:0:perspective
         int x = (int) player.getPos().getX();
         int z = (int) player.getPos().getZ();
+
+        return "https://map.kryeit.com/#overworld:" + x + ":0:" + z + ":0:0:0:0:0:perspective";
+    }
+
+    public static String getMapLink(Vec3i position) {
+        // example link https://map.kryeit.com/#overworld:-3664:0:8222:58252:-0.39:0:0:0:perspective
+        int x = position.getX();
+        int z = position.getZ();
 
         return "https://map.kryeit.com/#overworld:" + x + ":0:" + z + ":0:0:0:0:0:perspective";
     }
