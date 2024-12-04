@@ -109,6 +109,7 @@ public class Trains {
 
         for (Carriage carriage : train.carriages) {
             Vec3d anchorPosition = carriage.bogeys.get(true).getAnchorPosition();
+            if (anchorPosition == null) continue;
             Vec3i carriagePosition = new Vec3i((int) anchorPosition.x, (int) anchorPosition.y, (int) anchorPosition.z);
             position = position.add(carriagePosition);
             count++;
