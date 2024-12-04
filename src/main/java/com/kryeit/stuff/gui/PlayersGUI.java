@@ -24,7 +24,7 @@ public class PlayersGUI extends SimpleGui {
     private static final ItemStack COPPER_COIN = Utils.getItemStack("createdeco", "copper_coin");
     public static final Item PLAYER_HEAD_ITEM = Utils.getItemStack("minecraft", "player_head").getItem();
 
-    int REQUIRED_COINS = 1;
+    int REQUIRED_COINS = 3;
 
     public PlayersGUI(ServerPlayerEntity player) {
         super(ScreenHandlerType.GENERIC_9X6, player, false);
@@ -70,7 +70,7 @@ public class PlayersGUI extends SimpleGui {
         if (playerCoins >= REQUIRED_COINS) {
             if (hasInventorySpace(clickedItem.getItem(), itemAmount)) {
                 removePlayerCoins(REQUIRED_COINS);
-                player.giveItemStack(new ItemStack(clickedItem.getItem(), itemAmount));
+                player.giveItemStack(clickedItem.copy());
 
                 player.sendMessage(Text.literal("Successfully purchased " + itemAmount + " " + clickedItem.getName().getString()), false);
             } else {
