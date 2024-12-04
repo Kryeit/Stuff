@@ -26,13 +26,10 @@ public class ShopGUI extends SimpleGui {
         ItemStack copycats = COPYCAT_STEP.setCustomName(Text.literal("Copycat shop").formatted(Formatting.GOLD));
         this.addSlot(copycats);
 
-        ItemStack staff = STAFF_HEAD.setCustomName(Text.literal("Player head shop").formatted(Formatting.GOLD));
-        String[] playerNames = {"MuriPlz", "MrRedRhino", "__Tesseract"};
-        String randomPlayerName = playerNames[new Random().nextInt(playerNames.length)];
-
-        NbtCompound skullOwner = new NbtCompound();
-        skullOwner.putString("Name", randomPlayerName);
-        staff.getOrCreateNbt().put("SkullOwner", skullOwner);
+        String[] staffNames = {"MuriPlz", "MrRedRhino", "__Tesseract"};
+        ItemStack staff = GuiUtils.getPlayerHeadItem(staffNames[new Random().nextInt(staffNames.length)],
+                Text.literal("Player head shop").formatted(Formatting.GOLD),
+                Text.empty());
 
         this.addSlot(staff);
 

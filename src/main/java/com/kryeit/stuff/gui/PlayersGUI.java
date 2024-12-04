@@ -1,7 +1,9 @@
 package com.kryeit.stuff.gui;
 
-import com.kryeit.stuff.Utils;
 import com.kryeit.stuff.MinecraftServerSupplier;
+import com.kryeit.stuff.Utils;
+import com.mojang.authlib.GameProfile;
+import com.mojang.authlib.properties.Property;
 import eu.pb4.sgui.api.ClickType;
 import eu.pb4.sgui.api.elements.GuiElementInterface;
 import eu.pb4.sgui.api.gui.SimpleGui;
@@ -20,7 +22,7 @@ import java.util.List;
 
 public class PlayersGUI extends SimpleGui {
     private static final ItemStack COPPER_COIN = Utils.getItemStack("createdeco", "copper_coin");
-    private static final Item PLAYER_HEAD_ITEM = Utils.getItemStack("minecraft", "player_head").getItem();
+    public static final Item PLAYER_HEAD_ITEM = Utils.getItemStack("minecraft", "player_head").getItem();
 
     int REQUIRED_COINS = 1;
 
@@ -32,25 +34,16 @@ public class PlayersGUI extends SimpleGui {
         // Add online player heads to the shop
         List<ServerPlayerEntity> onlinePlayers = MinecraftServerSupplier.getServer().getPlayerManager().getPlayerList();
         for (ServerPlayerEntity onlinePlayer : onlinePlayers) {
-            ItemStack playerHead = new ItemStack(PLAYER_HEAD_ITEM);
-            NbtCompound skullOwner = new NbtCompound();
-            skullOwner.putString("Name", onlinePlayer.getName().getString());
-            skullOwner.putUuid("Id", onlinePlayer.getUuid());
-            playerHead.getOrCreateNbt().put("SkullOwner", skullOwner);
-
-            playerHead.setCustomName(Text.literal(onlinePlayer.getName().getString() + "'s player head").formatted(Formatting.GOLD));
-
-            NbtList loreList = new NbtList();
-            loreList.add(NbtString.of(Text.Serializer.toJson(Text.literal("Buy 1 for " + REQUIRED_COINS + " Copper coin").formatted(Formatting.LIGHT_PURPLE))));
-
-            playerHead.getOrCreateSubNbt("display").put("Lore", loreList);
+            ItemStack playerHead = GuiUtils.getPlayerHeadItem(onlinePlayer.getName().getString(),
+                    Text.literal(player.getName().getString() + "'s player head").formatted(Formatting.GOLD),
+                    Text.literal("Buy 1 for " + REQUIRED_COINS + " Copper coin").formatted(Formatting.LIGHT_PURPLE));
 
             this.addSlot(playerHead);
         }
 
         ItemStack back = Utils.getItemStack("createdeco", "decal_left");
         back.setCustomName(Text.literal("Go back").formatted(Formatting.RED));
-        this.setSlot(18, back);
+        this.setSlot(45, back);
 
         this.open();
     }

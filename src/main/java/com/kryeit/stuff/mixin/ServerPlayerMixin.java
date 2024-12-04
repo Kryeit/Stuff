@@ -3,7 +3,6 @@ package com.kryeit.stuff.mixin;
 import com.kryeit.stuff.Utils;
 import com.kryeit.stuff.afk.AfkPlayer;
 import com.kryeit.stuff.afk.Config;
-import me.lucko.fabric.api.permissions.v0.Permissions;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.network.packet.s2c.play.PlayerListS2CPacket;
