@@ -34,7 +34,7 @@ public class Login {
         String uuid = player.getUuidAsString();
 
         try {
-            URL url = new URL("http://kryeit.com:6969/api/login/link");
+            URL url = new URL("http://kryeit.com/api/login/link");
             HttpURLConnection connection = (HttpURLConnection) url.openConnection();
             connection.setRequestMethod("POST");
             connection.setRequestProperty("Content-Type", "application/json; utf-8");
@@ -43,6 +43,7 @@ public class Login {
             JsonObject json = new JsonObject();
             json.addProperty("username", username);
             json.addProperty("uuid", uuid);
+            json.addProperty("authApiSecret", System.getenv("AUTH_API_SECRET"));
 
             try (OutputStream os = connection.getOutputStream()) {
                 byte[] input = json.toString().getBytes(StandardCharsets.UTF_8);
