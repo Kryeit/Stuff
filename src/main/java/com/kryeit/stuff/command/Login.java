@@ -1,73 +1,86 @@
 package com.kryeit.stuff.command;
 
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
+import com.google.gson.Gson;
 import com.mojang.brigadier.Command;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.context.CommandContext;
 import net.minecraft.server.command.CommandManager;
 import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.text.ClickEvent;
+import net.minecraft.text.Style;
 import net.minecraft.text.Text;
 
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.nio.charset.StandardCharsets;
-import java.util.function.Supplier;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
+import java.time.Duration;
 
 public class Login {
+
+    private static final String LOGIN_API_URL = "https://kryeit.com/api/login/link";
+    private static final Gson gson = new Gson();
+    private static final HttpClient httpClient = HttpClient.newBuilder()
+            .version(HttpClient.Version.HTTP_2)
+            .connectTimeout(Duration.ofSeconds(10))
+            .build();
+
+    private static class LoginPayload {
+        String username;
+        String uuid;
+        String authApiSecret;
+
+        LoginPayload(String username, String uuid, String authApiSecret) {
+            this.username = username;
+            this.uuid = uuid;
+            this.authApiSecret = authApiSecret;
+        }
+    }
+
+    private static class LoginResponse {
+        String link;
+    }
 
     public static int execute(CommandContext<ServerCommandSource> context) {
         ServerCommandSource source = context.getSource();
         ServerPlayerEntity player = source.getPlayer();
 
         if (player == null) {
-            Supplier<Text> message = () -> Text.of("Can't execute from console");
-            source.sendFeedback(message, false);
+            source.sendFeedback(() -> Text.of("Can't execute from console"), false);
             return 0;
         }
 
-        String username = player.getName().getString();
-        String uuid = player.getUuidAsString();
-
         try {
-            URL url = new URL("https://kryeit.com/api/login/link");
-            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-            connection.setRequestMethod("GET");
-            connection.setRequestProperty("Content-Type", "application/json; utf-8");
-            connection.setDoOutput(true);
+            LoginPayload payload = new LoginPayload(
+                    player.getName().getString(),
+                    player.getUuidAsString(),
+                    getAuthSecret()
+            );
 
-            JsonObject json = new JsonObject();
-            json.addProperty("username", username);
-            json.addProperty("uuid", uuid);
-            json.addProperty("authApiSecret", System.getenv("AUTH_API_SECRET"));
+            String jsonPayload = gson.toJson(payload);
 
-            try (OutputStream os = connection.getOutputStream()) {
-                byte[] input = json.toString().getBytes(StandardCharsets.UTF_8);
-                os.write(input, 0, input.length);
-            }
+            HttpRequest request = HttpRequest.newBuilder()
+                    .uri(URI.create(LOGIN_API_URL))
+                    .header("Content-Type", "application/json")
+                    .method("GET", HttpRequest.BodyPublishers.ofString(jsonPayload))
+                    .build();
 
-            int responseCode = connection.getResponseCode();
-            if (responseCode == HttpURLConnection.HTTP_OK) {
-                BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
-                String inputLine;
-                StringBuilder content = new StringBuilder();
-                while ((inputLine = in.readLine()) != null) {
-                    content.append(inputLine);
-                }
-                in.close();
+            HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
 
-                JsonObject responseJson = JsonParser.parseString(content.toString()).getAsJsonObject();
-                String link = responseJson.get("link").getAsString();
-                player.sendMessage(Text.of("Login link: " + link), false);
+            if (response.statusCode() == 200) {
+                LoginResponse loginResponse = gson.fromJson(response.body(), LoginResponse.class);
+                player.sendMessage(Text.literal("Login link: " + loginResponse.link)
+                        .setStyle(Style.EMPTY.withClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, loginResponse.link))), false);
             } else {
-                player.sendMessage(Text.of("Failed to send login link"), false);
+                player.sendMessage(Text.of("Failed to send login link. Status: " + response.statusCode()), false);
             }
-        } catch (Exception e) {
+
+        } catch (IOException | InterruptedException e) {
             player.sendMessage(Text.of("An error occurred: " + e.getMessage()), false);
+            Thread.currentThread().interrupt();
         }
 
         return Command.SINGLE_SUCCESS;
@@ -77,5 +90,13 @@ public class Login {
         dispatcher.register(CommandManager.literal("login")
                 .executes(Login::execute)
         );
+    }
+
+    private static String getAuthSecret() {
+        try (InputStream inputStream = Login.class.getResourceAsStream("/auth_secret.txt")) {
+            return new String(inputStream.readAllBytes()).trim();
+        } catch (IOException e) {
+            throw new RuntimeException("Could not read auth secret", e);
+        }
     }
 }
