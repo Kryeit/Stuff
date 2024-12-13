@@ -34,9 +34,9 @@ public class Login {
         String uuid = player.getUuidAsString();
 
         try {
-            URL url = new URL("http://kryeit.com/api/login/link");
+            URL url = new URL("https://kryeit.com/api/login/link");
             HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-            connection.setRequestMethod("POST");
+            connection.setRequestMethod("GET");
             connection.setRequestProperty("Content-Type", "application/json; utf-8");
             connection.setDoOutput(true);
 
