@@ -18,3 +18,5 @@ classes/
 .vscode
 .settings
 *.launch
+
+/src/main/resources/auth_secret.txt
