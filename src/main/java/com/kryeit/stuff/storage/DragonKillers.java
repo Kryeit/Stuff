@@ -26,7 +26,7 @@ public class DragonKillers {
         }
     }
 
-    public static boolean canKillAnotherDragon(UUID uuid) {
+    public boolean canKillAnotherDragon(UUID uuid) {
         ServerPlayerEntity player = MinecraftServerSupplier.getServer().getPlayerManager().getPlayer(uuid);
         long currentTimePlayed = player.getStatHandler().getStat(Stats.CUSTOM.getOrCreateStat(Stats.PLAY_TIME));
         long lastKillTime = Stuff.dragonKillers.getLastKillTime(uuid);

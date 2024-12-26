@@ -1,5 +1,6 @@
 package com.kryeit.stuff.listener;
 
+import com.kryeit.stuff.Stuff;
 import com.kryeit.stuff.storage.DragonKillers;
 import net.fabricmc.fabric.api.entity.event.v1.ServerLivingEntityEvents;
 import net.minecraft.entity.Entity;
@@ -30,7 +31,7 @@ public class DragonDeath implements ServerLivingEntityEvents.AfterDeath {
                 }
             }
 
-            if (player != null && DragonKillers.canKillAnotherDragon(player.getUuid())) {
+            if (player != null && dragonKillers.canKillAnotherDragon(player.getUuid())) {
                 player.getInventory().offerOrDrop(Items.ELYTRA.getDefaultStack());
                 player.sendMessage(Text.of("You've killed the ender dragon! Here's an elytra :)"));
                 player.sendMessage(Text.of("Kill it again after 100 hours of playtime to get another elytra"));
