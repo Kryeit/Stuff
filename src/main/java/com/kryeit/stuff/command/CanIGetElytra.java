@@ -1,7 +1,6 @@
 package com.kryeit.stuff.command;
 
 import com.kryeit.stuff.Stuff;
-import com.kryeit.stuff.storage.DragonKillers;
 import com.mojang.brigadier.Command;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.context.CommandContext;
@@ -13,7 +12,7 @@ import net.minecraft.text.Text;
 
 import java.util.function.Supplier;
 
-public class Canigetelytra {
+public class CanIGetElytra {
 
     public static int execute(CommandContext<ServerCommandSource> context) {
         ServerCommandSource source = context.getSource();
@@ -45,7 +44,7 @@ public class Canigetelytra {
 
     public static void register(CommandDispatcher<ServerCommandSource> dispatcher) {
         dispatcher.register(CommandManager.literal("canigetelytra")
-                .executes(Canigetelytra::execute)
+                .executes(CanIGetElytra::execute)
         );
     }
 
