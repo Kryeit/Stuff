@@ -91,6 +91,10 @@ public class Stuff implements DedicatedServerModInitializer {
         AllConfigs.server().trains.maxTrackPlacementLength.set(128);
         AllConfigs.server().schematics.maxSchematicPacketSize.set(1024);
         AllConfigs.server().schematics.schematicannonDelay.set(1);
+        AllConfigs.server().schematics.schematicannonFuelUsage.set(0.05);
+        AllConfigs.server().schematics.schematicannonGunpowderWorth.set(20.);
+
+        AllConfigs.server().kinetics.maxDataSize.set(4000000);
         AllConfigs.server().fluids.bottomlessFluidMode.set(FluidManipulationBehaviour.BottomlessFluidMode.DENY_BY_TAG);
     }
 }
