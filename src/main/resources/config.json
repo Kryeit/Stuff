@@ -1,0 +1,5 @@
+{
+  "db-url": "jdbc:postgres://localhost:5432/servus",
+  "db-user": "postgres",
+  "db-password": "lel"
+}

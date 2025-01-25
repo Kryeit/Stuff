@@ -5,6 +5,7 @@ import com.kryeit.stuff.compat.BluemapImpl;
 import com.kryeit.stuff.listener.DragonDeath;
 import com.kryeit.stuff.listener.PlayerDeath;
 import com.kryeit.stuff.listener.PlayerVote;
+import com.kryeit.stuff.storage.Database;
 import com.kryeit.stuff.storage.DragonKillers;
 import com.kryeit.stuff.storage.MapVisibilityStorage;
 import com.kryeit.votifier.model.VotifierEvent;
@@ -26,7 +27,6 @@ import java.util.UUID;
 public class Stuff implements DedicatedServerModInitializer {
     private static final Logger LOGGER = LogUtils.getLogger();
     // public static Queue queue = new Queue();
-    public static HashMap<UUID, Long> lastActiveTime = new HashMap<>();
     public static MapVisibilityStorage hiddenPlayers;
     public static DragonKillers dragonKillers = new DragonKillers();
 
@@ -57,6 +57,8 @@ public class Stuff implements DedicatedServerModInitializer {
             server.getPlayerManager().getPlayerList().forEach(player -> {
                 Analytics.storeSessionEnd(player.getUuid());
             });
+
+            Database.closeDataSource();
         });
     }
 

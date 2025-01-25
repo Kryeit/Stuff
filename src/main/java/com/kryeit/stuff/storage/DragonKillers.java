@@ -34,7 +34,7 @@ public class DragonKillers {
         if (lastKillTime == 0) return true; // First time killing the dragon
 
         long ticksSinceLastKill = currentTimePlayed - lastKillTime;
-        long hoursSinceLastKill = ticksSinceLastKill / (20 * 60 * 60); // Convert ticks to hours
+        long hoursSinceLastKill = ticksSinceLastKill / (20 * 60 * 60);
         return hoursSinceLastKill >= 100;
     }
 

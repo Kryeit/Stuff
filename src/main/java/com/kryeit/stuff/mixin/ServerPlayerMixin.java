@@ -3,6 +3,7 @@ package com.kryeit.stuff.mixin;
 import com.kryeit.stuff.Utils;
 import com.kryeit.stuff.afk.AfkPlayer;
 import com.kryeit.stuff.afk.Config;
+import com.kryeit.stuff.auth.UserApi;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.network.packet.s2c.play.PlayerListS2CPacket;
@@ -22,8 +23,6 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
-
-import static com.kryeit.stuff.Stuff.lastActiveTime;
 
 // This class has been mostly made by afkdisplay mod
 // https://github.com/beabfc/afkdisplay
@@ -55,7 +54,7 @@ public abstract class ServerPlayerMixin extends Entity implements AfkPlayer {
     @Unique
     public void stuff$disableAfk() {
         if (!stuff$isAfk) return;
-        lastActiveTime.put(stuff$player.getUuid(), System.currentTimeMillis());
+        UserApi.updateLastSeen(stuff$player.getUuid());
         stuff$setAfk(false);
     }
 

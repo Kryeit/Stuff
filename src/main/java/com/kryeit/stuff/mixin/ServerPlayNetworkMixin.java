@@ -2,6 +2,8 @@ package com.kryeit.stuff.mixin;
 
 import com.kryeit.stuff.afk.AfkPlayer;
 import com.kryeit.stuff.afk.Config;
+import com.kryeit.stuff.auth.UserApi;
+import io.github.fabricators_of_create.porting_lib.event.client.InteractEvents;
 import me.lucko.fabric.api.permissions.v0.Permissions;
 import net.minecraft.network.packet.c2s.play.ChatMessageC2SPacket;
 import net.minecraft.network.packet.c2s.play.PlayerMoveC2SPacket;
@@ -12,8 +14,6 @@ import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-
-import static com.kryeit.stuff.Stuff.lastActiveTime;
 
 // This class has been mostly made by afkdisplay mod
 
@@ -28,8 +28,8 @@ public abstract class ServerPlayNetworkMixin {
         AfkPlayer afkPlayer = (AfkPlayer) player;
         int timeoutSeconds = Config.PacketOptions.timeoutSeconds;
         if (afkPlayer.stuff$isAfk() || timeoutSeconds <= 0) return;
-        if (!lastActiveTime.containsKey(player.getUuid())) return;
-        long afkDuration = System.currentTimeMillis() - lastActiveTime.get(player.getUuid());
+        if (UserApi.getLastSeen(player.getUuid()) == -1L) return;
+        long afkDuration = System.currentTimeMillis() - UserApi.getLastSeen(player.getUuid());
         if (afkDuration > timeoutSeconds * 1000L) {
             afkPlayer.stuff$enableAfk();
         }
@@ -41,7 +41,7 @@ public abstract class ServerPlayNetworkMixin {
             float yaw = player.getYaw();
             float pitch = player.getPitch();
             if (pitch != packet.getPitch(pitch) || yaw != packet.getYaw(yaw))
-                lastActiveTime.put(player.getUuid(), System.currentTimeMillis());
+                UserApi.updateLastSeen(player.getUuid());
         }
 
         // Enzo's alergy

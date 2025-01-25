@@ -4,6 +4,7 @@ import com.kryeit.stuff.Analytics;
 import com.kryeit.stuff.Config;
 import com.kryeit.stuff.MinecraftServerSupplier;
 import com.kryeit.stuff.Stuff;
+import com.kryeit.stuff.auth.UserApi;
 import com.mojang.authlib.GameProfile;
 import net.minecraft.network.ClientConnection;
 import net.minecraft.server.MinecraftServer;
@@ -52,14 +53,14 @@ public class ServerLoginNetworkHandlerMixin {
             return;
 
         // Has NOT joined before
-        if (!Stuff.lastActiveTime.containsKey(id)) {
+        if (UserApi.getLastSeen(id) == -1L) {
             MinecraftServerSupplier.getServer().getPlayerManager().broadcast(
                     Text.literal("Welcome " + name + " to Kryeit!").formatted(Formatting.AQUA),
                     false
             );
         }
 
-        Stuff.lastActiveTime.put(id, System.currentTimeMillis());
+        UserApi.updateLastSeen(id);
 
         player.sendMessage(Text.literal("Kryeit is fairly vanilla, but it has custom systems:").formatted(Formatting.AQUA));
         player.sendMessage(Text.literal(" - Claim system (use /claim and /abandon)").formatted(Formatting.AQUA));
