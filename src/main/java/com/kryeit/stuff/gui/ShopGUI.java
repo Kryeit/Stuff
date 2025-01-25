@@ -26,7 +26,7 @@ public class ShopGUI extends SimpleGui {
         ItemStack copycats = COPYCAT_STEP.setCustomName(Text.literal("Copycat shop").formatted(Formatting.GOLD));
         this.addSlot(copycats);
 
-        String[] staffNames = {"MuriPlz", "MrRedRhino", "__Tesseract"};
+        String[] staffNames = {"MuriPlz", "MrRedRhino", "__Tesseract", "RatInATopHat427"};
         ItemStack staff = GuiUtils.getPlayerHeadItem(staffNames[new Random().nextInt(staffNames.length)],
                 Text.literal("Player head shop").formatted(Formatting.GOLD),
                 Text.empty());
