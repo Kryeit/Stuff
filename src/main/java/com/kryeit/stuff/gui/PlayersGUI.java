@@ -2,14 +2,11 @@ package com.kryeit.stuff.gui;
 
 import com.kryeit.stuff.MinecraftServerSupplier;
 import com.kryeit.stuff.Utils;
-import com.kryeit.stuff.ui.GuiTextures;
 import eu.pb4.sgui.api.ClickType;
 import eu.pb4.sgui.api.elements.GuiElementInterface;
-import eu.pb4.sgui.api.gui.SimpleGui;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
-import net.minecraft.screen.ScreenHandlerType;
 import net.minecraft.screen.slot.SlotActionType;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.Text;
@@ -17,33 +14,44 @@ import net.minecraft.util.Formatting;
 
 import java.util.List;
 
-public class PlayersGUI extends SimpleGui {
+public class PlayersGUI extends PaginatedGUI {
     private static final ItemStack COPPER_COIN = Utils.getItemStack("createdeco", "copper_coin");
     public static final Item PLAYER_HEAD_ITEM = Utils.getItemStack("minecraft", "player_head").getItem();
 
     int REQUIRED_COINS = 3;
 
     public PlayersGUI(ServerPlayerEntity player) {
-        super(ScreenHandlerType.GENERIC_9X6, player, false);
-        this.setTitle(GuiTextures.PLAYER_SHOP.apply(Text.literal("Player Heads")));
-
-        populatePlayerHeads();
-
-        ItemStack back = Items.BARRIER.getDefaultStack();
-        back.setCustomName(Text.literal("Go back").formatted(Formatting.RED));
-        this.setSlot(45, back);
-
+        super(player, "Player Heads");
         this.open();
     }
 
-    private void populatePlayerHeads() {
+    @Override
+    protected void populate() {
+        for (int i = 0; i < this.getSize(); i++) {
+            this.setSlot(i, ItemStack.EMPTY);
+        }
+
+        int page = this.page;
+
+        int start = page * 3 * 7;
+        int end = start + 3 * 7;
+
         List<ServerPlayerEntity> onlinePlayers = MinecraftServerSupplier.getServer().getPlayerManager().getPlayerList();
-        for (ServerPlayerEntity onlinePlayer : onlinePlayers) {
+        for (int i = start; i < end; i++) {
+            if (i >= onlinePlayers.size()) {
+                break;
+            }
+
+            ServerPlayerEntity onlinePlayer = onlinePlayers.get(i);
             ItemStack playerHead = GuiUtils.getPlayerHeadItem(onlinePlayer.getName().getString(),
-                    Text.literal(player.getName().getString() + "'s player head").formatted(Formatting.GOLD),
+                    Text.literal(onlinePlayer.getName().getString() + "'s player head").formatted(Formatting.GOLD),
                     Text.literal("Buy 1 for " + REQUIRED_COINS + " Copper coin").formatted(Formatting.LIGHT_PURPLE));
 
-            this.addSlot(playerHead);
+            int row = (i - start) / 7;
+            int col = (i - start) % 7 + 1;
+            int slotIndex = row * 9 + col;
+
+            this.setSlot(slotIndex, playerHead);
         }
     }
 
@@ -53,11 +61,6 @@ public class PlayersGUI extends SimpleGui {
         if (slot == null) return false;
         ItemStack clickedItem = slot.getItemStack();
         if (clickedItem == null) return false;
-
-        if (clickedItem.getItem() == Utils.getItemStack("createdeco", "decal_left").getItem()) {
-            new ShopGUI(player);
-            return false;
-        }
 
         if (clickedItem.getItem() != PLAYER_HEAD_ITEM) {
             return false;

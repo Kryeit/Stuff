@@ -6,6 +6,7 @@ import eu.pb4.sgui.api.ClickType;
 import eu.pb4.sgui.api.elements.GuiElementInterface;
 import eu.pb4.sgui.api.gui.SimpleGui;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NbtList;
 import net.minecraft.screen.ScreenHandlerType;
 import net.minecraft.screen.slot.SlotActionType;
 import net.minecraft.server.network.ServerPlayerEntity;
@@ -24,14 +25,15 @@ public class ShopGUI extends SimpleGui {
         this.setTitle(GuiTextures.SHOP.apply(Text.literal("Shop")));
 
         ItemStack copycats = COPYCAT_STEP.setCustomName(Text.literal("Copycat shop").formatted(Formatting.GOLD));
-        this.addSlot(copycats);
+        this.setSlot(20, copycats);
+
+        // Discs in the 13
 
         String[] staffNames = {"MuriPlz", "MrRedRhino", "__Tesseract", "RatInATopHat427"};
         ItemStack staff = GuiUtils.getPlayerHeadItem(staffNames[new Random().nextInt(staffNames.length)],
                 Text.literal("Player head shop").formatted(Formatting.GOLD),
                 Text.empty());
-
-        this.addSlot(staff);
+        this.setSlot(24, staff);
 
         this.open();
     }

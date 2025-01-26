@@ -22,16 +22,14 @@ public class GuiUtils {
         NbtCompound nbt = new NbtCompound();
         nbt.putString("SkullOwner", name);
 
-        playerHead.setNbt(nbt);
-
-        playerHead.setCustomName(title);
-
         NbtCompound displayTag = new NbtCompound();
+        displayTag.putString("Name", Text.Serializer.toJson(title));
+
         NbtList loreList = new NbtList();
         loreList.add(NbtString.of(Text.Serializer.toJson(lore)));
         displayTag.put("Lore", loreList);
-        nbt.put("display", displayTag);
 
+        nbt.put("display", displayTag);
         playerHead.setNbt(nbt);
 
         return playerHead;

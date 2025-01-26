@@ -1,1 +1,1 @@
-{"providers":[{"type":"space","advances":{"a":-8,"b":-168}},{"type":"bitmap","file":"stuff:sgui/shop.png","ascent":13,"height":256,"chars":["c"]},{"type":"bitmap","file":"stuff:sgui/player_shop.png","ascent":13,"height":256,"chars":["e"]},{"type":"bitmap","file":"stuff:sgui/copycat_shop.png","ascent":13,"height":256,"chars":["d"]}]}
+{"providers":[{"type":"space","advances":{"a":-8,"b":-168}},{"type":"bitmap","file":"stuff:sgui/shop.png","ascent":13,"height":256,"chars":["c"]},{"type":"bitmap","file":"stuff:sgui/paginated_shop.png","ascent":13,"height":256,"chars":["d"]}]}

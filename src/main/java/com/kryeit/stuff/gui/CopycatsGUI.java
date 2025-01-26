@@ -7,6 +7,7 @@ import eu.pb4.sgui.api.elements.GuiElementInterface;
 import eu.pb4.sgui.api.gui.SimpleGui;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.Items;
 import net.minecraft.nbt.NbtList;
 import net.minecraft.nbt.NbtString;
 import net.minecraft.screen.ScreenHandlerType;
@@ -40,8 +41,8 @@ public class CopycatsGUI extends SimpleGui {
     int REQUIRED_COINS = 5;
 
     public CopycatsGUI(ServerPlayerEntity player) {
-        super(ScreenHandlerType.GENERIC_9X3, player, false);
-        this.setTitle(GuiTextures.COPYCAT_SHOP.apply(Text.literal("Copycats")));
+        super(ScreenHandlerType.GENERIC_9X6, player, false);
+        this.setTitle(GuiTextures.PAGINATED_SHOP.apply(Text.literal("Copycats")));
 
         items.put(COPYCAT_FENCE.getItem(), 4);
         items.put(COPYCAT_DOOR.getItem(), 4);
@@ -72,9 +73,9 @@ public class CopycatsGUI extends SimpleGui {
             this.addSlot(itemStack);
         }
 
-        ItemStack back = Utils.getItemStack("createdeco", "decal_left");
+        ItemStack back = Items.BARRIER.getDefaultStack();
         back.setCustomName(Text.literal("Go back").formatted(Formatting.RED));
-        this.setSlot(18, back);
+        this.setSlot(40, back);
 
         this.open();
     }
@@ -86,7 +87,7 @@ public class CopycatsGUI extends SimpleGui {
         ItemStack clickedItem = slot.getItemStack();
         if (clickedItem == null) return false;
 
-        if (clickedItem.getItem() == Utils.getItemStack("createdeco", "decal_left").getItem()) {
+        if (index == 40) {
             new ShopGUI(player);
             return false;
         }
