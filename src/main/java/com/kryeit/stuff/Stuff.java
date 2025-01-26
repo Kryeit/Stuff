@@ -7,6 +7,7 @@ import com.kryeit.stuff.config.StaticConfig;
 import com.kryeit.stuff.listener.DragonDeath;
 import com.kryeit.stuff.listener.PlayerDeath;
 import com.kryeit.stuff.listener.PlayerVote;
+import com.kryeit.stuff.registry.ModItems;
 import com.kryeit.stuff.storage.Database;
 import com.kryeit.stuff.storage.DragonKillers;
 import com.kryeit.stuff.storage.MapVisibilityStorage;
@@ -55,6 +56,8 @@ public class Stuff implements DedicatedServerModInitializer {
     }
 
     private void setupPatbox() {
+        ModItems.register();
+
         UiResourceCreator.setup();
         GuiTextures.register();
 
