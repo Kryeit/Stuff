@@ -2,11 +2,13 @@ package com.kryeit.stuff.gui;
 
 import com.kryeit.stuff.MinecraftServerSupplier;
 import com.kryeit.stuff.Utils;
+import com.kryeit.stuff.ui.GuiTextures;
 import eu.pb4.sgui.api.ClickType;
 import eu.pb4.sgui.api.elements.GuiElementInterface;
 import eu.pb4.sgui.api.gui.SimpleGui;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.Items;
 import net.minecraft.screen.ScreenHandlerType;
 import net.minecraft.screen.slot.SlotActionType;
 import net.minecraft.server.network.ServerPlayerEntity;
@@ -23,10 +25,18 @@ public class PlayersGUI extends SimpleGui {
 
     public PlayersGUI(ServerPlayerEntity player) {
         super(ScreenHandlerType.GENERIC_9X6, player, false);
+        this.setTitle(GuiTextures.PLAYER_SHOP.apply(Text.literal("Player Heads")));
 
-        this.setTitle(Text.literal("Player head shop"));
+        populatePlayerHeads();
 
-        // Add online player heads to the shop
+        ItemStack back = Items.BARRIER.getDefaultStack();
+        back.setCustomName(Text.literal("Go back").formatted(Formatting.RED));
+        this.setSlot(45, back);
+
+        this.open();
+    }
+
+    private void populatePlayerHeads() {
         List<ServerPlayerEntity> onlinePlayers = MinecraftServerSupplier.getServer().getPlayerManager().getPlayerList();
         for (ServerPlayerEntity onlinePlayer : onlinePlayers) {
             ItemStack playerHead = GuiUtils.getPlayerHeadItem(onlinePlayer.getName().getString(),
@@ -35,12 +45,6 @@ public class PlayersGUI extends SimpleGui {
 
             this.addSlot(playerHead);
         }
-
-        ItemStack back = Utils.getItemStack("createdeco", "decal_left");
-        back.setCustomName(Text.literal("Go back").formatted(Formatting.RED));
-        this.setSlot(45, back);
-
-        this.open();
     }
 
     @Override

@@ -1,6 +1,7 @@
 package com.kryeit.stuff.gui;
 
 import com.kryeit.stuff.Utils;
+import com.kryeit.stuff.ui.GuiTextures;
 import eu.pb4.sgui.api.ClickType;
 import eu.pb4.sgui.api.elements.GuiElementInterface;
 import eu.pb4.sgui.api.gui.SimpleGui;
@@ -40,8 +41,7 @@ public class CopycatsGUI extends SimpleGui {
 
     public CopycatsGUI(ServerPlayerEntity player) {
         super(ScreenHandlerType.GENERIC_9X3, player, false);
-
-        this.setTitle(Text.literal("Copycat shop"));
+        this.setTitle(GuiTextures.COPYCAT_SHOP.apply(Text.literal("Copycats")));
 
         items.put(COPYCAT_FENCE.getItem(), 4);
         items.put(COPYCAT_DOOR.getItem(), 4);
