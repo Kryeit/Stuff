@@ -1,5 +1,7 @@
 package com.kryeit.stuff;
 
+import com.kryeit.stuff.config.ConfigReader;
+import com.kryeit.stuff.config.StaticConfig;
 import com.kryeit.votifier.utils.JSONObject;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
@@ -25,10 +27,10 @@ public class Analytics {
         HikariConfig config = new HikariConfig();
         config.setJdbcUrl("jdbc:clickhouse://kryeit.com:8123/kryeit");
         config.setUsername("default");
-        config.setPassword(Config.clickHousePassword);
+        config.setPassword(ConfigReader.CLICKHOUSE_PASSWORD);
         jdbi = Jdbi.create(new HikariDataSource(config));
 
-        if (!Config.dev) {
+        if (StaticConfig.production) {
             playerTrackerTimer.scheduleAtFixedRate(new TimerTask() {
                 @Override
                 public void run() {
@@ -52,7 +54,7 @@ public class Analytics {
 
     public static void storeSessionStart(UUID player, String ipAddress) {
         URI uri = URI.create("https://www.ipqualityscore.com/api/json/ip/%s/%s?strictness=0&allow_public_access_points=true&lighter_penalties=true"
-                .formatted(Config.ipqsKey, ipAddress));
+                .formatted(ConfigReader.IPGS_KEY, ipAddress));
 
         HttpRequest request = HttpRequest.newBuilder(uri).build();
 

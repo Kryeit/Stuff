@@ -1,13 +1,12 @@
 package com.kryeit.stuff.storage;
 
 import com.kryeit.stuff.auth.User;
-import com.kryeit.stuff.auth.UserMapper;
 import com.kryeit.stuff.config.StaticConfig;
-import com.kryeit.votifier.model.Vote;
 import com.mojang.logging.LogUtils;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 import org.jdbi.v3.core.Jdbi;
+import org.jdbi.v3.core.mapper.reflect.ConstructorMapper;
 import org.jdbi.v3.jackson2.Jackson2Plugin;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,7 +26,7 @@ public class Database {
             dataSource = new HikariDataSource(hikariConfig);
             JDBI = Jdbi.create(dataSource);
             JDBI.installPlugin(new Jackson2Plugin());
-            JDBI.registerRowMapper(User.class, new UserMapper());
+            JDBI.registerRowMapper(ConstructorMapper.factory(User.class));
         } catch (Exception e) {
             logger.error("Failed to initialize database connection", e);
             throw new ExceptionInInitializerError(e);

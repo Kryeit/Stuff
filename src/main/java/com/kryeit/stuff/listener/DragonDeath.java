@@ -1,7 +1,5 @@
 package com.kryeit.stuff.listener;
 
-import com.kryeit.stuff.Stuff;
-import com.kryeit.stuff.storage.DragonKillers;
 import net.fabricmc.fabric.api.entity.event.v1.ServerLivingEntityEvents;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;

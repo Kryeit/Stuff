@@ -5,6 +5,7 @@ import com.kryeit.stuff.Stuff;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.stat.Stats;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -18,7 +19,12 @@ public class DragonKillers {
     public DragonKillers() {
         properties = new Properties();
         try {
-            FileInputStream in = new FileInputStream(FILE_NAME);
+            File file = new File(FILE_NAME);
+            if (!file.exists()) {
+                file.getParentFile().mkdirs();
+                file.createNewFile();
+            }
+            FileInputStream in = new FileInputStream(file);
             properties.load(in);
             in.close();
         } catch (IOException e) {

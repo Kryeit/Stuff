@@ -1,11 +1,11 @@
 package com.kryeit.stuff.gui;
 
 import com.kryeit.stuff.Utils;
+import com.kryeit.stuff.ui.GuiTextures;
 import eu.pb4.sgui.api.ClickType;
 import eu.pb4.sgui.api.elements.GuiElementInterface;
 import eu.pb4.sgui.api.gui.SimpleGui;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NbtCompound;
 import net.minecraft.screen.ScreenHandlerType;
 import net.minecraft.screen.slot.SlotActionType;
 import net.minecraft.server.network.ServerPlayerEntity;
@@ -20,8 +20,8 @@ public class ShopGUI extends SimpleGui {
     private static final ItemStack STAFF_HEAD = Utils.getItemStack("minecraft", "player_head");
 
     public ShopGUI(ServerPlayerEntity player) {
-        super(ScreenHandlerType.GENERIC_9X1, player, false);
-        this.setTitle(Text.literal("Shop"));
+        super(ScreenHandlerType.GENERIC_9X6, player, false);
+        this.setTitle(GuiTextures.SHOP.apply(Text.literal("Shop")));
 
         ItemStack copycats = COPYCAT_STEP.setCustomName(Text.literal("Copycat shop").formatted(Formatting.GOLD));
         this.addSlot(copycats);

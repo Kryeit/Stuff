@@ -2,16 +2,11 @@ package com.kryeit.stuff.gui;
 
 import com.kryeit.stuff.MinecraftServerSupplier;
 import com.kryeit.stuff.Utils;
-import com.mojang.authlib.GameProfile;
-import com.mojang.authlib.properties.Property;
 import eu.pb4.sgui.api.ClickType;
 import eu.pb4.sgui.api.elements.GuiElementInterface;
 import eu.pb4.sgui.api.gui.SimpleGui;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NbtCompound;
-import net.minecraft.nbt.NbtList;
-import net.minecraft.nbt.NbtString;
 import net.minecraft.screen.ScreenHandlerType;
 import net.minecraft.screen.slot.SlotActionType;
 import net.minecraft.server.network.ServerPlayerEntity;

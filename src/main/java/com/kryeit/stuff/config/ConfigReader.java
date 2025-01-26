@@ -18,7 +18,8 @@ public class ConfigReader {
     public static String DB_URL;
     public static String DB_USER;
     public static String DB_PASSWORD;
-
+    public static String IPGS_KEY;
+    public static String CLICKHOUSE_PASSWORD;
 
     public static void readFile(Path path) throws IOException {
         String config = readOrCopyFile(path.resolve("config.json"), "/config.json");
@@ -27,6 +28,8 @@ public class ConfigReader {
         DB_URL = configObject.get("db-url").getAsString();
         DB_USER = configObject.get("db-user").getAsString();
         DB_PASSWORD = configObject.get("db-password").getAsString();
+        IPGS_KEY = configObject.get("ipgs-key").getAsString();
+        CLICKHOUSE_PASSWORD = configObject.get("clickhouse-password").getAsString();
     }
 
     public static String readOrCopyFile(Path path, String exampleFile) throws IOException {

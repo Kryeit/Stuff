@@ -70,11 +70,18 @@ dependencies {
     implementation "org.jdbi:jdbi3-jackson2:3.45.1"
     shadow "org.jdbi:jdbi3-jackson2:3.45.1"
 
+    implementation 'org.postgresql:postgresql:42.6.0'
+    shadow 'org.postgresql:postgresql:42.6.0'
+
     implementation 'com.zaxxer:HikariCP:5.1.0'
     shadow 'com.zaxxer:HikariCP:5.1.0'
 
-    // Patbox's server-side GUI API
+    // Patbox stuff https://pb4.eu
     modImplementation include("eu.pb4:sgui:${project.sgui_version}")
+    modImplementation include('eu.pb4:map-canvas-api:0.2.2+1.19.4')
+    modImplementation 'eu.pb4:polymer-core:0.5.9+1.20.1'
+    modImplementation 'eu.pb4:polymer-autohost:0.5.19+1.20.1'
+    modImplementation 'eu.pb4:polymer-resource-pack:0.5.19+1.20.1'
 }
 
 processResources {
@@ -90,27 +97,44 @@ processResources {
     }
 }
 
-shadowJar {
-    configurations = [project.configurations.shadow]
-    exclude("META-INF")
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(17)
+    }
 }
 
-remapJar {
-    // wait until the shadowJar is done
-    dependsOn(shadowJar)
-    mustRunAfter(shadowJar)
-    // Set the input jar for the task. Here use the shadow Jar that include the .class of the transitive dependency
-    inputFile = file(shadowJar.archivePath)
+loom {
+    runs {
+        datagen {
+            server()
+            name = "Data Generation"
+            runDir = "build/datagen"
+            vmArg("-Dfabric-api.datagen")
+            vmArg("-Dfabric-api.datagen.output-dir=${file("src/main/generated")}")
+            property "fabric-api.datagen.modid", "stuff"
+        }
+    }
+}
+
+sourceSets {
+    main {
+        resources {
+            srcDirs += [
+                    "src/main/generated"
+            ]
+        }
+    }
 }
 
 shadowJar {
     configurations = [project.configurations.shadow]
-    mergeServiceFiles()  // Merges service files from dependencies
+    mergeServiceFiles()
     exclude("META-INF")
 }
 
 tasks.build {
-    dependsOn tasks.shadowJar  // Ensure shadowJar is built when running the build task
+    dependsOn tasks.shadowJar
+    dependsOn tasks.runDatagen
 }
 
 jar {

@@ -8,7 +8,7 @@
     "MuriPlz"
   ],
   "contact": {
-    "repo": "https://github.com/Kryeit/Stuff-Refabricated"
+    "repo": "https://github.com/Kryeit/Stuff"
   },
   "license": "MIT",
   "icon": "assets/stuff/icon.jpg",
@@ -16,6 +16,9 @@
   "entrypoints": {
     "server": [
       "com.kryeit.stuff.Stuff"
+    ],
+    "fabric-datagen":[
+      "com.kryeit.stuff.datagen.DataGenInit"
     ]
   },
   "mixins": [
@@ -25,7 +28,6 @@
     "fabricloader": ">=${loader_version}",
     "fabric": "*",
     "minecraft": "1.20.x",
-    "votifier": "*",
-    "griefdefender": "*"
+    "votifier": "*"
   }
 }

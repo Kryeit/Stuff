@@ -1,10 +1,9 @@
 package com.kryeit.stuff.mixin;
 
 import com.kryeit.stuff.Analytics;
-import com.kryeit.stuff.Config;
 import com.kryeit.stuff.MinecraftServerSupplier;
-import com.kryeit.stuff.Stuff;
 import com.kryeit.stuff.auth.UserApi;
+import com.kryeit.stuff.config.StaticConfig;
 import com.mojang.authlib.GameProfile;
 import net.minecraft.network.ClientConnection;
 import net.minecraft.server.MinecraftServer;
@@ -44,13 +43,11 @@ public class ServerLoginNetworkHandlerMixin {
         UUID id = this.profile.getId();
         String name = this.profile.getName();
 
-        if (connection.getAddress() instanceof InetSocketAddress address && !Config.dev) {
+        if (connection.getAddress() instanceof InetSocketAddress address && StaticConfig.production) {
             Analytics.storeSessionStart(id, address.getAddress().getHostAddress());
         }
 
-        ServerPlayerEntity player = server.getPlayerManager().getPlayer(id);
-        if (player == null || player.getStatHandler().getStat(Stats.CUSTOM.getOrCreateStat(Stats.PLAY_TIME)) > 72000)
-            return;
+
 
         // Has NOT joined before
         if (UserApi.getLastSeen(id) == -1L) {
@@ -60,7 +57,12 @@ public class ServerLoginNetworkHandlerMixin {
             );
         }
 
-        UserApi.updateLastSeen(id);
+        ServerPlayerEntity player = server.getPlayerManager().getPlayer(id);
+        if (player == null) return;
+        UserApi.updateLastSeen(player.getUuid());
+
+        if (player.getStatHandler().getStat(Stats.CUSTOM.getOrCreateStat(Stats.PLAY_TIME)) > 72000)
+            return;
 
         player.sendMessage(Text.literal("Kryeit is fairly vanilla, but it has custom systems:").formatted(Formatting.AQUA));
         player.sendMessage(Text.literal(" - Claim system (use /claim and /abandon)").formatted(Formatting.AQUA));

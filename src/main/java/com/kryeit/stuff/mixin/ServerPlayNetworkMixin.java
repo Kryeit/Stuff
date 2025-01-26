@@ -3,7 +3,6 @@ package com.kryeit.stuff.mixin;
 import com.kryeit.stuff.afk.AfkPlayer;
 import com.kryeit.stuff.afk.Config;
 import com.kryeit.stuff.auth.UserApi;
-import io.github.fabricators_of_create.porting_lib.event.client.InteractEvents;
 import me.lucko.fabric.api.permissions.v0.Permissions;
 import net.minecraft.network.packet.c2s.play.ChatMessageC2SPacket;
 import net.minecraft.network.packet.c2s.play.PlayerMoveC2SPacket;
