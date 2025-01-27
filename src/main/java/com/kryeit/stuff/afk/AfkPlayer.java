@@ -8,5 +8,4 @@ public interface AfkPlayer {
     void stuff$enableAfk();
 
     void stuff$disableAfk();
-
 }

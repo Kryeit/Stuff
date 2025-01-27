@@ -1,24 +1,22 @@
 package com.kryeit.stuff.gui;
 
+import com.kryeit.stuff.MinecraftServerSupplier;
 import com.kryeit.stuff.Utils;
-import com.kryeit.stuff.ui.GuiTextures;
 import eu.pb4.sgui.api.ClickType;
 import eu.pb4.sgui.api.elements.GuiElementInterface;
-import eu.pb4.sgui.api.gui.SimpleGui;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
 import net.minecraft.nbt.NbtList;
 import net.minecraft.nbt.NbtString;
-import net.minecraft.screen.ScreenHandlerType;
 import net.minecraft.screen.slot.SlotActionType;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 
 import java.util.LinkedHashMap;
+import java.util.List;
 
-public class CopycatsGUI extends SimpleGui {
+public class CopycatsGUI extends PaginatedGUI {
     LinkedHashMap<Item, Integer> items = new LinkedHashMap<>();
 
     private static final ItemStack COPYCAT_FENCE = Utils.getItemStack("copycats", "copycat_fence");
@@ -35,14 +33,16 @@ public class CopycatsGUI extends SimpleGui {
     private static final ItemStack COPYCAT_SHAFT = Utils.getItemStack("copycats", "copycat_shaft");
     private static final ItemStack COPYCAT_COGWHEEL = Utils.getItemStack("copycats", "copycat_cogwheel");
     private static final ItemStack COPYCAT_LARGE_COGWHEEL = Utils.getItemStack("copycats", "copycat_large_cogwheel");
+    private static final ItemStack COPYCAT_HEADSTOCK = Utils.getItemStack("railway", "copycat_headstock");
+
+
 
     private static final ItemStack IRON_COIN = Utils.getItemStack("createdeco", "iron_coin");
 
     int REQUIRED_COINS = 5;
 
     public CopycatsGUI(ServerPlayerEntity player) {
-        super(ScreenHandlerType.GENERIC_9X6, player, false);
-        this.setTitle(GuiTextures.PAGINATED_SHOP.apply(Text.literal("Copycats")));
+        super(player, "Copycats");
 
         items.put(COPYCAT_FENCE.getItem(), 4);
         items.put(COPYCAT_DOOR.getItem(), 4);
@@ -58,39 +58,20 @@ public class CopycatsGUI extends SimpleGui {
         items.put(COPYCAT_SHAFT.getItem(), 8);
         items.put(COPYCAT_COGWHEEL.getItem(), 6);
         items.put(COPYCAT_LARGE_COGWHEEL.getItem(), 4);
+        items.put(COPYCAT_HEADSTOCK.getItem(), 2);
 
-        for (Item item : items.keySet()) {
-            int amount = items.get(item);
-            ItemStack itemStack = new ItemStack(item, amount);
-
-            itemStack.setCustomName(Text.literal(itemStack.getName().getString()).formatted(Formatting.GOLD));
-
-            NbtList loreList = new NbtList();
-            loreList.add(NbtString.of(Text.Serializer.toJson(Text.literal("Buy " + amount + " for " + REQUIRED_COINS + " Iron coin").formatted(Formatting.LIGHT_PURPLE))));
-
-            itemStack.getOrCreateSubNbt("display").put("Lore", loreList);
-
-            this.addSlot(itemStack);
-        }
-
-        ItemStack back = Items.BARRIER.getDefaultStack();
-        back.setCustomName(Text.literal("Go back").formatted(Formatting.RED));
-        this.setSlot(40, back);
-
+        populate();
         this.open();
     }
 
     @Override
     public boolean onClick(int index, ClickType type, SlotActionType action, GuiElementInterface element) {
+        super.onClick(index, type, action, element);
+
         GuiElementInterface slot = this.getSlot(index);
         if (slot == null) return false;
         ItemStack clickedItem = slot.getItemStack();
         if (clickedItem == null) return false;
-
-        if (index == 40) {
-            new ShopGUI(player);
-            return false;
-        }
 
         if (!items.containsKey(clickedItem.getItem())) {
             return false;
@@ -113,6 +94,30 @@ public class CopycatsGUI extends SimpleGui {
         }
 
         return false;
+    }
+
+    @Override
+    public void populate() {
+        this.clearItems();
+
+        int start = page * 3 * 7;
+        int end = start + 3 * 7;
+
+        int index = 0;
+        for (Item item : items.keySet()) {
+            if (index >= start && index < end) {
+                int row = (index - start) / 7;
+                int col = (index - start) % 7 + 1;
+                int slotIndex = row * 9 + col;
+
+                ItemStack itemStack = new ItemStack(item, items.get(item));
+                NbtList loreList = new NbtList();
+                loreList.add(NbtString.of(Text.Serializer.toJson(Text.literal("Buy one for " + REQUIRED_COINS + " iron coins").formatted(Formatting.LIGHT_PURPLE))));
+                itemStack.getOrCreateSubNbt("display").put("Lore", loreList);
+                this.setSlot(slotIndex, itemStack);
+            }
+            index++;
+        }
     }
 
     private int getPlayerCoinCount() {

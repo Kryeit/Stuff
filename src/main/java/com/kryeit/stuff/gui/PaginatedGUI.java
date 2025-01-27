@@ -1,5 +1,6 @@
 package com.kryeit.stuff.gui;
 
+import com.kryeit.stuff.MinecraftServerSupplier;
 import com.kryeit.stuff.ui.GuiTextures;
 import eu.pb4.sgui.api.ClickType;
 import eu.pb4.sgui.api.elements.GuiElementInterface;
@@ -25,7 +26,6 @@ public abstract class PaginatedGUI extends SimpleGui {
 
         addPreviousPageButton();
         addNextPageButton();
-
 
         ItemStack back = Items.BARRIER.getDefaultStack();
         back.setCustomName(Text.literal("Go back").formatted(Formatting.RED));
@@ -82,12 +82,25 @@ public abstract class PaginatedGUI extends SimpleGui {
     }
 
     public void nextPage() {
+        int maxPages = maxPages();
+        if (page >= maxPages - 1) return;
         page++;
         this.populate();
     }
 
     public void previousPage() {
+        if (page == 0) return;
         page--;
         this.populate();
+    }
+
+    public int maxPages() {
+        return (int) Math.ceil((double) MinecraftServerSupplier.getServer().getCurrentPlayerCount() / (3 * 7));
+    }
+
+    public void clearItems() {
+        for (int i = 0; i < 36; i++) {
+            this.setSlot(i, ItemStack.EMPTY);
+        }
     }
 }

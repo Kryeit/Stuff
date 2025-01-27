@@ -72,9 +72,9 @@ public abstract class ServerPlayerMixin extends Entity implements AfkPlayer {
     }
 
     public void setPosition(double x, double y, double z) {
-        if (Config.PacketOptions.resetOnMovement && (this.getX() != x || this.getY() != y || this.getZ() != z)) {
-            stuff$player.updateLastActionTime();
-        }
+                if (Config.PacketOptions.resetOnMovement && (this.getX() != x || this.getY() != y || this.getZ() != z)) {
+                    stuff$player.updateLastActionTime();
+                }
 
         super.setPosition(x, y, z);
     }

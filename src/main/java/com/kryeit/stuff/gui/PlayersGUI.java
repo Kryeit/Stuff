@@ -12,55 +12,78 @@ import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class PlayersGUI extends PaginatedGUI {
     private static final ItemStack COPPER_COIN = Utils.getItemStack("createdeco", "copper_coin");
     public static final Item PLAYER_HEAD_ITEM = Utils.getItemStack("minecraft", "player_head").getItem();
 
+    List<ItemStack> playerHeads;
     int REQUIRED_COINS = 3;
 
     public PlayersGUI(ServerPlayerEntity player) {
-        super(player, "Player Heads");
+        super(player, "Online Player Heads");
+        playerHeads = getOnlinePlayerHeadItemStacks();
+        populate();
+
         this.open();
+    }
+
+    private List<ItemStack> getOnlinePlayerHeadItemStacks() {
+
+        List<ServerPlayerEntity> onlinePlayers = MinecraftServerSupplier.getServer().getPlayerManager().getPlayerList();
+        List<ItemStack> playerHeads = new ArrayList<>();
+
+        for (ServerPlayerEntity onlinePlayer : onlinePlayers) {
+            ItemStack playerHead = GuiUtils.getPlayerHeadItem(onlinePlayer.getName().getString(),
+                    Text.literal(onlinePlayer.getName().getString() + "'s head").formatted(Formatting.GOLD),
+                    Text.literal("Buy 1 for " + REQUIRED_COINS + " copper coins").formatted(Formatting.LIGHT_PURPLE));
+            playerHeads.add(playerHead);
+        }
+
+        return playerHeads;
     }
 
     @Override
     protected void populate() {
-        for (int i = 0; i < this.getSize(); i++) {
-            this.setSlot(i, ItemStack.EMPTY);
-        }
+        this.clearItems();
+        System.out.println("Populating items for page " + this.page);
 
         int page = this.page;
 
         int start = page * 3 * 7;
         int end = start + 3 * 7;
 
-        List<ServerPlayerEntity> onlinePlayers = MinecraftServerSupplier.getServer().getPlayerManager().getPlayerList();
         for (int i = start; i < end; i++) {
-            if (i >= onlinePlayers.size()) {
+            if (i >= playerHeads.size()) {
                 break;
             }
 
-            ServerPlayerEntity onlinePlayer = onlinePlayers.get(i);
-            ItemStack playerHead = GuiUtils.getPlayerHeadItem(onlinePlayer.getName().getString(),
-                    Text.literal(onlinePlayer.getName().getString() + "'s player head").formatted(Formatting.GOLD),
-                    Text.literal("Buy 1 for " + REQUIRED_COINS + " Copper coin").formatted(Formatting.LIGHT_PURPLE));
+            ItemStack playerHead = playerHeads.get(i);
 
-            int row = (i - start) / 7;
-            int col = (i - start) % 7 + 1;
+            int index = i - start;
+            int row = index / 7;
+            int col = index % 7 + 1;
             int slotIndex = row * 9 + col;
 
+            System.out.println("Setting slot " + slotIndex + " with item " + playerHead.getName().getString());
             this.setSlot(slotIndex, playerHead);
         }
     }
 
     @Override
     public boolean onClick(int index, ClickType type, SlotActionType action, GuiElementInterface element) {
+        super.onClick(index, type, action, element);
+
         GuiElementInterface slot = this.getSlot(index);
-        if (slot == null) return false;
+        if (slot == null) {
+            return false;
+        }
         ItemStack clickedItem = slot.getItemStack();
-        if (clickedItem == null) return false;
+        if (clickedItem == null) {
+            return false;
+        }
 
         if (clickedItem.getItem() != PLAYER_HEAD_ITEM) {
             return false;
@@ -69,10 +92,15 @@ public class PlayersGUI extends PaginatedGUI {
         int itemAmount = 1;
 
         int playerCoins = getPlayerCoinCount();
+
         if (playerCoins >= REQUIRED_COINS) {
             if (hasInventorySpace(clickedItem.getItem(), itemAmount)) {
                 removePlayerCoins(REQUIRED_COINS);
-                player.giveItemStack(clickedItem.copy());
+
+                ItemStack itemToGive = clickedItem.copy();
+                itemToGive.removeCustomName();
+                itemToGive.setNbt(null);
+                player.giveItemStack(itemToGive);
 
                 player.sendMessage(Text.literal("Successfully purchased " + itemAmount + " " + clickedItem.getName().getString()), false);
             } else {
