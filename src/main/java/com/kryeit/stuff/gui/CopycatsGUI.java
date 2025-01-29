@@ -35,8 +35,6 @@ public class CopycatsGUI extends PaginatedGUI {
     private static final ItemStack COPYCAT_LARGE_COGWHEEL = Utils.getItemStack("copycats", "copycat_large_cogwheel");
     private static final ItemStack COPYCAT_HEADSTOCK = Utils.getItemStack("railway", "copycat_headstock");
 
-
-
     private static final ItemStack IRON_COIN = Utils.getItemStack("createdeco", "iron_coin");
 
     int REQUIRED_COINS = 5;
@@ -112,7 +110,7 @@ public class CopycatsGUI extends PaginatedGUI {
 
                 ItemStack itemStack = new ItemStack(item, items.get(item));
                 NbtList loreList = new NbtList();
-                loreList.add(NbtString.of(Text.Serializer.toJson(Text.literal("Buy one for " + REQUIRED_COINS + " iron coins").formatted(Formatting.LIGHT_PURPLE))));
+                loreList.add(NbtString.of(Text.Serializer.toJson(Text.literal("Buy 1 for " + REQUIRED_COINS + " iron coins").formatted(Formatting.LIGHT_PURPLE))));
                 itemStack.getOrCreateSubNbt("display").put("Lore", loreList);
                 this.setSlot(slotIndex, itemStack);
             }

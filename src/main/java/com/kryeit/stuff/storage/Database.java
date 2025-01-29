@@ -25,8 +25,9 @@ public class Database {
         try {
             dataSource = new HikariDataSource(hikariConfig);
             JDBI = Jdbi.create(dataSource);
-            JDBI.installPlugin(new Jackson2Plugin());
             JDBI.registerRowMapper(ConstructorMapper.factory(User.class));
+
+            JDBI.installPlugin(new Jackson2Plugin());
         } catch (Exception e) {
             logger.error("Failed to initialize database connection", e);
             throw new ExceptionInInitializerError(e);

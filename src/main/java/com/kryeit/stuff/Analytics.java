@@ -21,16 +21,16 @@ public class Analytics {
     private static final Timer playerTrackerTimer = new Timer();
     private static final HttpClient httpClient = HttpClient.newHttpClient();
     private static final Map<UUID, Session> sessions = new HashMap<>();
-    private static final Jdbi jdbi;
+    private static Jdbi jdbi = null;
 
     static {
-        HikariConfig config = new HikariConfig();
-        config.setJdbcUrl("jdbc:clickhouse://kryeit.com:8123/kryeit");
-        config.setUsername("default");
-        config.setPassword(ConfigReader.CLICKHOUSE_PASSWORD);
-        jdbi = Jdbi.create(new HikariDataSource(config));
-
         if (StaticConfig.production) {
+            HikariConfig config = new HikariConfig();
+            config.setJdbcUrl("jdbc:clickhouse://kryeit.com:8123/kryeit");
+            config.setUsername("default");
+            config.setPassword(ConfigReader.CLICKHOUSE_PASSWORD);
+            jdbi = Jdbi.create(new HikariDataSource(config));
+
             playerTrackerTimer.scheduleAtFixedRate(new TimerTask() {
                 @Override
                 public void run() {
@@ -53,6 +53,8 @@ public class Analytics {
     }
 
     public static void storeSessionStart(UUID player, String ipAddress) {
+        if (!StaticConfig.production) return;
+
         URI uri = URI.create("https://www.ipqualityscore.com/api/json/ip/%s/%s?strictness=0&allow_public_access_points=true&lighter_penalties=true"
                 .formatted(ConfigReader.IPGS_KEY, ipAddress));
 
@@ -72,6 +74,8 @@ public class Analytics {
     }
 
     public static void storeSessionEnd(UUID uuid) {
+        if (!StaticConfig.production) return;
+
         Session session = sessions.remove(uuid);
 
         if (session == null) return;

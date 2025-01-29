@@ -48,7 +48,6 @@ public class PlayersGUI extends PaginatedGUI {
     @Override
     protected void populate() {
         this.clearItems();
-        System.out.println("Populating items for page " + this.page);
 
         int page = this.page;
 
@@ -67,7 +66,6 @@ public class PlayersGUI extends PaginatedGUI {
             int col = index % 7 + 1;
             int slotIndex = row * 9 + col;
 
-            System.out.println("Setting slot " + slotIndex + " with item " + playerHead.getName().getString());
             this.setSlot(slotIndex, playerHead);
         }
     }
