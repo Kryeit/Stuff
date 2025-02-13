@@ -125,6 +125,7 @@ public class Stuff implements DedicatedServerModInitializer {
         AllConfigs.server().fluids.bottomlessFluidMode.set(FluidManipulationBehaviour.BottomlessFluidMode.DENY_BY_TAG);
 
         AllConfigs.server().trains.trainTurningTopSpeed.set(20.);
+        AllConfigs.server().trains.poweredTrainTopSpeed.set(32.);
         AllConfigs.server().trains.manualTrainSpeedModifier.set(1.);
     }
 }
