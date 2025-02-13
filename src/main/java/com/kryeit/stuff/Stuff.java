@@ -122,5 +122,7 @@ public class Stuff implements DedicatedServerModInitializer {
 
         AllConfigs.server().kinetics.maxDataSize.set(4000000);
         AllConfigs.server().fluids.bottomlessFluidMode.set(FluidManipulationBehaviour.BottomlessFluidMode.DENY_BY_TAG);
+
+        AllConfigs.server().trains.trainTurningTopSpeed.set(20.);
     }
 }
