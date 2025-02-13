@@ -1,7 +1,7 @@
 plugins {
     id 'fabric-loom' version '1.5.+'
     id 'maven-publish'
-    id 'com.github.johnrengelman.shadow' version '7.0.0'
+    id 'com.gradleup.shadow' version '8.3.0+'
 }
 
 version = project.mod_version
@@ -70,8 +70,8 @@ dependencies {
     implementation "org.jdbi:jdbi3-jackson2:3.45.1"
     shadow "org.jdbi:jdbi3-jackson2:3.45.1"
 
-    implementation 'org.postgresql:postgresql:42.6.0'
-    shadow 'org.postgresql:postgresql:42.6.0'
+    implementation 'org.postgresql:postgresql:42.7.2'
+    shadow 'org.postgresql:postgresql:42.7.2'
 
     implementation 'com.zaxxer:HikariCP:5.1.0'
     shadow 'com.zaxxer:HikariCP:5.1.0'
