@@ -14,6 +14,7 @@ import com.kryeit.stuff.storage.MapVisibilityStorage;
 import com.kryeit.stuff.ui.GuiTextures;
 import com.kryeit.stuff.ui.UiResourceCreator;
 import com.kryeit.votifier.model.VotifierEvent;
+import com.mojang.datafixers.TypeRewriteRule;
 import com.mojang.logging.LogUtils;
 import com.simibubi.create.content.fluids.transfer.FluidManipulationBehaviour;
 import com.simibubi.create.infrastructure.config.AllConfigs;
@@ -124,5 +125,6 @@ public class Stuff implements DedicatedServerModInitializer {
         AllConfigs.server().fluids.bottomlessFluidMode.set(FluidManipulationBehaviour.BottomlessFluidMode.DENY_BY_TAG);
 
         AllConfigs.server().trains.trainTurningTopSpeed.set(20.);
+        AllConfigs.server().trains.manualTrainSpeedModifier.set(1.);
     }
 }
