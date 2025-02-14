@@ -50,7 +50,7 @@ public class ServerLoginNetworkHandlerMixin {
 
 
         // Has NOT joined before
-        if (UserApi.getLastSeen(id) == -1L) {
+        if (UserApi.getLastSeen(id) == null) {
             MinecraftServerSupplier.getServer().getPlayerManager().broadcast(
                     Text.literal("Welcome " + name + " to Kryeit!").formatted(Formatting.AQUA),
                     false

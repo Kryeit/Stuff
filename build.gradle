@@ -125,6 +125,11 @@ sourceSets {
         }
     }
 }
+remapJar {
+    dependsOn(shadowJar)
+    mustRunAfter(shadowJar)
+    inputFile = file(shadowJar.archivePath)
+}
 
 shadowJar {
     configurations = [project.configurations.shadow]

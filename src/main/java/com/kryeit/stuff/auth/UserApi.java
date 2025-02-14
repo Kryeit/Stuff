@@ -2,17 +2,18 @@ package com.kryeit.stuff.auth;
 
 import com.kryeit.stuff.storage.Database;
 
+import java.sql.Timestamp;
 import java.util.UUID;
 
 public class UserApi {
 
-    public static long getLastSeen(UUID uuid) {
+    public static Timestamp getLastSeen(UUID uuid) {
         return Database.getJdbi().withHandle(handle ->
-            handle.createQuery("SELECT last_seen FROM users WHERE uuid = :uuid")
-                .bind("uuid", uuid)
-                .mapTo(Long.class)
-                .findOne()
-                .orElse(-1L)
+                handle.createQuery("SELECT last_seen FROM users WHERE uuid = :uuid")
+                        .bind("uuid", uuid)
+                        .mapTo(Timestamp.class)
+                        .findOne()
+                        .orElse(null)
         );
     }
 
