@@ -41,6 +41,6 @@ class AssetProvider implements DataProvider {
 
     @Override
     public String getName() {
-        return "krive:assets";
+        return "stuff:assets";
     }
 }

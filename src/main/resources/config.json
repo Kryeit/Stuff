@@ -1,5 +1,5 @@
 {
-  "db-url": "jdbc:postgres://kryeit.com:5432/servus",
+  "db-url": "jdbc:postgresql://kryeit.com:5432/servus",
   "db-user": "postgres",
   "db-password": "lel",
   "ipgs-key": "kryeit.com",

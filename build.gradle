@@ -125,6 +125,7 @@ sourceSets {
         }
     }
 }
+
 remapJar {
     dependsOn(shadowJar)
     mustRunAfter(shadowJar)
