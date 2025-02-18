@@ -24,4 +24,13 @@ public class UserApi {
                 .execute();
         });
     }
+
+    public static void createUser(UUID id, String name) {
+        Database.getJdbi().useHandle(handle -> {
+            handle.createUpdate("INSERT INTO users (uuid, name, creation, roles, last_seen) VALUES (:uuid, :name, NOW(), '{DEFAULT}', NOW())")
+                .bind("uuid", id)
+                .bind("name", name)
+                .execute();
+        });
+    }
 }
