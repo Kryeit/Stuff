@@ -26,6 +26,15 @@ public class UserApi {
     }
 
     public static void createUser(UUID id, String name) {
+        boolean exists = Database.getJdbi().withHandle(handle ->
+                handle.createQuery("SELECT EXISTS(SELECT 1 FROM users WHERE uuid = :uuid)")
+                        .bind("uuid", id)
+                        .mapTo(Boolean.class)
+                        .one()
+        );
+
+        if (exists) return;
+
         Database.getJdbi().useHandle(handle -> {
             handle.createUpdate("INSERT INTO users (uuid, username, creation, roles, last_seen) VALUES (:uuid, :username, NOW(), '{DEFAULT}', NOW())")
                 .bind("uuid", id)
