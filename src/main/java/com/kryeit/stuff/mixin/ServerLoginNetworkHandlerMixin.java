@@ -47,13 +47,14 @@ public class ServerLoginNetworkHandlerMixin {
             Analytics.storeSessionStart(id, address.getAddress().getHostAddress());
         }
 
-        UserApi.createUser(id, name);
         // Has NOT joined before
         if (UserApi.getLastSeen(id) == null) {
             MinecraftServerSupplier.getServer().getPlayerManager().broadcast(
                     Text.literal("Welcome " + name + " to Kryeit!").formatted(Formatting.AQUA),
                     false
             );
+
+            UserApi.createUser(id, name);
         }
 
         ServerPlayerEntity player = server.getPlayerManager().getPlayer(id);
