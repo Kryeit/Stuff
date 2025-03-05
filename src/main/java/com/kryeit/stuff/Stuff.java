@@ -53,18 +53,6 @@ public class Stuff implements DedicatedServerModInitializer {
         registerEvents();
         registerCommands();
 
-        setupPatbox();
-    }
-
-    private void setupPatbox() {
-        ModItems.register();
-
-        UiResourceCreator.setup();
-        GuiTextures.register();
-
-        // Resource pack
-        PolymerResourcePackUtils.addModAssets(MODID);
-        PolymerResourcePackUtils.markAsRequired();
     }
 
     public void registerEvents() {
@@ -100,7 +88,6 @@ public class Stuff implements DedicatedServerModInitializer {
             NetherCoords.register(dispatcher);
             Login.register(dispatcher);
             Trains.register(dispatcher);
-            Shop.register(dispatcher);
             CanIGetElytra.register(dispatcher);
 
             ChickensAI.register(dispatcher);

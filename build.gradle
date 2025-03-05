@@ -32,10 +32,6 @@ repositories {
         name = 'GriefDefender'
         url = 'https://repo.glaremasters.me/repository/bloodshot'
     }
-    maven {
-        name = 'Patbox'
-        url = 'https://maven.nucleoid.xyz'
-    }
     maven { url = "https://mvn.devos.one/releases/" }
     maven { url = "https://mvn.devos.one/snapshots/" }
     maven { url = "https://raw.githubusercontent.com/Fuzss/modresources/main/maven/" }
@@ -75,13 +71,6 @@ dependencies {
 
     implementation 'com.zaxxer:HikariCP:5.1.0'
     shadow 'com.zaxxer:HikariCP:5.1.0'
-
-    // Patbox stuff https://pb4.eu
-    modImplementation include("eu.pb4:sgui:${project.sgui_version}")
-    modImplementation include('eu.pb4:map-canvas-api:0.2.2+1.19.4')
-    modImplementation 'eu.pb4:polymer-core:0.5.9+1.20.1'
-    modImplementation 'eu.pb4:polymer-autohost:0.5.19+1.20.1'
-    modImplementation 'eu.pb4:polymer-resource-pack:0.5.19+1.20.1'
 }
 
 processResources {
@@ -103,34 +92,9 @@ java {
     }
 }
 
-loom {
-    runs {
-        datagen {
-            server()
-            name = "Data Generation"
-            runDir = "build/datagen"
-            vmArg("-Dfabric-api.datagen")
-            vmArg("-Dfabric-api.datagen.output-dir=${file("src/main/generated")}")
-            property "fabric-api.datagen.modid", "stuff"
-        }
-    }
-}
-
-sourceSets {
-    main {
-        resources {
-            srcDirs += [
-                    "src/main/generated"
-            ]
-        }
-    }
-}
-
 remapJar {
     dependsOn(shadowJar)
-    dependsOn(runDatagen)
     mustRunAfter(shadowJar)
-    mustRunAfter(runDatagen)
     inputFile = file(shadowJar.archivePath)
 }
 
@@ -142,7 +106,6 @@ shadowJar {
 
 tasks.build {
     dependsOn tasks.shadowJar
-    dependsOn tasks.runDatagen
 }
 
 jar {
