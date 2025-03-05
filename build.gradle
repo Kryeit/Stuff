@@ -128,7 +128,9 @@ sourceSets {
 
 remapJar {
     dependsOn(shadowJar)
+    dependsOn(runDatagen)
     mustRunAfter(shadowJar)
+    mustRunAfter(runDatagen)
     inputFile = file(shadowJar.archivePath)
 }
 

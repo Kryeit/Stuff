@@ -95,9 +95,8 @@ public class PlayersGUI extends PaginatedGUI {
             if (hasInventorySpace(clickedItem.getItem(), itemAmount)) {
                 removePlayerCoins(REQUIRED_COINS);
 
-                ItemStack itemToGive = clickedItem.copy();
-                itemToGive.removeCustomName();
-                itemToGive.setNbt(null);
+                String playerName = clickedItem.getNbt().getString("SkullOwner");
+                ItemStack itemToGive = GuiUtils.getPlayerHeadItem(playerName, null, null);
                 player.giveItemStack(itemToGive);
 
                 player.sendMessage(Text.literal("Successfully purchased " + itemAmount + " " + clickedItem.getName().getString()), false);
