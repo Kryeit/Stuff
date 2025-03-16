@@ -20,7 +20,7 @@ public class PlayerVote implements VotifierEvent {
 
     Map<Double, ItemStack> voteRewards = Map.of(
             0.05, Utils.getItemStack("polymerstuff", "kryeit_cog"),
-            0.08, Utils.getItemStack("minecraft", "netherite_nugget"),
+            0.08, Utils.getItemStack("createdeco", "netherite_nugget"),
             0.1, Utils.getItemStack("minecraft", "saddle"),
             0.77, ItemStack.EMPTY
     );
