@@ -2,6 +2,7 @@ package com.kryeit.stuff.mixin;
 
 import com.kryeit.stuff.Analytics;
 import com.kryeit.stuff.MinecraftServerSupplier;
+import com.kryeit.stuff.Utils;
 import com.kryeit.stuff.auth.UserApi;
 import com.kryeit.stuff.config.StaticConfig;
 import com.mojang.authlib.GameProfile;
@@ -38,6 +39,8 @@ public class ServerLoginNetworkHandlerMixin {
     @Final
     MinecraftServer server;
 
+    @Shadow @Nullable private ServerPlayerEntity delayedPlayer;
+
     @Inject(at = @At("RETURN"), method = "acceptPlayer")
     private void init(CallbackInfo ci) {
         UUID id = this.profile.getId();
@@ -54,7 +57,7 @@ public class ServerLoginNetworkHandlerMixin {
                     false
             );
 
-            UserApi.createUser(id, name);
+            UserApi.createUser(id, name, Utils.getStatsJson(delayedPlayer));
         }
 
         ServerPlayerEntity player = server.getPlayerManager().getPlayer(id);

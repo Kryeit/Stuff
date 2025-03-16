@@ -11,10 +11,15 @@ import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.Vec3i;
+import org.jetbrains.annotations.Nullable;
 
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.UUID;
 
 public class Utils {
     public static boolean isServerFull() {
@@ -95,5 +100,23 @@ public class Utils {
 
     public static ItemStack getItemStack(String namespace, String path) {
         return Registries.ITEM.getOrEmpty(Identifier.of(namespace, path)).map(ItemStack::new).orElse(ItemStack.EMPTY);
+    }
+
+    public static String getStatsJson(@Nullable ServerPlayerEntity delayedPlayer) {
+        if (delayedPlayer == null) return "{}";
+
+        try {
+            UUID playerUuid = delayedPlayer.getUuid();
+            Path statsPath = Paths.get("world/stats/" + playerUuid + ".json");
+
+            if (Files.exists(statsPath)) {
+                return Files.readString(statsPath);
+            }
+
+            return "{}";
+        } catch (Exception e) {
+            e.printStackTrace();
+            return "{}";
+        }
     }
 }

@@ -1,5 +1,6 @@
 package com.kryeit.stuff.auth;
 
+import com.google.gson.JsonObject;
 import com.kryeit.stuff.storage.Database;
 
 import java.sql.Timestamp;
@@ -25,14 +26,15 @@ public class UserApi {
         });
     }
 
-    public static void createUser(UUID id, String name) {
+    public static void createUser(UUID id, String name, String stats) {
         Database.getJdbi().useHandle(h -> h.createUpdate("""
-                        INSERT INTO users (uuid, username, roles)
-                        VALUES (:uuid, :username, '{DEFAULT}')
+                        INSERT INTO users (uuid, username, roles, stats)
+                        VALUES (:uuid, :username, '{DEFAULT}', :stats)
                         ON CONFLICT ON CONSTRAINT users_pkey DO NOTHING
                         """)
                 .bind("uuid", id)
                 .bind("username", name)
+                .bind("stats", stats)
                 .execute());
     }
 }
