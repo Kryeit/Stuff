@@ -1,6 +1,6 @@
 package com.kryeit.stuff;
 
-import com.kryeit.stuff.afk.AfkPlayer;
+import com.kryeit.idler.afk.AfkPlayer;
 import me.lucko.fabric.api.permissions.v0.Permissions;
 import net.minecraft.item.ItemStack;
 import net.minecraft.registry.Registries;
@@ -80,7 +80,7 @@ public class Utils {
         List<ServerPlayerEntity> afkPlayers = new ArrayList<>();
         MinecraftServerSupplier.getServer().getPlayerManager().getPlayerList().forEach(player -> {
             AfkPlayer afkPlayer = (AfkPlayer) player;
-            if (afkPlayer != null && afkPlayer.stuff$isAfk() && !Permissions.check(player, "stuff.afk")) {
+            if (afkPlayer != null && afkPlayer.idler$isAfk() && !Permissions.check(player, "stuff.afk")) {
                 afkPlayers.add(player);
             }
         });

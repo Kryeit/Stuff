@@ -1,6 +1,6 @@
 package com.kryeit.stuff.command;
 
-import com.kryeit.stuff.afk.AfkPlayer;
+import com.kryeit.idler.afk.AfkPlayer;
 import com.mojang.brigadier.Command;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.context.CommandContext;
@@ -24,7 +24,7 @@ public class AFK {
         }
 
         AfkPlayer afkPlayer = (AfkPlayer) player;
-        afkPlayer.stuff$enableAfk();
+        afkPlayer.idler$enableAfk();
 
         return Command.SINGLE_SUCCESS;
     }
