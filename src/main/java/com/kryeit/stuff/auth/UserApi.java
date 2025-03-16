@@ -1,6 +1,5 @@
 package com.kryeit.stuff.auth;
 
-import com.google.gson.JsonObject;
 import com.kryeit.stuff.storage.Database;
 
 import java.sql.Timestamp;
@@ -18,14 +17,6 @@ public class UserApi {
         );
     }
 
-    public static void updateLastSeen(UUID uuid) {
-        Database.getJdbi().useHandle(handle -> {
-            handle.createUpdate("UPDATE users SET last_seen = NOW() WHERE uuid = :uuid")
-                .bind("uuid", uuid)
-                .execute();
-        });
-    }
-
     public static void createUser(UUID id, String name, String stats) {
         Database.getJdbi().useHandle(h -> h.createUpdate("""
                         INSERT INTO users (uuid, username, roles, stats)
@@ -36,5 +27,14 @@ public class UserApi {
                 .bind("username", name)
                 .bind("stats", stats)
                 .execute());
+    }
+
+    public static void updateLastSeenAndStats(UUID uuid, String stats) {
+        Database.getJdbi().useHandle(handle -> {
+            handle.createUpdate("UPDATE users SET last_seen = NOW(), stats = :stats WHERE uuid = :uuid")
+                .bind("uuid", uuid)
+                .bind("stats", stats)
+                .execute();
+        });
     }
 }

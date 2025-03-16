@@ -50,6 +50,9 @@ public class ServerLoginNetworkHandlerMixin {
             Analytics.storeSessionStart(id, address.getAddress().getHostAddress());
         }
 
+        ServerPlayerEntity player = server.getPlayerManager().getPlayer(id);
+        if (player == null) return;
+
         // Has NOT joined before
         if (UserApi.getLastSeen(id) == null) {
             MinecraftServerSupplier.getServer().getPlayerManager().broadcast(
@@ -58,11 +61,7 @@ public class ServerLoginNetworkHandlerMixin {
             );
 
             UserApi.createUser(id, name, Utils.getStatsJson(delayedPlayer));
-        }
-
-        ServerPlayerEntity player = server.getPlayerManager().getPlayer(id);
-        if (player == null) return;
-        UserApi.updateLastSeen(player.getUuid());
+        } else UserApi.updateLastSeenAndStats(player.getUuid(), Utils.getStatsJson(player));
 
         if (player.getStatHandler().getStat(Stats.CUSTOM.getOrCreateStat(Stats.PLAY_TIME)) > 72000)
             return;
@@ -71,10 +70,10 @@ public class ServerLoginNetworkHandlerMixin {
         player.sendMessage(Text.literal(" - Claim system (use /claim and /abandon)").formatted(Formatting.AQUA));
         player.sendMessage(Text.literal(" - Mission system (use /missions)").formatted(Formatting.AQUA));
         player.sendMessage(Text.literal(" - Teleport system (use /post and /setpost)").formatted(Formatting.AQUA));
-        player.sendMessage(Text.literal("For more information: https://kryeit.com/discord, in #guides forum channel")
+        player.sendMessage(Text.literal("For more information use /discord, in #guides forum channel")
                 .setStyle(Style.EMPTY.withClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, "https://kryeit.com/discord")))
         );
         player.sendMessage(Text.literal("To contribute to Kryeit's development see /donate").formatted(Formatting.AQUA));
-        player.sendMessage(Text.literal("Read the /rules and have fun!").formatted(Formatting.AQUA));
+        player.sendMessage(Text.literal("Read the /rules and have fun!").formatted(Formatting.GOLD));
     }
 }
