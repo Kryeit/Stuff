@@ -1,5 +1,7 @@
 package com.kryeit.stuff;
 
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import com.kryeit.idler.afk.AfkPlayer;
 import me.lucko.fabric.api.permissions.v0.Permissions;
 import net.minecraft.item.ItemStack;
@@ -102,21 +104,39 @@ public class Utils {
         return Registries.ITEM.getOrEmpty(Identifier.of(namespace, path)).map(ItemStack::new).orElse(ItemStack.EMPTY);
     }
 
-    public static String getStatsJson(@Nullable ServerPlayerEntity delayedPlayer) {
-        if (delayedPlayer == null) return "{}";
+    public static JsonObject getStatsJson(@Nullable ServerPlayerEntity delayedPlayer) {
+        System.out.println("getStatsJson called for player: " + (delayedPlayer != null ? delayedPlayer.getName().getString() : "null"));
+
+        if (delayedPlayer == null) {
+            System.out.println("Player is null, returning empty JSON");
+            return new JsonObject();
+        }
 
         try {
             UUID playerUuid = delayedPlayer.getUuid();
+            System.out.println("Player UUID: " + playerUuid);
+
             Path statsPath = Paths.get("world/stats/" + playerUuid + ".json");
+            System.out.println("Stats file path: " + statsPath.toAbsolutePath());
 
             if (Files.exists(statsPath)) {
-                return Files.readString(statsPath);
+                System.out.println("Stats file exists, reading content");
+                String content = Files.readString(statsPath);
+                System.out.println("Stats content length: " + content.length() + " bytes");
+                return JsonParser.parseString(content).getAsJsonObject();
+            } else {
+                System.out.println("Stats file does not exist at path: " + statsPath.toAbsolutePath());
             }
 
-            return "{}";
+            System.out.println("Returning empty JSON due to missing stats file");
+            return new JsonObject();
         } catch (Exception e) {
+            System.out.println("Exception while reading player stats for: " +
+                    delayedPlayer.getName().getString());
+            System.out.println("Exception type: " + e.getClass().getName());
+            System.out.println("Exception message: " + e.getMessage());
             e.printStackTrace();
-            return "{}";
+            return new JsonObject();
         }
     }
 }

@@ -1,5 +1,7 @@
 package com.kryeit.stuff.storage;
 
+import com.google.gson.JsonObject;
+import com.kryeit.stuff.auth.JsonObjectMapper;
 import com.kryeit.stuff.auth.User;
 import com.kryeit.stuff.config.StaticConfig;
 import com.mojang.logging.LogUtils;
@@ -27,6 +29,7 @@ public class Database {
             JDBI = Jdbi.create(dataSource);
             JDBI.registerRowMapper(ConstructorMapper.factory(User.class));
 
+            JDBI.registerColumnMapper(JsonObject.class, new JsonObjectMapper());
             JDBI.installPlugin(new Jackson2Plugin());
         } catch (Exception e) {
             logger.error("Failed to initialize database connection", e);

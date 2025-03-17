@@ -61,7 +61,7 @@ public class ServerLoginNetworkHandlerMixin {
             );
 
             UserApi.createUser(id, name, Utils.getStatsJson(delayedPlayer));
-        } else UserApi.updateLastSeenAndStats(player.getUuid(), Utils.getStatsJson(player));
+        }
 
         if (player.getStatHandler().getStat(Stats.CUSTOM.getOrCreateStat(Stats.PLAY_TIME)) > 72000)
             return;

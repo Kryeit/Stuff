@@ -6,6 +6,7 @@ import com.kryeit.stuff.config.ConfigReader;
 import com.kryeit.stuff.config.StaticConfig;
 import com.kryeit.stuff.listener.DragonDeath;
 import com.kryeit.stuff.listener.PlayerDeath;
+import com.kryeit.stuff.listener.PlayerLogin;
 import com.kryeit.stuff.listener.PlayerVote;
 import com.kryeit.stuff.storage.Database;
 import com.kryeit.stuff.storage.DragonKillers;
@@ -14,6 +15,7 @@ import com.kryeit.votifier.model.VotifierEvent;
 import com.mojang.logging.LogUtils;
 import com.simibubi.create.content.fluids.transfer.FluidManipulationBehaviour;
 import com.simibubi.create.infrastructure.config.AllConfigs;
+import io.github.fabricators_of_create.porting_lib.entity.events.PlayerEvents;
 import net.fabricmc.api.DedicatedServerModInitializer;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 import net.fabricmc.fabric.api.entity.event.v1.ServerLivingEntityEvents;
@@ -59,6 +61,9 @@ public class Stuff implements DedicatedServerModInitializer {
         ServerLifecycleEvents.SERVER_STARTED.register(server -> {
             createModConfigs();
         });
+
+        PlayerEvents.LOGGED_IN.register(new PlayerLogin());
+        PlayerEvents.LOGGED_OUT.register(new PlayerLogin());
 
         ServerLifecycleEvents.SERVER_STOPPING.register(server -> {
             server.getPlayerManager().getPlayerList().forEach(player -> {

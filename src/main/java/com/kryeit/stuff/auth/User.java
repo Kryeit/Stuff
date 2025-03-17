@@ -7,7 +7,7 @@ import java.sql.Timestamp;
 import java.util.List;
 import java.util.UUID;
 
-public record User(UUID uuid, String username, Timestamp creation, Timestamp lastSeen, List<Role> roles, String stats) {
+public record User(UUID uuid, String username, Timestamp creation, Timestamp lastSeen, List<Role> roles, JsonObject stats) {
 
     public enum Role {
         DEFAULT,
@@ -15,9 +15,5 @@ public record User(UUID uuid, String username, Timestamp creation, Timestamp las
         COLLABORATOR,
         STAFF
         ;
-    }
-
-    public JsonObject getStats() {
-        return JsonParser.parseString(stats).getAsJsonObject();
     }
 }
