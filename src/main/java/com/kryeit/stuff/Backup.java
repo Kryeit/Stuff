@@ -52,24 +52,25 @@ public class Backup {
                 System.out.println("Creating backup for " + fileOrFolder.getPath());
                 File source = new File(fileOrFolder.getPath());
 
-                if (source.isFile()) {
-                    // Create target directory if it doesn't exist
-                    File targetDir = new File(backupPath + fileOrFolder.getPath()).getParentFile();
-                    targetDir.mkdirs();
+                // Ensure parent directory exists
+                File targetParent = new File(backupPath + source.getParent());
+                targetParent.mkdirs();
 
-                    // Copy file
-                    Files.copy(
-                            source.toPath(),
-                            Paths.get(backupPath + fileOrFolder.getPath()),
-                            StandardCopyOption.REPLACE_EXISTING
-                    );
-                } else if (source.isDirectory()) {
-                    // Create target directory
-                    File targetDir = new File(backupPath + fileOrFolder.getPath());
-                    targetDir.mkdirs();
-
-                    // Copy directory contents recursively
-                    copyDirectory(source.toPath(), targetDir.toPath());
+                // Backup file or directory
+                if (source.exists()) {
+                    if (source.isFile()) {
+                        // Explicitly copy file
+                        Files.copy(
+                                source.toPath(),
+                                Paths.get(backupPath + fileOrFolder.getPath()),
+                                StandardCopyOption.REPLACE_EXISTING
+                        );
+                    } else if (source.isDirectory()) {
+                        // Copy directory contents recursively
+                        copyDirectory(source.toPath(), new File(backupPath + fileOrFolder.getPath()).toPath());
+                    }
+                } else {
+                    System.err.println("Source does not exist: " + fileOrFolder.getPath());
                 }
             } catch (IOException e) {
                 System.err.println("Failed to backup " + fileOrFolder.getPath() + ": " + e.getMessage());
