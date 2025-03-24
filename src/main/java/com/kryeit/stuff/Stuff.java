@@ -60,6 +60,7 @@ public class Stuff implements DedicatedServerModInitializer {
 
         ServerLifecycleEvents.SERVER_STARTED.register(server -> {
             createModConfigs();
+            Backup.createBackups();
         });
 
         PlayerEvents.LOGGED_IN.register(new PlayerLogin());
