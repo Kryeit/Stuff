@@ -18,6 +18,16 @@ public class UserApi {
         );
     }
 
+    public static Timestamp getLastSeenByName(String username) {
+        return Database.getJdbi().withHandle(handle ->
+                handle.createQuery("SELECT last_seen FROM users WHERE username = :username")
+                        .bind("username", username)
+                        .mapTo(Timestamp.class)
+                        .findOne()
+                        .orElse(null)
+        );
+    }
+
     public static void createUser(UUID id, String name, JsonObject stats) {
         Database.getJdbi().useHandle(h -> h.createUpdate("""
                         INSERT INTO users (uuid, username, roles, stats)

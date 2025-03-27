@@ -10,7 +10,7 @@ import java.util.List;
 
 public class Backup {
     public enum BackupFiles {
-        CREATE_TRAINS("world/data/create_trains.dat"),
+        CREATE_TRAINS("world/data/"),
         CLAIMS("config/griefdefender/worlds/")
         ;
 
@@ -32,7 +32,6 @@ public class Backup {
     public static void createBackups() {
         String backupPath = "backup/";
 
-        // Delete previous backup folder if it exists
         File backupDir = new File(backupPath);
         if (backupDir.exists()) {
             try {
@@ -40,37 +39,35 @@ public class Backup {
                 System.out.println("Previous backup folder deleted successfully");
             } catch (IOException e) {
                 System.err.println("Failed to delete previous backup folder: " + e.getMessage());
-                return; // Exit if we can't delete the previous backup
+                return;
             }
         }
 
-        // Create fresh backup directory
         backupDir.mkdirs();
 
         for (BackupFiles fileOrFolder : BackupFiles.getValues()) {
             try {
-                System.out.println("Creating backup for " + fileOrFolder.getPath());
-                File source = new File(fileOrFolder.getPath());
+                String sourcePath = fileOrFolder.getPath();
+                String destPath = backupPath + sourcePath;
+                System.out.println("Creating backup for " + sourcePath);
 
-                // Ensure parent directory exists
-                File targetParent = new File(backupPath + source.getParent());
-                targetParent.mkdirs();
+                File source = new File(sourcePath);
 
-                // Backup file or directory
                 if (source.exists()) {
+                    Path destParentPath = Paths.get(destPath).getParent();
+                    if (destParentPath != null) {
+                        Files.createDirectories(destParentPath);
+                    }
+
                     if (source.isFile()) {
-                        // Explicitly copy file
-                        Files.copy(
-                                source.toPath(),
-                                Paths.get(backupPath + fileOrFolder.getPath()),
-                                StandardCopyOption.REPLACE_EXISTING
-                        );
+                        Files.copy(source.toPath(), Paths.get(destPath), StandardCopyOption.REPLACE_EXISTING);
+                        System.out.println("File backed up: " + destPath);
                     } else if (source.isDirectory()) {
-                        // Copy directory contents recursively
-                        copyDirectory(source.toPath(), new File(backupPath + fileOrFolder.getPath()).toPath());
+                        copyDirectory(source.toPath(), Paths.get(destPath));
+                        System.out.println("Directory backed up: " + destPath);
                     }
                 } else {
-                    System.err.println("Source does not exist: " + fileOrFolder.getPath());
+                    System.err.println("Source does not exist: " + sourcePath);
                 }
             } catch (IOException e) {
                 System.err.println("Failed to backup " + fileOrFolder.getPath() + ": " + e.getMessage());
@@ -79,12 +76,20 @@ public class Backup {
     }
 
     private static void copyDirectory(Path source, Path target) throws IOException {
+        if (!Files.exists(target)) {
+            Files.createDirectories(target);
+        }
+
         Files.walk(source)
                 .forEach(sourcePath -> {
                     try {
-                        Path targetPath = target.resolve(source.relativize(sourcePath));
+                        Path relativePath = source.relativize(sourcePath);
+                        Path targetPath = target.resolve(relativePath);
+
                         if (Files.isDirectory(sourcePath)) {
-                            Files.createDirectories(targetPath);
+                            if (!Files.exists(targetPath)) {
+                                Files.createDirectories(targetPath);
+                            }
                         } else {
                             Files.copy(sourcePath, targetPath, StandardCopyOption.REPLACE_EXISTING);
                         }
@@ -96,7 +101,7 @@ public class Backup {
 
     private static void deleteDirectory(Path directory) throws IOException {
         Files.walk(directory)
-                .sorted((a, b) -> -a.compareTo(b)) // Reverse order to delete files before directories
+                .sorted((a, b) -> -a.compareTo(b))
                 .forEach(path -> {
                     try {
                         Files.delete(path);

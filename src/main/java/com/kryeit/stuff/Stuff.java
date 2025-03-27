@@ -90,6 +90,7 @@ public class Stuff implements DedicatedServerModInitializer {
             Login.register(dispatcher);
             Trains.register(dispatcher);
             CanIGetElytra.register(dispatcher);
+            LastSeen.register(dispatcher);
 
             ChickensAI.register(dispatcher);
         });
