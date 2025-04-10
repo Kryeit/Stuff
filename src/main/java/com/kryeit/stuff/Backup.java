@@ -7,11 +7,12 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 public class Backup {
     public enum BackupFiles {
-        CREATE_TRAINS("world/data/"),
-        CLAIMS("config/griefdefender/worlds/")
+        CREATE_TRAINS("world/data/create_tracks.dat"),
         ;
 
         private final String path;
@@ -30,6 +31,15 @@ public class Backup {
     }
 
     public static void createBackups() {
+        // Create a new thread for backup operations
+        ExecutorService executor = Executors.newSingleThreadExecutor();
+        executor.submit(() -> {
+            performBackup();
+        });
+        executor.shutdown();
+    }
+
+    private static void performBackup() {
         String backupPath = "backup/";
 
         File backupDir = new File(backupPath);
@@ -60,6 +70,7 @@ public class Backup {
                     }
 
                     if (source.isFile()) {
+                        // File handling works correctly for create_tracks.dat
                         Files.copy(source.toPath(), Paths.get(destPath), StandardCopyOption.REPLACE_EXISTING);
                         System.out.println("File backed up: " + destPath);
                     } else if (source.isDirectory()) {

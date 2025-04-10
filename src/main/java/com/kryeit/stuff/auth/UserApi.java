@@ -30,10 +30,10 @@ public class UserApi {
 
     public static void createUser(UUID id, String name, JsonObject stats) {
         Database.getJdbi().useHandle(h -> h.createUpdate("""
-                        INSERT INTO users (uuid, username, roles, stats)
-                        VALUES (:uuid, :username, '{DEFAULT}', :stats)
-                        ON CONFLICT ON CONSTRAINT users_pkey DO NOTHING
-                        """)
+                    INSERT INTO users (uuid, username, roles, stats)
+                    VALUES (:uuid, :username, '{DEFAULT}', CAST(:stats AS jsonb))
+                    ON CONFLICT ON CONSTRAINT users_pkey DO NOTHING
+                    """)
                 .bind("uuid", id)
                 .bind("username", name)
                 .bind("stats", stats.toString())
