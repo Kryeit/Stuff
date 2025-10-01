@@ -1,6 +1,7 @@
 package com.kryeit.stuff.command;
 
-import com.kryeit.stuff.auth.UserApi;
+import com.kryeit.stuff.GerenteClient;
+import com.kryeit.stuff.Stuff;
 import com.kryeit.stuff.command.completion.PlayerAutocompletion;
 import com.mojang.brigadier.Command;
 import com.mojang.brigadier.CommandDispatcher;
@@ -16,6 +17,7 @@ import java.util.function.Supplier;
 
 public class LastSeen {
 
+    // TODO last seen
     public static int execute(CommandContext<ServerCommandSource> context, String name) {
         ServerCommandSource source = context.getSource();
         ServerPlayerEntity player = source.getPlayer();
@@ -26,37 +28,52 @@ public class LastSeen {
             return 0;
         }
 
-        Timestamp timestamp = UserApi.getLastSeenByName(name);
+        Stuff.runActionAsync(() -> {
+            if (source.getServer().getPlayerManager().getPlayer(name) != null) {
+                return new GerenteClient.LastSeenResponse(true, 0);
+            }
 
-        if (timestamp == null) {
-            Supplier<Text> message = () -> Text.of("Player not found");
-            source.sendFeedback(message, false);
-            return 0;
-        }
+            return Stuff.GERENTE.searchPlayers(name, true)
+                    .stream()
+                    .map(GerenteClient.PlayerSearchResult::uuid)
+                    .findAny()
+                    .map(Stuff.GERENTE::getLastSeen)
+                    .orElse(new GerenteClient.LastSeenResponse(false, 0));
 
-        long time = timestamp.getTime();
-        long currentTime = System.currentTimeMillis();
-        long difference = currentTime - time;
+        }, lastSeenResponse -> {
+            if (lastSeenResponse.connected()) {
+                source.sendFeedback(() -> Text.literal(name + " is currently online"), false);
+                return;
+            }
 
-        long days = difference / 86400000;
-        long hours = (difference % 86400000) / 3600000;
-        long minutes = ((difference % 86400000) % 3600000) / 60000;
+            if (lastSeenResponse.lastSeen() == 0) {
+                source.sendFeedback(() -> Text.literal(name + " not found"), false);
+                return;
+            }
 
-        String message = name + " was last seen ";
+            long currentTime = System.currentTimeMillis();
+            long difference = currentTime - lastSeenResponse.lastSeen();
 
-        if (days > 0) message += days + "d ";
-        if (hours > 0) message += hours + "h ";
-        if (minutes > 0) message += minutes + "m ";
-        if (days == 0 && hours == 0 && minutes == 0) message += "1m ";
+            long days = difference / 86400000;
+            long hours = (difference % 86400000) / 3600000;
+            long minutes = ((difference % 86400000) % 3600000) / 60000;
 
-        java.text.SimpleDateFormat sdf = new java.text.SimpleDateFormat("dd/MM/yyyy 'at' HH:mm:ss");
-        String formattedDate = sdf.format(timestamp);
+            String message = name + " was last seen ";
 
-        message += "ago, on the " + formattedDate;
+            if (days > 0) message += days + "d ";
+            if (hours > 0) message += hours + "h ";
+            if (minutes > 0) message += minutes + "m ";
+            if (days == 0 && hours == 0 && minutes == 0) message += "1m ";
 
-        String finalMessage = message;
-        Supplier<Text> feedback = () -> Text.of(finalMessage);
-        source.sendFeedback(feedback, false);
+            java.text.SimpleDateFormat sdf = new java.text.SimpleDateFormat("dd/MM/yyyy 'at' HH:mm:ss");
+            String formattedDate = sdf.format(new Timestamp(lastSeenResponse.lastSeen()));
+
+            message += "ago, on the " + formattedDate + " UTC";
+
+            String finalMessage = message;
+            Supplier<Text> feedback = () -> Text.of(finalMessage);
+            source.sendFeedback(feedback, false);
+        });
 
         return Command.SINGLE_SUCCESS;
     }

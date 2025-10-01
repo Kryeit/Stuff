@@ -1,25 +1,34 @@
 package com.kryeit.stuff.listener;
 
+import com.kryeit.idler.afk.AfkPlayer;
+import com.kryeit.stuff.GerenteClient;
+import com.kryeit.stuff.Stuff;
 import net.minecraft.network.packet.s2c.play.PlayerListHeaderS2CPacket;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.text.MutableText;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 
+import java.util.List;
+
 public class JoinDisconnectHandler {
     public static void onJoin(MinecraftServer server) {
         int current = server.getCurrentPlayerCount();
         int max = server.getMaxPlayerCount();
 
-        PlayerListHeaderS2CPacket packet = getPacket(current, max);
-        server.getPlayerManager().sendToAll(packet);
+        server.getPlayerManager().sendToAll(getPacket(current, max));
+        updateServerStatus(server);
     }
 
     public static void onDisconnect(MinecraftServer server) {
-        int current = server.getCurrentPlayerCount();
-        int max = server.getMaxPlayerCount();
+        onJoin(server);
+    }
 
-        server.getPlayerManager().sendToAll(getPacket(current, max));
+    private static void updateServerStatus(MinecraftServer server) {
+        List<GerenteClient.StatusPlayer> players = server.getPlayerManager().getPlayerList().stream()
+                .map(p -> new GerenteClient.StatusPlayer(((AfkPlayer) p).idler$isAfk(), p.getUuid(), p.getEntityName()))
+                .toList();
+        Stuff.runActionAsync(() -> Stuff.GERENTE.updateServerStatus(true, "Online", players));
     }
 
     private static PlayerListHeaderS2CPacket getPacket(int current, int max) {

@@ -1,6 +1,7 @@
 package com.kryeit.stuff.mixin;
 
-import me.lucko.fabric.api.permissions.v0.Permissions;
+import com.kryeit.stuff.GerenteClient;
+import com.kryeit.stuff.Stuff;
 import net.minecraft.network.packet.c2s.play.ChatMessageC2SPacket;
 import net.minecraft.server.network.ServerPlayNetworkHandler;
 import net.minecraft.server.network.ServerPlayerEntity;
@@ -17,6 +18,10 @@ public abstract class ServerPlayNetworkMixin {
 
     @Inject(method = "onChatMessage", at = @At("HEAD"), cancellable = true)
     private void onChatMessage(ChatMessageC2SPacket packet, CallbackInfo ci) {
-        if (Permissions.check(player, "stuff.muted")) ci.cancel();
+        boolean muted = Stuff.GERENTE.getCachedJoinInfo(player.getUuid())
+                .map(GerenteClient.PlayerJoinInfo::muted)
+                .orElse(false);
+
+        if (muted) ci.cancel();
     }
 }

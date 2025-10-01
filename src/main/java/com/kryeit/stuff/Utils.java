@@ -3,7 +3,9 @@ package com.kryeit.stuff;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.kryeit.idler.afk.AfkPlayer;
-import me.lucko.fabric.api.permissions.v0.Permissions;
+import me.lucko.spark.api.Spark;
+import me.lucko.spark.api.SparkProvider;
+import me.lucko.spark.api.statistic.StatisticWindow;
 import net.minecraft.item.ItemStack;
 import net.minecraft.registry.Registries;
 import net.minecraft.server.network.ServerPlayerEntity;
@@ -24,55 +26,38 @@ import java.util.List;
 import java.util.UUID;
 
 public class Utils {
-    public static boolean isServerFull() {
-        return MinecraftServerSupplier.getServer().getCurrentPlayerCount() >= MinecraftServerSupplier.getServer().getMaxPlayerCount();
-    }
-
-    // Run a command as the server, arguments is a String, the command
-    public static void runCommand(String arguments) {
-        MinecraftServerSupplier.getServer().getCommandManager().executeWithPrefix(MinecraftServerSupplier.getServer().getCommandSource(), arguments);
-    }
-
     public static MutableText prefix(ServerPlayerEntity player) {
-        MutableText cog = Text.literal("⛭").setStyle(Style.EMPTY.withBold(true)).formatted(Formatting.GOLD);
-        MutableText camera = Text.literal("📷").formatted(Formatting.GREEN);
-        MutableText anchor = Text.literal("⚓").formatted(Formatting.RED);
-        MutableText diamond = Text.literal("♢").formatted(Formatting.LIGHT_PURPLE);
-        MutableText pig1 = Text.literal("\uD83D\uDC3D").formatted(Formatting.LIGHT_PURPLE);
-        MutableText pig2 = Text.literal("\uD83D\uDC3D").formatted(Formatting.GRAY);
-        MutableText pig3 = Text.literal("\uD83D\uDC3D").styled(s -> s.withColor(0xa95b0e));
+        MutableText cog = Text.literal("⛭").setStyle(Style.EMPTY.withBold(true)).formatted(Formatting.GOLD); // "group.kryeitor"
+        MutableText camera = Text.literal("📷").formatted(Formatting.GREEN); // group.photographer
+        MutableText anchor = Text.literal("⚓").formatted(Formatting.RED); // group.postbuilder
+        MutableText diamond = Text.literal("♢").formatted(Formatting.LIGHT_PURPLE); // group.booster
+        MutableText pig1 = Text.literal("\uD83D\uDC3D").formatted(Formatting.LIGHT_PURPLE); // group.potato-war.winner
+        MutableText pig2 = Text.literal("\uD83D\uDC3D").formatted(Formatting.GRAY); // group.potato-war.2nd
+        MutableText pig3 = Text.literal("\uD83D\uDC3D").styled(s -> s.withColor(0xa95b0e)); // group.potato-war.3rd
 
-        MutableText text = Text.literal("");
-
-        if (Permissions.check(player, "group.kryeitor", false)) {
-            text.append(cog);
-        }
-
-        if (Permissions.check(player, "group.photographer", false)) {
-            text.append(camera);
-        }
-
-        if (Permissions.check(player, "group.booster", false)) {
-            text.append(diamond);
-        }
-
-        if (Permissions.check(player, "group.postbuilder", false)) {
-            text.append(anchor);
-        }
-
-        if (Permissions.check(player, "group.potato-war.winner", false)) text.append(pig1);
-        if (Permissions.check(player, "group.potato-war.2nd", false)) text.append(pig2);
-        if (Permissions.check(player, "group.potato-war.3rd", false)) text.append(pig3);
-
-        return text.append(" ");
+        return Stuff.GERENTE.getCachedJoinInfo(player.getUuid())
+                .map(info -> {
+                    MutableText text = Text.literal("");
+                    for (GerenteClient.Role role : info.roles()) {
+                        text.append(Text.literal(role.prefix()));
+                    }
+                    return text.append(" ");
+                })
+                .orElse(Text.empty());
     }
 
     public static String getMapLink(ServerPlayerEntity player) {
-        // example link https://map.kryeit.com/#overworld:-3664:0:8222:58252:-0.39:0:0:0:perspective
-        int x = (int) player.getPos().getX();
-        int z = (int) player.getPos().getZ();
+        return getMapLink(player.getBlockPos());
+    }
 
-        return "https://map.kryeit.com/#overworld:" + x + ":0:" + z + ":0:0:0:0:0:perspective";
+    public static float getTPS() {
+        try {
+            Spark spark = SparkProvider.get();
+            return (float) spark.tps().poll(StatisticWindow.TicksPerSecond.MINUTES_1);
+        } catch (IllegalStateException ignored) {
+            return 0;
+        }
+
     }
 
     public static String getMapLink(Vec3i position) {
@@ -87,7 +72,7 @@ public class Utils {
         List<ServerPlayerEntity> afkPlayers = new ArrayList<>();
         MinecraftServerSupplier.getServer().getPlayerManager().getPlayerList().forEach(player -> {
             AfkPlayer afkPlayer = (AfkPlayer) player;
-            if (afkPlayer != null && afkPlayer.idler$isAfk() && !Permissions.check(player, "stuff.afk")) {
+            if (afkPlayer != null && afkPlayer.idler$isAfk() && !Stuff.checkPermission(player.getUuid(), "stuff.afk")) {
                 afkPlayers.add(player);
             }
         });
@@ -104,16 +89,16 @@ public class Utils {
         return Registries.ITEM.getOrEmpty(Identifier.of(namespace, path)).map(ItemStack::new).orElse(ItemStack.EMPTY);
     }
 
-    public static JsonObject getStatsJson(@Nullable ServerPlayerEntity delayedPlayer) {
-        System.out.println("getStatsJson called for player: " + (delayedPlayer != null ? delayedPlayer.getName().getString() : "null"));
+    public static JsonObject getStatsJson(@Nullable ServerPlayerEntity player) {
+        System.out.println("getStatsJson called for player: " + (player != null ? player.getName().getString() : "null"));
 
-        if (delayedPlayer == null) {
+        if (player == null) {
             System.out.println("Player is null, returning empty JSON");
             return new JsonObject();
         }
 
         try {
-            UUID playerUuid = delayedPlayer.getUuid();
+            UUID playerUuid = player.getUuid();
             System.out.println("Player UUID: " + playerUuid);
 
             Path statsPath = Paths.get("world/stats/" + playerUuid + ".json");
@@ -123,7 +108,7 @@ public class Utils {
                 System.out.println("Stats file exists, reading content");
                 String content = Files.readString(statsPath);
                 System.out.println("Stats content length: " + content.length() + " bytes");
-                return JsonParser.parseString(content).getAsJsonObject();
+                return JsonParser.parseString(content).getAsJsonObject().getAsJsonObject("stats");
             } else {
                 System.out.println("Stats file does not exist at path: " + statsPath.toAbsolutePath());
             }
@@ -131,8 +116,7 @@ public class Utils {
             System.out.println("Returning empty JSON due to missing stats file");
             return new JsonObject();
         } catch (Exception e) {
-            System.out.println("Exception while reading player stats for: " +
-                    delayedPlayer.getName().getString());
+            System.out.println("Exception while reading player stats for: " + player.getName().getString());
             System.out.println("Exception type: " + e.getClass().getName());
             System.out.println("Exception message: " + e.getMessage());
             e.printStackTrace();

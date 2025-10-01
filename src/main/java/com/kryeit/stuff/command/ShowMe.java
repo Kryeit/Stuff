@@ -10,7 +10,7 @@ import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.Text;
 
-import java.io.IOException;
+import java.util.Map;
 import java.util.function.Supplier;
 
 public class ShowMe {
@@ -24,14 +24,13 @@ public class ShowMe {
             return 0;
         }
 
-        BluemapImpl.changePlayerVisibility(player.getUuid(), true);
-        try {
-            Stuff.hiddenPlayers.deletePlayer(player.getUuid());
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        player.sendMessage(Text.literal("Now you are shown in the BlueMap"));
+        Stuff.runActionAsync(() -> {
+                    Stuff.GERENTE.updatePreferences(player.getUuid(), Map.of("show_on_map", true));
+                    BluemapImpl.changePlayerVisibility(player.getUuid(), true);
+                    return null;
+                },
+                v -> player.sendMessage(Text.literal("Now you are shown in the BlueMap"))
+        );
         return Command.SINGLE_SUCCESS;
     }
 

@@ -1,6 +1,5 @@
 package com.kryeit.stuff;
 
-import com.kryeit.stuff.config.ConfigReader;
 import com.kryeit.stuff.config.StaticConfig;
 import com.kryeit.votifier.utils.JSONObject;
 import com.zaxxer.hikari.HikariConfig;
@@ -24,11 +23,11 @@ public class Analytics {
     private static Jdbi jdbi = null;
 
     static {
-        if (StaticConfig.production) {
+        if (StaticConfig.enableAnalytics) {
             HikariConfig config = new HikariConfig();
             config.setJdbcUrl("jdbc:clickhouse://kryeit.com:8123/kryeit");
             config.setUsername("default");
-            config.setPassword(ConfigReader.CLICKHOUSE_PASSWORD);
+            config.setPassword(System.getenv("CLICKHOUSE_PASSWORD"));
             jdbi = Jdbi.create(new HikariDataSource(config));
 
             playerTrackerTimer.scheduleAtFixedRate(new TimerTask() {
@@ -53,10 +52,10 @@ public class Analytics {
     }
 
     public static void storeSessionStart(UUID player, String ipAddress) {
-        if (!StaticConfig.production) return;
+        if (!StaticConfig.enableAnalytics) return;
 
         URI uri = URI.create("https://www.ipqualityscore.com/api/json/ip/%s/%s?strictness=0&allow_public_access_points=true&lighter_penalties=true"
-                .formatted(ConfigReader.IPGS_KEY, ipAddress));
+                .formatted(System.getenv("IPQS_KEY"), ipAddress));
 
         HttpRequest request = HttpRequest.newBuilder(uri).build();
 
@@ -74,7 +73,7 @@ public class Analytics {
     }
 
     public static void storeSessionEnd(UUID uuid) {
-        if (!StaticConfig.production) return;
+        if (!StaticConfig.enableAnalytics) return;
 
         Session session = sessions.remove(uuid);
 

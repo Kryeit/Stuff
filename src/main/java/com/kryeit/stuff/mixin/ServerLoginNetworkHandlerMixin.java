@@ -1,12 +1,18 @@
 package com.kryeit.stuff.mixin;
 
 import com.kryeit.stuff.Analytics;
+import com.kryeit.stuff.GerenteClient;
 import com.kryeit.stuff.MinecraftServerSupplier;
-import com.kryeit.stuff.Utils;
-import com.kryeit.stuff.auth.UserApi;
+import com.kryeit.stuff.Stuff;
+import com.kryeit.stuff.compat.BluemapImpl;
 import com.kryeit.stuff.config.StaticConfig;
 import com.mojang.authlib.GameProfile;
+import net.luckperms.api.LuckPerms;
+import net.luckperms.api.LuckPermsProvider;
+import net.luckperms.api.model.group.Group;
+import net.luckperms.api.node.Node;
 import net.minecraft.network.ClientConnection;
+import net.minecraft.network.packet.s2c.play.PlayerListS2CPacket;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.network.ServerLoginNetworkHandler;
 import net.minecraft.server.network.ServerPlayerEntity;
@@ -24,7 +30,9 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import java.net.InetSocketAddress;
+import java.util.Set;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Mixin(ServerLoginNetworkHandler.class)
 public class ServerLoginNetworkHandlerMixin {
@@ -39,29 +47,51 @@ public class ServerLoginNetworkHandlerMixin {
     @Final
     MinecraftServer server;
 
-    @Shadow @Nullable private ServerPlayerEntity delayedPlayer;
-
     @Inject(at = @At("RETURN"), method = "acceptPlayer")
     private void init(CallbackInfo ci) {
         UUID id = this.profile.getId();
         String name = this.profile.getName();
 
-        if (connection.getAddress() instanceof InetSocketAddress address && StaticConfig.production) {
+        GerenteClient.PlayerJoinInfo joinInfo = Stuff.GERENTE.handlePlayerJoin(id, name);
+
+        if (connection.getAddress() instanceof InetSocketAddress address && StaticConfig.enableAnalytics) {
             Analytics.storeSessionStart(id, address.getAddress().getHostAddress());
         }
 
         ServerPlayerEntity player = server.getPlayerManager().getPlayer(id);
         if (player == null) return;
+        server.getPlayerManager().sendToAll(new PlayerListS2CPacket(PlayerListS2CPacket.Action.UPDATE_DISPLAY_NAME, player));
 
-        // Has NOT joined before
-        if (UserApi.getLastSeen(id) == null) {
+        LuckPerms luckPerms = LuckPermsProvider.get();
+        luckPerms.getUserManager().modifyUser(id, user -> {
+            Set<String> roleIds = joinInfo.roles().stream()
+                    .map(GerenteClient.Role::id)
+                    .collect(Collectors.toSet());
+
+            for (String role : roleIds) {
+                luckPerms.getGroupManager().createAndLoadGroup(role)
+                        .thenAccept(g -> user.data().add(Node.builder(role).build()));
+            }
+
+            for (Group group : user.getInheritedGroups(user.getQueryOptions())) {
+                if (!roleIds.contains(group.getName())) {
+                    user.data().remove(Node.builder(group.getName()).build());
+                }
+            }
+        });
+
+        if (joinInfo.firstJoin()) {
             MinecraftServerSupplier.getServer().getPlayerManager().broadcast(
                     Text.literal("Welcome " + name + " to Kryeit!").formatted(Formatting.AQUA),
                     false
             );
-
-            UserApi.createUser(id, name, Utils.getStatsJson(delayedPlayer));
         }
+
+        if (joinInfo.banReason() != null) {
+            connection.disconnect(Text.literal("You're banned. Reason: " + joinInfo.banReason()));
+        }
+
+        BluemapImpl.changePlayerVisibility(id, joinInfo.preferences().get("show_on_map").getAsBoolean());
 
         if (player.getStatHandler().getStat(Stats.CUSTOM.getOrCreateStat(Stats.PLAY_TIME)) > 72000)
             return;

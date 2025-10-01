@@ -42,6 +42,11 @@ repositories {
     maven { url = "https://maven.cafeteria.dev/releases" }
     maven { url = "https://maven.jamieswhiteshirt.com/libs-release" }
     mavenCentral()
+
+    maven {
+        name 'luck-repo'
+        url 'https://repo.lucko.me/'
+    }
 }
 
 dependencies {
@@ -54,15 +59,13 @@ dependencies {
     modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
     modImplementation("com.simibubi.create:create-fabric-${minecraft_version}:${create_fabric_version}")
 
-    include(modImplementation("me.lucko:fabric-permissions-api:${luckperms_version}"))
+    compileOnly "net.luckperms:api:${luckperms_version}"
     modApi include("maven.modrinth:votifier-for-fabric:oLTPPYWG")
     modApi include("maven.modrinth:idler:ag1hkaWl")
 
+    compileOnly 'me.lucko:spark-api:0.1-SNAPSHOT'
     compileOnly ("com.github.BlueMap-Minecraft:BlueMapAPI:v2.6.2")
     compileOnly "com.griefdefender:api:${griefdefender_version}"
-
-    implementation 'com.clickhouse:clickhouse-jdbc:0.6.4:all'
-    shadow 'com.clickhouse:clickhouse-jdbc:0.6.4:all'
 
     implementation 'org.jdbi:jdbi3-core:3.45.1'
     shadow 'org.jdbi:jdbi3-core:3.45.1'

@@ -1,11 +1,11 @@
 package com.kryeit.stuff.listener;
 
+import com.kryeit.stuff.Stuff;
 import com.kryeit.stuff.Utils;
 import com.kryeit.stuff.compat.GriefDefenderImpl;
 import com.kryeit.votifier.MinecraftServerSupplier;
 import com.kryeit.votifier.model.Vote;
 import com.kryeit.votifier.model.VotifierEvent;
-import me.lucko.fabric.api.permissions.v0.Permissions;
 import net.minecraft.item.ItemStack;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.Text;
@@ -15,7 +15,6 @@ import java.util.Map;
 import java.util.Random;
 
 public class PlayerVote implements VotifierEvent {
-
     private final Random random = new Random();
 
     Map<Double, ItemStack> voteRewards = Map.of(
@@ -31,7 +30,8 @@ public class PlayerVote implements VotifierEvent {
         for (ServerPlayerEntity player : MinecraftServerSupplier.getServer().getPlayerManager().getPlayerList()) {
             if (!player.getName().getString().equals(name)) {
                 int cb = 40;
-                if (Permissions.check(player, "group.collaborator", false)) {
+
+                if (Stuff.checkPermission(player.getUuid(), "group.staff")) {
                     cb = 50;
                 }
                 player.sendMessage(

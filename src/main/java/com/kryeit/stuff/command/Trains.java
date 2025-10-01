@@ -1,6 +1,7 @@
 package com.kryeit.stuff.command;
 
 import com.kryeit.stuff.MinecraftServerSupplier;
+import com.kryeit.stuff.Stuff;
 import com.kryeit.stuff.Utils;
 import com.kryeit.stuff.command.completion.PlayerAutocompletion;
 import com.mojang.authlib.GameProfile;
@@ -11,7 +12,6 @@ import com.mojang.brigadier.context.CommandContext;
 import com.simibubi.create.Create;
 import com.simibubi.create.content.trains.entity.Carriage;
 import com.simibubi.create.content.trains.entity.Train;
-import me.lucko.fabric.api.permissions.v0.Permissions;
 import net.minecraft.server.command.CommandManager;
 import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.text.ClickEvent;
@@ -65,7 +65,7 @@ public class Trains {
             Vec3i trainPosition = getTrainPosition(train);
             ClickEvent clickEvent;
 
-            if (Permissions.check(source.getPlayer(), "group.staff")) {
+            if (isStaff(source)) {
                 clickEvent = new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/tp " + source.getPlayer().getName().getString() + " " + trainPosition.getX() + " " + trainPosition.getY() + " " + trainPosition.getZ());
             } else {
                 clickEvent = new ClickEvent(ClickEvent.Action.OPEN_URL, Utils.getMapLink(trainPosition));
@@ -81,7 +81,7 @@ public class Trains {
                             .copy()
                             .setStyle(Style.EMPTY.withColor(Formatting.GOLD)))
                     .setStyle(Style.EMPTY.withClickEvent(clickEvent)
-            ));
+                    ));
 
         }
 
@@ -96,11 +96,15 @@ public class Trains {
         dispatcher.register(CommandManager.literal("trains")
                 .executes(context -> execute(context, context.getSource().getPlayer().getName().getString()))
                 .then(CommandManager.argument("name", StringArgumentType.word())
-                        .requires(Permissions.require("group.staff"))
+                        .requires(Trains::isStaff)
                         .suggests(PlayerAutocompletion.suggestOnlinePlayers())
                         .executes(context -> execute(context, StringArgumentType.getString(context, "name")))
                 )
         );
+    }
+
+    private static boolean isStaff(ServerCommandSource source) {
+        return Stuff.checkPermission(source.getPlayer().getUuid(), "group.staff");
     }
 
     public static Vec3i getTrainPosition(Train train) {

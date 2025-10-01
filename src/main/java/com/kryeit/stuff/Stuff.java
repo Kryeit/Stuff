@@ -1,59 +1,58 @@
 package com.kryeit.stuff;
 
 import com.kryeit.stuff.command.*;
-import com.kryeit.stuff.compat.BluemapImpl;
-import com.kryeit.stuff.config.ConfigReader;
 import com.kryeit.stuff.config.StaticConfig;
 import com.kryeit.stuff.listener.DragonDeath;
 import com.kryeit.stuff.listener.PlayerDeath;
-import com.kryeit.stuff.listener.PlayerLogin;
 import com.kryeit.stuff.listener.PlayerVote;
-import com.kryeit.stuff.storage.Database;
 import com.kryeit.stuff.storage.DragonKillers;
-import com.kryeit.stuff.storage.MapVisibilityStorage;
 import com.kryeit.votifier.model.VotifierEvent;
-import com.mojang.logging.LogUtils;
 import com.simibubi.create.content.fluids.transfer.FluidManipulationBehaviour;
 import com.simibubi.create.infrastructure.config.AllConfigs;
-import io.github.fabricators_of_create.porting_lib.entity.events.PlayerEvents;
 import net.fabricmc.api.DedicatedServerModInitializer;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 import net.fabricmc.fabric.api.entity.event.v1.ServerLivingEntityEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
-import net.fabricmc.loader.api.FabricLoader;
-import org.slf4j.Logger;
+import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
+import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
+import net.luckperms.api.LuckPermsProvider;
+import net.luckperms.api.model.user.User;
+import net.minecraft.server.network.ServerPlayerEntity;
 
-import java.io.IOException;
-import java.nio.file.Path;
+import java.util.List;
+import java.util.Queue;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
+import java.util.function.Consumer;
+import java.util.function.Supplier;
 
 public class Stuff implements DedicatedServerModInitializer {
-    public static final String MODID = "stuff";
-    private static final Logger LOGGER = LogUtils.getLogger();
-    // public static Queue queue = new Queue();
-    public static MapVisibilityStorage hiddenPlayers;
+    //    public static final GerenteClient GERENTE = new GerenteClient(System.getenv("GERENTE_API_KEY"), System.getenv("GERENTE_URL"));
+    public static final GerenteClient GERENTE = new GerenteClient("internal", "http://localhost:8080", Utils::getTPS);
     public static DragonKillers dragonKillers = new DragonKillers();
-
-    public static final boolean DEV = FabricLoader.getInstance().isDevelopmentEnvironment();
-    @SuppressWarnings("PointlessBooleanExpression")
-    public static final boolean DYNAMIC_ASSETS = true && DEV;
+    private static final Queue<Runnable> toRunNextTick = new ConcurrentLinkedQueue<>();
+    private static final Executor asyncExecutor = Executors.newSingleThreadExecutor();
 
     @Override
     public void onInitializeServer() {
-        try {
-            ConfigReader.readFile(Path.of("config/stuff"));
-            hiddenPlayers = new MapVisibilityStorage("config/stuff/hiddenPlayers");
-        } catch (IOException e) {
-            LOGGER.error("Failed to load map visibility storage", e);
-        }
-
         registerEvents();
         registerCommands();
+    }
 
+    public static <R> void runActionAsync(Supplier<R> job, Consumer<R> runOnTick) {
+        asyncExecutor.execute(() -> {
+            R result = job.get();
+            toRunNextTick.offer(() -> runOnTick.accept(result));
+        });
+    }
+
+    public static void runActionAsync(Runnable job) {
+        asyncExecutor.execute(job);
     }
 
     public void registerEvents() {
-        //     ServerPlayConnectionEvents.INIT.register(new QueueHandler(queue));
         ServerLivingEntityEvents.AFTER_DEATH.register(new PlayerDeath());
         ServerLivingEntityEvents.AFTER_DEATH.register(new DragonDeath());
         VotifierEvent.EVENT.register(new PlayerVote());
@@ -61,18 +60,30 @@ public class Stuff implements DedicatedServerModInitializer {
         ServerLifecycleEvents.SERVER_STARTED.register(server -> {
             createModConfigs();
             Backup.createBackups();
+
+            GERENTE.updateServerStatus(true, "Online", List.of());
         });
 
-        PlayerEvents.LOGGED_IN.register(new PlayerLogin());
-        PlayerEvents.LOGGED_OUT.register(new PlayerLogin());
+        ServerPlayConnectionEvents.DISCONNECT.register((networkHandler, server) -> {
+            ServerPlayerEntity player = networkHandler.getPlayer();
+            GERENTE.updatePlayerStats(player.getUuid(), Utils.getStatsJson(player));
+        });
 
         ServerLifecycleEvents.SERVER_STOPPING.register(server -> {
             server.getPlayerManager().getPlayerList().forEach(player -> {
-                if (!StaticConfig.production) return;
+                if (!StaticConfig.enableAnalytics) return;
                 Analytics.storeSessionEnd(player.getUuid());
             });
 
-            Database.closeDataSource();
+            Stuff.GERENTE.updateServerStatus(false, "Offline", List.of());
+        });
+
+        ServerTickEvents.START_SERVER_TICK.register(server -> {
+            while (true) {
+                Runnable action = toRunNextTick.poll();
+                if (action == null) break;
+                action.run();
+            }
         });
     }
 
@@ -87,18 +98,13 @@ public class Stuff implements DedicatedServerModInitializer {
             ShowMe.register(dispatcher);
             HideMe.register(dispatcher);
             NetherCoords.register(dispatcher);
-            Login.register(dispatcher);
             Trains.register(dispatcher);
             CanIGetElytra.register(dispatcher);
             LastSeen.register(dispatcher);
+            OTP.register(dispatcher);
+            Link.register(dispatcher);
 
             ChickensAI.register(dispatcher);
-        });
-
-        ServerLifecycleEvents.SERVER_STARTED.register(server -> {
-            for (UUID id : hiddenPlayers.getPlayers()) {
-                BluemapImpl.changePlayerVisibility(id, false);
-            }
         });
     }
 
@@ -116,5 +122,10 @@ public class Stuff implements DedicatedServerModInitializer {
         AllConfigs.server().trains.trainTurningTopSpeed.set(20.);
         AllConfigs.server().trains.poweredTrainTopSpeed.set(32.);
         AllConfigs.server().trains.manualTrainSpeedModifier.set(1.);
+    }
+
+    public static boolean checkPermission(UUID playerUUID, String permission) {
+        User user = LuckPermsProvider.get().getUserManager().getUser(playerUUID);
+        return user != null && user.getCachedData().getPermissionData().checkPermission(permission).asBoolean();
     }
 }
