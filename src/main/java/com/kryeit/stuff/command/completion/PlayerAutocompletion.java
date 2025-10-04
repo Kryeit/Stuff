@@ -1,6 +1,8 @@
 package com.kryeit.stuff.command.completion;
 
+import com.kryeit.stuff.GerenteClient;
 import com.kryeit.stuff.MinecraftServerSupplier;
+import com.kryeit.stuff.Stuff;
 import com.mojang.brigadier.suggestion.SuggestionProvider;
 import com.mojang.brigadier.suggestion.Suggestions;
 import com.mojang.brigadier.suggestion.SuggestionsBuilder;
@@ -16,13 +18,12 @@ public class PlayerAutocompletion {
     }
 
     private static CompletableFuture<Suggestions> suggestMatchingPlayerNames(SuggestionsBuilder builder, Collection<ServerPlayerEntity> players) {
-        String remaining = builder.getRemaining().toLowerCase();
+        return Stuff.runAsync(() -> {
+            Stuff.GERENTE.searchPlayers(builder.getRemaining(), false).stream()
+                    .map(GerenteClient.PlayerSearchResult::name)
+                    .forEach(builder::suggest);
 
-        players.stream()
-                .map(player -> player.getName().getString())
-                .filter(name -> name.toLowerCase().startsWith(remaining))
-                .forEach(builder::suggest);
-
-        return builder.buildFuture();
+            return builder.build();
+        });
     }
 }
