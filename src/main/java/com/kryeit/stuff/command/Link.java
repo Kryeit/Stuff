@@ -21,9 +21,9 @@ public class Link {
                 () -> Stuff.GERENTE.connectDiscord(player.getUuid(), code),
                 codeValid -> {
                     if (codeValid) {
-                        source.sendMessage(Text.literal("Your Discord account has been successfully connected"));
+                        source.sendFeedback(() -> Text.literal("Your Discord account has been successfully connected"), false);
                     } else {
-                        source.sendMessage(Text.literal("This code is either invalid or has expired. You need to generate it in a Discord chat using /otp"));
+                        source.sendFeedback(() -> Text.literal("This code is either invalid or has expired. You need to generate it in a Discord chat using /otp"), false);
                     }
                 });
 

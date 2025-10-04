@@ -22,6 +22,7 @@ import net.minecraft.server.network.ServerPlayerEntity;
 import java.util.List;
 import java.util.Queue;
 import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
@@ -50,6 +51,10 @@ public class Stuff implements DedicatedServerModInitializer {
 
     public static void runActionAsync(Runnable job) {
         asyncExecutor.execute(job);
+    }
+
+    public static <T> CompletableFuture<T> runAsync(Supplier<T> job) {
+        return CompletableFuture.supplyAsync(job, asyncExecutor);
     }
 
     public void registerEvents() {

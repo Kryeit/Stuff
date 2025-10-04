@@ -8,9 +8,8 @@ public class TPS {
     public static void register(CommandDispatcher<ServerCommandSource> dispatcher) {
         dispatcher.register(CommandManager.literal("tps")
                 .executes(context -> {
-                    String command = "spark tps";
                     context.getSource().getServer().getCommandManager().executeWithPrefix(
-                            context.getSource().withSilent(), command
+                            context.getSource().withSilent(), "spark tps"
                     );
                     return 1;
                 })
