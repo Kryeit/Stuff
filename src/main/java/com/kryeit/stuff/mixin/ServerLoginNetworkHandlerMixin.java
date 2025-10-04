@@ -69,13 +69,12 @@ public class ServerLoginNetworkHandlerMixin {
                     .collect(Collectors.toSet());
 
             for (String role : roleIds) {
-                luckPerms.getGroupManager().createAndLoadGroup(role)
-                        .thenAccept(g -> user.data().add(Node.builder(role).build()));
+                user.data().add(Node.builder("group.synced." + role).build());
             }
 
             for (Group group : user.getInheritedGroups(user.getQueryOptions())) {
-                if (!roleIds.contains(group.getName())) {
-                    user.data().remove(Node.builder(group.getName()).build());
+                if (!roleIds.contains(group.getName().substring("synced.".length())) && group.getName().startsWith("synced.")) {
+                    user.data().remove(Node.builder("group." + group.getName()).build());
                 }
             }
         });
