@@ -97,7 +97,7 @@ dependencies {
     compileOnly 'me.lucko:spark-api:0.1-SNAPSHOT'
     compileOnly 'de.bluecolored:bluemap-api:2.7.4'
     compileOnly "com.griefdefender:api:2.1.0-SNAPSHOT"
-
+    implementation 'org.json:json:20250517'
 }
 
 tasks.withType(ProcessResources).configureEach {

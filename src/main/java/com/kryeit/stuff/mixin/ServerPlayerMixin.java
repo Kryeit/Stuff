@@ -1,26 +1,27 @@
 package com.kryeit.stuff.mixin;
 
 import com.kryeit.idler.afk.AfkPlayer;
-import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.text.MutableText;
-import net.minecraft.text.Text;
-import net.minecraft.util.Formatting;
+import com.kryeit.stuff.Utils;
+import net.minecraft.ChatFormatting;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.server.level.ServerPlayer;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
-@Mixin(value = ServerPlayerEntity.class, priority = 999)
+@Mixin(value = ServerPlayer.class, priority = 999)
 public abstract class ServerPlayerMixin {
 
-    @Inject(method = "getPlayerListName", at = @At("RETURN"), cancellable = true)
-    private void replacePlayerListName(CallbackInfoReturnable<Text> cir) {
-        ServerPlayerEntity player = (ServerPlayerEntity) (Object) this;
+    @Inject(method = "getTabListDisplayName", at = @At("RETURN"), cancellable = true)
+    private void replacePlayerListName(CallbackInfoReturnable<Component> cir) {
+        ServerPlayer player = (ServerPlayer) (Object) this;
         AfkPlayer afkPlayer = (AfkPlayer) player;
-        MutableText name = player.getName().copy().formatted(Formatting.WHITE);
+        MutableComponent name = player.getName().copy().withStyle(ChatFormatting.WHITE);
 
         if (afkPlayer.idler$isAfk()) {
-            name = name.formatted(Formatting.GRAY);
+            name = name.withStyle(ChatFormatting.GRAY);
         }
 
         cir.setReturnValue(Utils.prefix(player).append(name));

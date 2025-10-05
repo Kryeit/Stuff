@@ -2,8 +2,8 @@ package com.kryeit.stuff.storage;
 
 import com.kryeit.stuff.MinecraftServerSupplier;
 import com.kryeit.stuff.Stuff;
-import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.stat.Stats;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.stats.Stats;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -33,8 +33,8 @@ public class DragonKillers {
     }
 
     public boolean canKillAnotherDragon(UUID uuid) {
-        ServerPlayerEntity player = MinecraftServerSupplier.getServer().getPlayerManager().getPlayer(uuid);
-        long currentTimePlayed = player.getStatHandler().getStat(Stats.CUSTOM.getOrCreateStat(Stats.PLAY_TIME));
+        ServerPlayer player = MinecraftServerSupplier.getServer().getPlayerList().getPlayer(uuid);
+        long currentTimePlayed = player.getStats().getValue(Stats.CUSTOM.get(Stats.PLAY_TIME));
         long lastKillTime = Stuff.dragonKillers.getLastKillTime(uuid);
 
         if (lastKillTime == 0) return true; // First time killing the dragon
@@ -49,8 +49,8 @@ public class DragonKillers {
     }
 
     public void addKiller(UUID uuid) {
-        ServerPlayerEntity player = MinecraftServerSupplier.getServer().getPlayerManager().getPlayer(uuid);
-        long currentTimePlayed = player.getStatHandler().getStat(Stats.CUSTOM.getOrCreateStat(Stats.PLAY_TIME));
+        ServerPlayer player = MinecraftServerSupplier.getServer().getPlayerList().getPlayer(uuid);
+        long currentTimePlayed = player.getStats().getValue(Stats.CUSTOM.get(Stats.PLAY_TIME));
         properties.setProperty(uuid.toString(), Long.toString(currentTimePlayed));
         saveProperties();
     }

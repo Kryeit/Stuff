@@ -2,54 +2,31 @@ package com.kryeit.stuff.mixin;
 
 import com.kryeit.stuff.Analytics;
 import com.kryeit.stuff.listener.JoinDisconnectHandler;
-import net.minecraft.network.ClientConnection;
+import net.minecraft.network.Connection;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.server.PlayerManager;
-import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.text.Text;
-import org.spongepowered.asm.mixin.Final;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.server.network.CommonListenerCookie;
+import net.minecraft.server.players.PlayerList;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import java.util.List;
-
-@Mixin(PlayerManager.class)
+@Mixin(PlayerList.class)
 public abstract class PlayerManagerMixin {
     @Shadow
     public abstract MinecraftServer getServer();
 
-    @Shadow
-    @Final
-    protected int maxPlayers;
-
-    @Inject(method = "onPlayerConnect", at = @At("TAIL"))
-    public void onPlayerConnect(ClientConnection connection, ServerPlayerEntity player, CallbackInfo ci) {
+    @Inject(method = "placeNewPlayer", at = @At("TAIL"))
+    public void onPlayerConnect(Connection p_11262_, ServerPlayer p_11263_, CommonListenerCookie p_301988_, CallbackInfo ci) {
         JoinDisconnectHandler.onJoin(getServer());
     }
 
     @Inject(method = "remove", at = @At("TAIL"))
-    public void onPlayerDisconnect(ServerPlayerEntity player, CallbackInfo ci) {
+    public void onPlayerDisconnect(ServerPlayer player, CallbackInfo ci) {
         JoinDisconnectHandler.onDisconnect(getServer());
 
-        Analytics.storeSessionEnd(player.getUuid());
-    }
-
-    @Redirect(method = "checkCanJoin", at = @At(value = "INVOKE", target = "Ljava/util/List;size()I"))
-    public int getPlayerListSize(List<?> list) {
-        if (list.size() < maxPlayers) {
-            return list.size();
-        }
-
-        List<ServerPlayerEntity> afkPlayers = Utils.getAfkPlayersSorted();
-        if (!afkPlayers.isEmpty()) {
-            afkPlayers.get(0).networkHandler.disconnect(Text.of("You were kicked to make room for new players."));
-            return list.size() - 1;
-        } else {
-            return list.size();
-        }
+        Analytics.storeSessionEnd(player.getUUID());
     }
 }

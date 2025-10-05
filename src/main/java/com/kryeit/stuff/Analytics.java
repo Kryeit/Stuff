@@ -1,11 +1,11 @@
 package com.kryeit.stuff;
 
 import com.kryeit.stuff.config.StaticConfig;
-import com.kryeit.votifier.utils.JSONObject;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 import net.minecraft.server.level.ServerPlayer;
 import org.jdbi.v3.core.Jdbi;
+import org.json.JSONObject;
 
 import java.net.URI;
 import java.net.http.HttpClient;

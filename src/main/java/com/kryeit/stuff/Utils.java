@@ -26,7 +26,7 @@ import java.util.List;
 import java.util.UUID;
 
 public class Utils {
-    public static Component prefix(ServerPlayer player) {
+    public static MutableComponent prefix(ServerPlayer player) {
         Component cog = Component.literal("⛭").withStyle(style -> style.withBold(true)).withStyle(ChatFormatting.GOLD);
         Component camera = Component.literal("📷").withStyle(ChatFormatting.GREEN);
         Component anchor = Component.literal("⚓").withStyle(ChatFormatting.RED);
