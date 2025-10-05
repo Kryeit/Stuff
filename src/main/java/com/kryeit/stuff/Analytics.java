@@ -4,7 +4,7 @@ import com.kryeit.stuff.config.StaticConfig;
 import com.kryeit.votifier.utils.JSONObject;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
-import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.server.level.ServerPlayer;
 import org.jdbi.v3.core.Jdbi;
 
 import java.net.URI;
@@ -34,10 +34,10 @@ public class Analytics {
                 @Override
                 public void run() {
                     StringBuilder inserts = new StringBuilder();
-                    List<ServerPlayerEntity> playerList = MinecraftServerSupplier.getServer().getPlayerManager().getPlayerList();
+                    List<ServerPlayer> playerList = MinecraftServerSupplier.getServer().getPlayerList().getPlayers();
 
                     new ArrayList<>(playerList).forEach(player -> {
-                        String insert = "('%s', %s, %s, %s), ".formatted(player.getUuidAsString(), player.getBlockX(), player.getBlockY(), player.getBlockZ());
+                        String insert = "('%s', %s, %s, %s), ".formatted(player.getStringUUID(), player.getBlockX(), player.getBlockY(), player.getBlockZ());
                         inserts.append(insert);
                     });
                     if (inserts.isEmpty()) return;

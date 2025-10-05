@@ -1,15 +1,15 @@
 package com.kryeit.stuff.command;
 
 import com.mojang.brigadier.CommandDispatcher;
-import net.minecraft.server.command.CommandManager;
-import net.minecraft.server.command.ServerCommandSource;
+import net.minecraft.commands.CommandSourceStack;
+import net.minecraft.commands.Commands;
 
 public class TPS {
-    public static void register(CommandDispatcher<ServerCommandSource> dispatcher) {
-        dispatcher.register(CommandManager.literal("tps")
+    public static void register(CommandDispatcher<CommandSourceStack> dispatcher) {
+        dispatcher.register(Commands.literal("tps")
                 .executes(context -> {
-                    context.getSource().getServer().getCommandManager().executeWithPrefix(
-                            context.getSource().withSilent(), "spark tps"
+                    context.getSource().getServer().getCommands().performPrefixedCommand(
+                            context.getSource(), "spark tps"
                     );
                     return 1;
                 })

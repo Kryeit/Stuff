@@ -1,7 +1,6 @@
 package com.kryeit.stuff.mixin;
 
 import com.kryeit.stuff.Analytics;
-import com.kryeit.stuff.Utils;
 import com.kryeit.stuff.listener.JoinDisconnectHandler;
 import net.minecraft.network.ClientConnection;
 import net.minecraft.server.MinecraftServer;

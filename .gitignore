@@ -1,6 +1,7 @@
 build/
 *.ipr
 run/
+runs/
 *.iws
 out/
 *.iml
@@ -18,5 +19,3 @@ classes/
 .vscode
 .settings
 *.launch
-
-/src/main/resources/auth_secret.txt

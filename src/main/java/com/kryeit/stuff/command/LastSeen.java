@@ -8,21 +8,20 @@ import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
-import net.minecraft.server.command.CommandManager;
-import net.minecraft.server.command.ServerCommandSource;
-import net.minecraft.text.Text;
+import net.minecraft.commands.CommandSourceStack;
+import net.minecraft.commands.Commands;
+import net.minecraft.network.chat.Component;
 
 import java.sql.Timestamp;
-import java.util.function.Supplier;
 
 public class LastSeen {
 
     // TODO last seen
-    public static int execute(CommandContext<ServerCommandSource> context, String name) throws CommandSyntaxException {
-        ServerCommandSource source = context.getSource();
+    public static int execute(CommandContext<CommandSourceStack> context, String name) throws CommandSyntaxException {
+        CommandSourceStack source = context.getSource();
 
         Stuff.runActionAsync(() -> {
-            if (source.getServer().getPlayerManager().getPlayer(name) != null) {
+            if (source.getServer().getPlayerList().getPlayerByName(name) != null) {
                 return new GerenteClient.LastSeenResponse(true, 0);
             }
 
@@ -35,12 +34,12 @@ public class LastSeen {
 
         }, lastSeenResponse -> {
             if (lastSeenResponse.connected()) {
-                source.sendFeedback(() -> Text.literal(name + " is currently online"), false);
+                source.sendSystemMessage(Component.literal(name + " is currently online"));
                 return;
             }
 
             if (lastSeenResponse.lastSeen() == 0) {
-                source.sendFeedback(() -> Text.literal(name + " not found"), false);
+                source.sendSystemMessage(Component.literal(name + " not found"));
                 return;
             }
 
@@ -63,17 +62,15 @@ public class LastSeen {
 
             message += "ago, on the " + formattedDate + " UTC";
 
-            String finalMessage = message;
-            Supplier<Text> feedback = () -> Text.of(finalMessage);
-            source.sendFeedback(feedback, false);
+            source.sendSystemMessage(Component.literal(message));
         });
 
         return Command.SINGLE_SUCCESS;
     }
 
-    public static void register(CommandDispatcher<ServerCommandSource> dispatcher) {
-        dispatcher.register(CommandManager.literal("lastseen")
-                .then(CommandManager.argument("name", StringArgumentType.word())
+    public static void register(CommandDispatcher<CommandSourceStack> dispatcher) {
+        dispatcher.register(Commands.literal("lastseen")
+                .then(Commands.argument("name", StringArgumentType.word())
                         .suggests(PlayerAutocompletion.suggestOnlinePlayers())
                         .executes(context -> execute(context, StringArgumentType.getString(context, "name")))
                 )

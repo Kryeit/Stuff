@@ -2,20 +2,16 @@
   "required": true,
   "minVersion": "0.8",
   "package": "com.kryeit.stuff.mixin",
-  "compatibilityLevel": "JAVA_17",
-  "refmap": "Stuff-refmap.json",
+  "compatibilityLevel": "JAVA_21",
   "mixins": [
-    "EntityMixin",
-    "MinecraftServerMixin",
-    "PersistentStateManagerMixin",
-    "PlayerInventoryMixin",
-    "PlayerManagerMixin",
-    "PortingLibBaseMixin",
-    "ServerLoginNetworkHandlerMixin",
-    "ServerPlayerMixin",
-    "ServerPlayNetworkMixin"
+    "MinecraftServerMixin"
+  ],
+  "client": [
   ],
   "injectors": {
     "defaultRequire": 1
+  },
+  "overwrites": {
+    "requireAnnotations": true
   }
 }
