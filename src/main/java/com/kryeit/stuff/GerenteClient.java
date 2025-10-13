@@ -127,7 +127,7 @@ public class GerenteClient {
     }
 
     public LastSeenResponse getLastSeen(UUID playerUUID) {
-        HttpRequest request = requestBuilder("/api/internal/players/" + playerUUID + "/last-seen").build();
+        HttpRequest request = requestBuilder("/api/players/" + playerUUID + "/last-seen").build();
         return sendRequest(request, LastSeenResponse.class);
     }
 
@@ -140,13 +140,17 @@ public class GerenteClient {
         return response.get("code").getAsInt();
     }
 
-    public List<PlayerSearchResult> searchPlayers(String query, boolean exact) {
+    public List<PlayerSearchResult> searchPlayers(String query, boolean exact, boolean bannedOnly) {
         String encodedQuery = URLEncoder.encode(query, StandardCharsets.UTF_8);
 
-        HttpRequest request = requestBuilder("/api/players?query=" + encodedQuery + "&exact=" + exact).build();
+        HttpRequest request = requestBuilder("/api/players?query=" + encodedQuery + "&exact=" + exact + "&bannedOnly=" + bannedOnly).build();
 
         return sendRequest(request, new TypeToken<>() {
         });
+    }
+
+    public List<PlayerSearchResult> searchPlayers(String query, boolean exact) {
+        return searchPlayers(query, exact, false);
     }
 
     public void banPlayer(UUID playerUUID, String banReason, long bannedUntil) {
@@ -263,7 +267,8 @@ public class GerenteClient {
     public record ServerStatus(boolean running, String statusMessage, float tps, List<StatusPlayer> connectedPlayers) {
     }
 
-    public record PlayerInfo(String minecraftName, String discordId, Long lastSeen, Long bannedUntil, String banReason,
+    public record PlayerInfo(String minecraftName, String discordId, Long lastSeen, boolean connected, Long bannedUntil,
+                             String banReason,
                              String mutedUntil, JsonObject preferences, Map<String, Integer> selectedStats,
                              List<Role> roles) {
     }

@@ -13,6 +13,7 @@ import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.text.Text;
 
 import java.sql.Timestamp;
+import java.util.List;
 import java.util.function.Supplier;
 
 public class LastSeen {
@@ -26,13 +27,12 @@ public class LastSeen {
                 return new GerenteClient.LastSeenResponse(true, 0);
             }
 
-            return Stuff.GERENTE.searchPlayers(name, true)
-                    .stream()
+            return Stuff.GERENTE.searchPlayers(name, true).stream()
                     .map(GerenteClient.PlayerSearchResult::uuid)
                     .findAny()
-                    .map(Stuff.GERENTE::getLastSeen)
+                    .map(p -> Stuff.GERENTE.getPlayerInfo(p, List.of()))
+                    .map(info -> new GerenteClient.LastSeenResponse(info.connected(), info.lastSeen()))
                     .orElse(new GerenteClient.LastSeenResponse(false, 0));
-
         }, lastSeenResponse -> {
             if (lastSeenResponse.connected()) {
                 source.sendFeedback(() -> Text.literal(name + " is currently online"), false);
