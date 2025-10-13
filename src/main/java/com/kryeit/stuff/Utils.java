@@ -2,6 +2,8 @@ package com.kryeit.stuff;
 
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import com.griefdefender.api.GriefDefender;
+import com.griefdefender.api.User;
 import com.kryeit.idler.afk.AfkPlayer;
 import me.lucko.spark.api.Spark;
 import me.lucko.spark.api.SparkProvider;
@@ -89,7 +91,20 @@ public class Utils {
         return Registries.ITEM.getOrEmpty(Identifier.of(namespace, path)).map(ItemStack::new).orElse(ItemStack.EMPTY);
     }
 
-    public static JsonObject getStatsJson(@Nullable ServerPlayerEntity player) {
+    public static JsonObject getStatsJson(ServerPlayerEntity player) {
+        JsonObject stats = getMinecraftStats(player);
+
+        User user = GriefDefender.getCore().getUser(player.getUuid());
+        int claimBlocks = user == null ? 0 : user.getPlayerData().getInitialClaimBlocks() + user.getPlayerData().getAccruedClaimBlocks() + user.getPlayerData().getBonusClaimBlocks();
+
+        JsonObject custom = new JsonObject();
+        custom.addProperty("kryeit:claim_blocks", claimBlocks);
+
+        stats.add("kryeit:custom", custom);
+        return stats;
+    }
+
+    private static JsonObject getMinecraftStats(@Nullable ServerPlayerEntity player) {
         System.out.println("getStatsJson called for player: " + (player != null ? player.getName().getString() : "null"));
 
         if (player == null) {
