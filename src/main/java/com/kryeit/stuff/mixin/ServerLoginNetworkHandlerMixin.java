@@ -1,5 +1,6 @@
 package com.kryeit.stuff.mixin;
 
+import com.google.gson.JsonElement;
 import com.kryeit.stuff.Analytics;
 import com.kryeit.stuff.GerenteClient;
 import com.kryeit.stuff.MinecraftServerSupplier;
@@ -90,7 +91,8 @@ public class ServerLoginNetworkHandlerMixin {
             connection.disconnect(Text.literal("You're banned. Reason: " + joinInfo.banReason()));
         }
 
-        BluemapImpl.changePlayerVisibility(id, joinInfo.preferences().get("show_on_map").getAsBoolean());
+        JsonElement showOnMap = joinInfo.preferences().get("show_on_map");
+        BluemapImpl.changePlayerVisibility(id, showOnMap == null || showOnMap.getAsBoolean());
 
         if (player.getStatHandler().getStat(Stats.CUSTOM.getOrCreateStat(Stats.PLAY_TIME)) > 72000)
             return;

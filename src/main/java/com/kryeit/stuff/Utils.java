@@ -19,6 +19,8 @@ import net.minecraft.util.Identifier;
 import net.minecraft.util.math.Vec3i;
 import org.jetbrains.annotations.Nullable;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -40,10 +42,14 @@ public class Utils {
         return Stuff.GERENTE.getCachedJoinInfo(player.getUuid())
                 .map(info -> {
                     MutableText text = Text.literal("");
+                    boolean isEmpty = true;
                     for (GerenteClient.Role role : info.roles()) {
-                        text.append(Text.literal(role.prefix()));
+                        if (role.prefix() != null) {
+                            text.append(Text.literal(role.prefix()));
+                            isEmpty = false;
+                        }
                     }
-                    return text.append(" ");
+                    return isEmpty ? Text.empty() : text.append(" ");
                 })
                 .orElse(Text.empty());
     }
@@ -136,6 +142,18 @@ public class Utils {
             System.out.println("Exception message: " + e.getMessage());
             e.printStackTrace();
             return new JsonObject();
+        }
+    }
+
+    public static String readSecret(String envName) {
+        String secret = System.getenv(envName);
+        if (secret != null) return secret;
+
+        String path = System.getenv(envName + "_FILE");
+        try (InputStream stream = Files.newInputStream(Path.of(path))) {
+            return new String(stream.readAllBytes()).strip();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         }
     }
 }

@@ -70,12 +70,6 @@ dependencies {
     implementation 'org.jdbi:jdbi3-core:3.45.1'
     shadow 'org.jdbi:jdbi3-core:3.45.1'
 
-    implementation "org.jdbi:jdbi3-jackson2:3.45.1"
-    shadow "org.jdbi:jdbi3-jackson2:3.45.1"
-
-    implementation 'org.postgresql:postgresql:42.7.2'
-    shadow 'org.postgresql:postgresql:42.7.2'
-
     implementation 'com.zaxxer:HikariCP:5.1.0'
     shadow 'com.zaxxer:HikariCP:5.1.0'
 }

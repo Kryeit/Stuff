@@ -30,8 +30,8 @@ import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 public class Stuff implements DedicatedServerModInitializer {
-    //    public static final GerenteClient GERENTE = new GerenteClient(System.getenv("GERENTE_API_KEY"), System.getenv("GERENTE_URL"));
-    public static final GerenteClient GERENTE = new GerenteClient("internal", "http://localhost:8080", Utils::getTPS);
+    public static final GerenteClient GERENTE = new GerenteClient(Utils.readSecret("GERENTE_API_KEY"), System.getenv("GERENTE_URL"), Utils::getTPS);
+    //    public static final GerenteClient GERENTE = new GerenteClient("internal", "http://localhost:8080", Utils::getTPS);
     public static DragonKillers dragonKillers = new DragonKillers();
     private static final Queue<Runnable> toRunNextTick = new ConcurrentLinkedQueue<>();
     private static final Executor asyncExecutor = Executors.newSingleThreadExecutor();
