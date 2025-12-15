@@ -12,7 +12,7 @@ import net.minecraft.text.ClickEvent;
 import net.minecraft.text.Style;
 import net.minecraft.text.Text;
 
-public class Map {
+public class CommandMap {
     public static int execute(CommandContext<ServerCommandSource> context) throws CommandSyntaxException {
         ServerCommandSource source = context.getSource();
         ServerPlayerEntity player = source.getPlayerOrThrow();
@@ -24,7 +24,7 @@ public class Map {
 
     public static void register(CommandDispatcher<ServerCommandSource> dispatcher) {
         dispatcher.register(CommandManager.literal("map")
-                .executes(Map::execute)
+                .executes(CommandMap::execute)
         );
     }
 }

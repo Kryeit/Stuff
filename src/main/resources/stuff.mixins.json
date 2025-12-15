@@ -13,7 +13,8 @@
     "PortingLibBaseMixin",
     "ServerLoginNetworkHandlerMixin",
     "ServerPlayerMixin",
-    "ServerPlayNetworkMixin"
+    "ServerPlayNetworkMixin",
+    "StatHandlerMixin"
   ],
   "injectors": {
     "defaultRequire": 1

@@ -1,5 +1,8 @@
 package com.kryeit.stuff;
 
+import com.google.common.io.Files;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import com.kryeit.stuff.command.*;
 import com.kryeit.stuff.config.StaticConfig;
 import com.kryeit.stuff.listener.DragonDeath;
@@ -18,8 +21,14 @@ import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
 import net.luckperms.api.LuckPermsProvider;
 import net.luckperms.api.model.user.User;
 import net.minecraft.server.network.ServerPlayerEntity;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
+import java.util.Map;
 import java.util.Queue;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
@@ -30,16 +39,37 @@ import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 public class Stuff implements DedicatedServerModInitializer {
+    private static final Logger LOGGER = LoggerFactory.getLogger(Stuff.class);
     public static final GerenteClient GERENTE = new GerenteClient(Utils.readSecret("GERENTE_API_KEY"), System.getenv("GERENTE_URL"), Utils::getTPS);
     //    public static final GerenteClient GERENTE = new GerenteClient("internal", "http://localhost:8080", Utils::getTPS);
     public static DragonKillers dragonKillers = new DragonKillers();
     private static final Queue<Runnable> toRunNextTick = new ConcurrentLinkedQueue<>();
     private static final Executor asyncExecutor = Executors.newSingleThreadExecutor();
+    public static Map<String, Integer> statisticModifiers;
 
     @Override
     public void onInitializeServer() {
         registerEvents();
         registerCommands();
+        statisticModifiers = readStatisticMultiplierConfig();
+    }
+
+    private static Map<String, Integer> readStatisticMultiplierConfig() {
+        File file = new File("config/stuff/statistic-multipliers.json");
+        file.getParentFile().mkdirs();
+
+        try {
+            if (file.createNewFile()) return Map.of();
+
+            try (BufferedReader reader = Files.newReader(file, StandardCharsets.UTF_8)) {
+                Map<String, Integer> result = new Gson().fromJson(reader, new TypeToken<>() {
+                });
+                return result == null ? Map.of() : result;
+            }
+        } catch (Exception e) {
+            LOGGER.warn("Failed to load statistic-multipliers.json", e);
+            return Map.of();
+        }
     }
 
     public static <R> void runActionAsync(Supplier<R> job, Consumer<R> runOnTick) {
@@ -95,7 +125,7 @@ public class Stuff implements DedicatedServerModInitializer {
     public void registerCommands() {
         CommandRegistrationCallback.EVENT.register((dispatcher, dedicatedServer, commandFunction) -> {
             Kofi.register(dispatcher);
-            Map.register(dispatcher);
+            CommandMap.register(dispatcher);
             Rules.register(dispatcher);
             SendCoords.register(dispatcher);
             TPS.register(dispatcher);

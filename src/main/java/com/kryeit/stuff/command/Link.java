@@ -20,7 +20,7 @@ public class Link {
         Stuff.runActionAsync(
                 () -> Stuff.GERENTE.connectDiscord(player.getUuid(), code),
                 codeValid -> {
-                    if (codeValid) {
+                    if (codeValid.success()) {
                         source.sendFeedback(() -> Text.literal("Your Discord account has been successfully connected"), false);
                     } else {
                         source.sendFeedback(() -> Text.literal("This code is either invalid or has expired. You need to generate it in a Discord chat using /otp"), false);

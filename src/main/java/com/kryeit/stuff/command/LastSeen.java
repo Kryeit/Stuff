@@ -24,15 +24,15 @@ public class LastSeen {
 
         Stuff.runActionAsync(() -> {
             if (source.getServer().getPlayerManager().getPlayer(name) != null) {
-                return new GerenteClient.LastSeenResponse(true, 0);
+                return new LastSeenResponse(true, 0);
             }
 
             return Stuff.GERENTE.searchPlayers(name, true).stream()
                     .map(GerenteClient.PlayerSearchResult::uuid)
                     .findAny()
                     .map(p -> Stuff.GERENTE.getPlayerInfo(p, List.of()))
-                    .map(info -> new GerenteClient.LastSeenResponse(info.connected(), info.lastSeen()))
-                    .orElse(new GerenteClient.LastSeenResponse(false, 0));
+                    .map(info -> new LastSeenResponse(info.connected(), info.lastSeen()))
+                    .orElse(new LastSeenResponse(false, 0));
         }, lastSeenResponse -> {
             if (lastSeenResponse.connected()) {
                 source.sendFeedback(() -> Text.literal(name + " is currently online"), false);
@@ -80,4 +80,6 @@ public class LastSeen {
         );
     }
 
+    private record LastSeenResponse(boolean connected, long lastSeen) {
+    }
 }
