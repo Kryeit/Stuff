@@ -10,7 +10,6 @@
     "PersistentStateManagerMixin",
     "PlayerInventoryMixin",
     "PlayerManagerMixin",
-    "PortingLibBaseMixin",
     "ServerLoginNetworkHandlerMixin",
     "ServerPlayerMixin",
     "ServerPlayNetworkMixin",
