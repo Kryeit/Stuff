@@ -9,9 +9,8 @@ import com.kryeit.stuff.listener.DragonDeath;
 import com.kryeit.stuff.listener.PlayerDeath;
 import com.kryeit.stuff.listener.PlayerVote;
 import com.kryeit.stuff.storage.DragonKillers;
+import com.kryeit.stuff.storage.ModStats;
 import com.kryeit.votifier.model.VotifierEvent;
-import com.simibubi.create.content.fluids.transfer.FluidManipulationBehaviour;
-import com.simibubi.create.infrastructure.config.AllConfigs;
 import net.fabricmc.api.DedicatedServerModInitializer;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 import net.fabricmc.fabric.api.entity.event.v1.ServerLivingEntityEvents;
@@ -52,6 +51,7 @@ public class Stuff implements DedicatedServerModInitializer {
         registerEvents();
         registerCommands();
         statisticModifiers = readStatisticMultiplierConfig();
+        ModStats.registerStats();
     }
 
     private static Map<String, Integer> readStatisticMultiplierConfig() {
