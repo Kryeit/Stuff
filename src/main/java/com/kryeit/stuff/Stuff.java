@@ -144,19 +144,19 @@ public class Stuff implements DedicatedServerModInitializer {
     }
 
     public void createModConfigs() {
-        AllConfigs.server().kinetics.maxBlocksMoved.set(6144);
-        AllConfigs.server().trains.maxTrackPlacementLength.set(128);
-        AllConfigs.server().schematics.maxSchematicPacketSize.set(1024);
-        AllConfigs.server().schematics.schematicannonDelay.set(1);
-//        AllConfigs.server().schematics.schematicannonFuelUsage.set(0.05);
-//        AllConfigs.server().schematics.schematicannonGunpowderWorth.set(20.);
-
-        AllConfigs.server().kinetics.maxDataSize.set(4000000);
-        AllConfigs.server().fluids.bottomlessFluidMode.set(FluidManipulationBehaviour.BottomlessFluidMode.DENY_BY_TAG);
-
-        AllConfigs.server().trains.trainTurningTopSpeed.set(20.);
-        AllConfigs.server().trains.poweredTrainTopSpeed.set(32.);
-        AllConfigs.server().trains.manualTrainSpeedModifier.set(1.);
+//        AllConfigs.server().kinetics.maxBlocksMoved.set(6144);
+//        AllConfigs.server().trains.maxTrackPlacementLength.set(128);
+//        AllConfigs.server().schematics.maxSchematicPacketSize.set(1024);
+//        AllConfigs.server().schematics.schematicannonDelay.set(1);
+////        AllConfigs.server().schematics.schematicannonFuelUsage.set(0.05);
+////        AllConfigs.server().schematics.schematicannonGunpowderWorth.set(20.);
+//
+//        AllConfigs.server().kinetics.maxDataSize.set(4000000);
+//        AllConfigs.server().fluids.bottomlessFluidMode.set(FluidManipulationBehaviour.BottomlessFluidMode.DENY_BY_TAG);
+//
+//        AllConfigs.server().trains.trainTurningTopSpeed.set(20.);
+//        AllConfigs.server().trains.poweredTrainTopSpeed.set(32.);
+//        AllConfigs.server().trains.manualTrainSpeedModifier.set(1.);
     }
 
     public static boolean checkPermission(UUID playerUUID, String permission) {
