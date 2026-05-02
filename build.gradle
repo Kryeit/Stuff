@@ -1,118 +1,129 @@
 plugins {
-    id 'fabric-loom' version '1.9.+'
+    id 'java-library'
+    id 'eclipse'
+    id 'idea'
     id 'maven-publish'
-    id 'com.gradleup.shadow' version '8.3.0+'
+    id 'net.neoforged.gradle.userdev' version '7.0.142'
 }
 
-version = project.mod_version
-group = project.maven_group
+version = mod_version
+group = mod_group_id
 
 repositories {
-    maven {
-        name = 'Translations API'
-        url = 'https://maven.nucleoid.xyz'
-    }
-    maven {
-        name = 'LuckPerms'
-        url = 'https://oss.sonatype.org/content/repositories/snapshots'
-    }
-
+    mavenLocal()
+    mavenCentral()
+    maven { url "https://repo.lucko.me" }
     exclusiveContent {
         forRepository {
             maven {
-                name = "Modrinth"
-                url = "https://api.modrinth.com/maven"
+                url "https://cursemaven.com"
             }
         }
         filter {
-            includeGroup "maven.modrinth"
+            includeGroup "curse.maven"
         }
     }
-
-    maven { url 'https://jitpack.io' }
-
+    repositories {
+        maven { url 'https://repo.bluecolored.de/releases' }
+    }
     maven {
         name = 'GriefDefender'
         url = 'https://repo.glaremasters.me/repository/bloodshot'
     }
-    maven { url = "https://mvn.devos.one/releases/" }
-    maven { url = "https://mvn.devos.one/snapshots/" }
-    maven { url = "https://raw.githubusercontent.com/Fuzss/modresources/main/maven/" }
-    maven { url = "https://maven.tterrag.com/" }
-    maven { url = "https://maven.cafeteria.dev/releases" }
-    maven { url = "https://maven.jamieswhiteshirt.com/libs-release" }
-    mavenCentral()
+}
 
-    maven {
-        name 'luck-repo'
-        url 'https://repo.lucko.me/'
+base {
+    archivesName = mod_id
+}
+
+java.toolchain.languageVersion = JavaLanguageVersion.of(21)
+
+jarJar.enable()
+
+runs {
+    configureEach {
+        systemProperty 'forge.logging.markers', 'REGISTRIES'
+
+        systemProperty 'forge.logging.console.level', 'debug'
+
+        modSource project.sourceSets.main
     }
 
-    maven { url = "https://modmaven.dev/" }
+    client {
+        systemProperty 'forge.enabledGameTestNamespaces', project.mod_id
+    }
+
+    server {
+        systemProperty 'forge.enabledGameTestNamespaces', project.mod_id
+        programArgument '--nogui'
+    }
+
+    gameTestServer {
+        systemProperty 'forge.enabledGameTestNamespaces', project.mod_id
+    }
+}
+
+sourceSets.main.resources { srcDir 'src/generated/resources' }
+
+
+configurations {
+    runtimeClasspath.extendsFrom localRuntime
 }
 
 dependencies {
-    // To change the versions see the gradle.properties file
-    minecraft "com.mojang:minecraft:${project.minecraft_version}"
-    mappings "net.fabricmc:yarn:${project.yarn_mappings}:v2"
-    modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
+    implementation "net.neoforged:neoforge:${neo_version}"
 
-    // Fabric API. This is technically optional, but you probably want it anyway.
-    modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
-    modImplementation("com.simibubi.create:create-fabric-${minecraft_version}:${create_fabric_version}")
+    implementation(jarJar("org.jdbi:jdbi3-core:3.45.1")) {
+        jarJar.ranged(it, "[3.45.1,)")
+    }
+    implementation(jarJar("org.jdbi:jdbi3-json:3.45.1")) {
+        jarJar.ranged(it, "[3.45.1,)")
+    }
+    implementation(jarJar("io.leangen.geantyref:geantyref:1.3.13")) {
+        jarJar.ranged(it, "[1.3.13,)")
+    }
+    implementation(jarJar("org.jdbi:jdbi3-jackson2:3.45.1")) {
+        jarJar.ranged(it, "[3.45.1,)")
+    }
+    implementation(jarJar("com.zaxxer:HikariCP:5.1.0")) {
+        jarJar.ranged(it, "[5.1.0,)")
+    }
+    implementation(jarJar("org.postgresql:postgresql:42.7.4")) {
+        jarJar.ranged(it, "[42.7.4,)")
+    }
 
-    compileOnly "net.luckperms:api:${luckperms_version}"
-    modApi include("maven.modrinth:votifier-for-fabric:oLTPPYWG")
-    modApi include("maven.modrinth:idler:ag1hkaWl")
-
+    implementation "net.luckperms:api:5.4"
+    implementation "curse.maven:idler-1188174:6310143"
     compileOnly 'me.lucko:spark-api:0.1-SNAPSHOT'
-    compileOnly ("com.github.BlueMap-Minecraft:BlueMapAPI:v2.6.2")
-    compileOnly "com.griefdefender:api:${griefdefender_version}"
-
-    implementation 'org.jdbi:jdbi3-core:3.45.1'
-    shadow 'org.jdbi:jdbi3-core:3.45.1'
-
-    implementation 'com.zaxxer:HikariCP:5.1.0'
-    shadow 'com.zaxxer:HikariCP:5.1.0'
+    compileOnly 'de.bluecolored:bluemap-api:2.7.4'
+    compileOnly "com.griefdefender:api:2.1.0-SNAPSHOT"
+    implementation 'org.json:json:20250517'
 }
 
-processResources {
-    inputs.property "version", project.version
-    inputs.property "minecraft_version", project.minecraft_version
-    inputs.property "loader_version", project.loader_version
-    filteringCharset "UTF-8"
+tasks.withType(ProcessResources).configureEach {
+    var replaceProperties = [
+            minecraft_version      : minecraft_version,
+            minecraft_version_range: minecraft_version_range,
+            neo_version            : neo_version,
+            neo_version_range      : neo_version_range,
+            loader_version_range   : loader_version_range,
+            mod_id                 : mod_id,
+            mod_name               : mod_name,
+            mod_license            : mod_license,
+            mod_version            : mod_version,
+            mod_authors            : mod_authors,
+            mod_description        : mod_description
+    ]
+    inputs.properties replaceProperties
 
-    filesMatching("fabric.mod.json") {
-        expand "version": project.version,
-                "minecraft_version": project.minecraft_version,
-                "loader_version": project.loader_version
+    filesMatching(['META-INF/neoforge.mods.toml']) {
+        expand replaceProperties
     }
 }
 
-java {
-    toolchain {
-        languageVersion = JavaLanguageVersion.of(17)
-    }
-}
-
-remapJar {
-    dependsOn(shadowJar)
-    mustRunAfter(shadowJar)
-    inputFile = file(shadowJar.archivePath)
-}
-
-shadowJar {
-    configurations = [project.configurations.shadow]
-    mergeServiceFiles()
-    exclude("META-INF")
-}
-
-tasks.build {
-    dependsOn tasks.shadowJar
-}
-
-jar {
-    from("LICENSE") {
-        rename { "${it}_${project.archivesBaseName}"}
+idea {
+    module {
+        downloadSources = true
+        downloadJavadoc = true
     }
 }

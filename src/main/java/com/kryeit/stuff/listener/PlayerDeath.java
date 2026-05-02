@@ -1,21 +1,24 @@
+// PlayerDeath.java
 package com.kryeit.stuff.listener;
 
-import net.fabricmc.fabric.api.entity.event.v1.ServerLivingEntityEvents;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.damage.DamageSource;
-import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.text.Text;
-import net.minecraft.util.Formatting;
+import com.kryeit.stuff.Stuff;
+import net.minecraft.ChatFormatting;
+import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerPlayer;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.neoforge.event.entity.living.LivingDeathEvent;
 
-public class PlayerDeath implements ServerLivingEntityEvents.AfterDeath {
+@EventBusSubscriber(modid = Stuff.MODID)
+public class PlayerDeath {
 
-    @Override
-    public void afterDeath(LivingEntity entity, DamageSource damageSource) {
-        if (entity instanceof ServerPlayerEntity player) {
-            player.sendMessage(Text.literal("You've died on: (" +
-                    (int) player.getPos().getX() + ", " +
-                    (int) player.getPos().getY() + ", " +
-                    (int) player.getPos().getZ() + ")").formatted(Formatting.GRAY));
+    @SubscribeEvent
+    public static void onPlayerDeath(LivingDeathEvent event) {
+        if (event.getEntity() instanceof ServerPlayer player) {
+            player.sendSystemMessage(Component.literal("You've died on: (" +
+                    (int) player.position().x + ", " +
+                    (int) player.position().y + ", " +
+                    (int) player.position().z + ")").withStyle(ChatFormatting.GRAY));
         }
     }
 }

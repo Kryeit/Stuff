@@ -5,29 +5,22 @@ import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.kryeit.stuff.command.*;
 import com.kryeit.stuff.config.StaticConfig;
-import com.kryeit.stuff.listener.DragonDeath;
-import com.kryeit.stuff.listener.PlayerDeath;
-import com.kryeit.stuff.listener.PlayerVote;
 import com.kryeit.stuff.storage.DragonKillers;
-import com.kryeit.stuff.storage.ModStats;
-import com.kryeit.votifier.model.VotifierEvent;
-import net.fabricmc.api.DedicatedServerModInitializer;
-import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
-import net.fabricmc.fabric.api.entity.event.v1.ServerLivingEntityEvents;
-import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
-import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
-import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
+import com.mojang.brigadier.CommandDispatcher;
 import net.luckperms.api.LuckPermsProvider;
 import net.luckperms.api.model.user.User;
-import net.minecraft.server.network.ServerPlayerEntity;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import net.minecraft.commands.CommandSourceStack;
+import net.minecraft.server.level.ServerPlayer;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.common.Mod;
+import net.neoforged.neoforge.common.NeoForge;
+import net.neoforged.neoforge.event.RegisterCommandsEvent;
+import net.neoforged.neoforge.event.entity.player.PlayerEvent;
+import net.neoforged.neoforge.event.server.ServerStartedEvent;
+import net.neoforged.neoforge.event.server.ServerStoppingEvent;
+import net.neoforged.neoforge.event.tick.ServerTickEvent;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.nio.charset.StandardCharsets;
 import java.util.List;
-import java.util.Map;
 import java.util.Queue;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
@@ -37,7 +30,10 @@ import java.util.concurrent.Executors;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
-public class Stuff implements DedicatedServerModInitializer {
+@Mod(Stuff.MODID)
+public class Stuff {
+    public static final String MODID = "stuff";
+
     private static final Logger LOGGER = LoggerFactory.getLogger(Stuff.class);
     public static final GerenteClient GERENTE = new GerenteClient(Utils.readSecret("GERENTE_API_KEY"), System.getenv("GERENTE_URL"), Utils::getTPS);
     //    public static final GerenteClient GERENTE = new GerenteClient("internal", "http://localhost:8080", Utils::getTPS);
@@ -46,12 +42,42 @@ public class Stuff implements DedicatedServerModInitializer {
     private static final Executor asyncExecutor = Executors.newSingleThreadExecutor();
     public static Map<String, Integer> statisticModifiers;
 
-    @Override
-    public void onInitializeServer() {
-        registerEvents();
-        registerCommands();
+
+    public Stuff() {
+        NeoForge.EVENT_BUS.register(this);
         statisticModifiers = readStatisticMultiplierConfig();
         ModStats.registerStats();
+    }
+
+    @SubscribeEvent
+    public static void serverStarted(ServerStartedEvent event) {
+        GERENTE.updateServerStatus(true, "Online", List.of());
+    }
+
+    @SubscribeEvent
+    public void onPlayerDisconnect(PlayerEvent.PlayerLoggedOutEvent event) {
+        if (event.getEntity() instanceof ServerPlayer player) {
+            GERENTE.updatePlayerStats(player.getUUID(), Utils.getStatsJson(player));
+        }
+    }
+
+    @SubscribeEvent
+    public void onServerStopping(ServerStoppingEvent event) {
+        event.getServer().getPlayerList().getPlayers().forEach(player -> {
+            if (!StaticConfig.enableAnalytics) return;
+            Analytics.storeSessionEnd(player.getUUID());
+        });
+
+        Stuff.GERENTE.updateServerStatus(false, "Offline", List.of());
+    }
+
+    @SubscribeEvent
+    public void onServerTick(ServerTickEvent.Pre event) {
+        while (true) {
+            Runnable action = toRunNextTick.poll();
+            if (action == null) break;
+            action.run();
+        }
     }
 
     private static Map<String, Integer> readStatisticMultiplierConfig() {
@@ -72,6 +98,7 @@ public class Stuff implements DedicatedServerModInitializer {
         }
     }
 
+
     public static <R> void runActionAsync(Supplier<R> job, Consumer<R> runOnTick) {
         asyncExecutor.execute(() -> {
             R result = job.get();
@@ -87,76 +114,23 @@ public class Stuff implements DedicatedServerModInitializer {
         return CompletableFuture.supplyAsync(job, asyncExecutor);
     }
 
-    public void registerEvents() {
-        ServerLivingEntityEvents.AFTER_DEATH.register(new PlayerDeath());
-        ServerLivingEntityEvents.AFTER_DEATH.register(new DragonDeath());
-        VotifierEvent.EVENT.register(new PlayerVote());
+    @SubscribeEvent
+    public void onCommandRegistration(RegisterCommandsEvent event) {
+        CommandDispatcher<CommandSourceStack> dispatcher = event.getDispatcher();
 
-        ServerLifecycleEvents.SERVER_STARTED.register(server -> {
-            createModConfigs();
-            Backup.createBackups();
-
-            GERENTE.updateServerStatus(true, "Online", List.of());
-        });
-
-        ServerPlayConnectionEvents.DISCONNECT.register((networkHandler, server) -> {
-            ServerPlayerEntity player = networkHandler.getPlayer();
-            GERENTE.updatePlayerStats(player.getUuid(), Utils.getStatsJson(player));
-        });
-
-        ServerLifecycleEvents.SERVER_STOPPING.register(server -> {
-            server.getPlayerManager().getPlayerList().forEach(player -> {
-                if (!StaticConfig.enableAnalytics) return;
-                Analytics.storeSessionEnd(player.getUuid());
-            });
-
-            Stuff.GERENTE.updateServerStatus(false, "Offline", List.of());
-        });
-
-        ServerTickEvents.START_SERVER_TICK.register(server -> {
-            while (true) {
-                Runnable action = toRunNextTick.poll();
-                if (action == null) break;
-                action.run();
-            }
-        });
-    }
-
-    public void registerCommands() {
-        CommandRegistrationCallback.EVENT.register((dispatcher, dedicatedServer, commandFunction) -> {
-            Kofi.register(dispatcher);
-            CommandMap.register(dispatcher);
-            Rules.register(dispatcher);
-            SendCoords.register(dispatcher);
-            TPS.register(dispatcher);
-            AFK.register(dispatcher);
-            ShowMe.register(dispatcher);
-            HideMe.register(dispatcher);
-            NetherCoords.register(dispatcher);
-            Trains.register(dispatcher);
-            CanIGetElytra.register(dispatcher);
-            LastSeen.register(dispatcher);
-            OTP.register(dispatcher);
-            Link.register(dispatcher);
-
-            ChickensAI.register(dispatcher);
-        });
-    }
-
-    public void createModConfigs() {
-//        AllConfigs.server().kinetics.maxBlocksMoved.set(6144);
-//        AllConfigs.server().trains.maxTrackPlacementLength.set(128);
-//        AllConfigs.server().schematics.maxSchematicPacketSize.set(1024);
-//        AllConfigs.server().schematics.schematicannonDelay.set(1);
-////        AllConfigs.server().schematics.schematicannonFuelUsage.set(0.05);
-////        AllConfigs.server().schematics.schematicannonGunpowderWorth.set(20.);
-//
-//        AllConfigs.server().kinetics.maxDataSize.set(4000000);
-//        AllConfigs.server().fluids.bottomlessFluidMode.set(FluidManipulationBehaviour.BottomlessFluidMode.DENY_BY_TAG);
-//
-//        AllConfigs.server().trains.trainTurningTopSpeed.set(20.);
-//        AllConfigs.server().trains.poweredTrainTopSpeed.set(32.);
-//        AllConfigs.server().trains.manualTrainSpeedModifier.set(1.);
+        Kofi.register(dispatcher);
+        Map.register(dispatcher);
+        Rules.register(dispatcher);
+        SendCoords.register(dispatcher);
+        TPS.register(dispatcher);
+        AFK.register(dispatcher);
+        ShowMe.register(dispatcher);
+        HideMe.register(dispatcher);
+        NetherCoords.register(dispatcher);
+        CanIGetElytra.register(dispatcher);
+        LastSeen.register(dispatcher);
+        OTP.register(dispatcher);
+        Link.register(dispatcher);
     }
 
     public static boolean checkPermission(UUID playerUUID, String permission) {

@@ -2,7 +2,7 @@ package com.kryeit.stuff.compat;
 
 import com.griefdefender.api.GriefDefender;
 import com.griefdefender.api.User;
-import net.fabricmc.loader.api.FabricLoader;
+import net.neoforged.fml.ModList;
 
 import java.util.UUID;
 import java.util.function.IntSupplier;
@@ -12,7 +12,7 @@ public class GriefDefenderImpl {
     public static final String ID = "griefdefender";
 
     public static boolean isAvailable() {
-        return FabricLoader.getInstance().isModLoaded(ID);
+        return ModList.get().isLoaded(ID);
     }
 
     public static void giveClaimBlocks(UUID playerID, int amount) {

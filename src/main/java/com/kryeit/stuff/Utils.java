@@ -8,15 +8,15 @@ import com.kryeit.idler.afk.AfkPlayer;
 import me.lucko.spark.api.Spark;
 import me.lucko.spark.api.SparkProvider;
 import me.lucko.spark.api.statistic.StatisticWindow;
-import net.minecraft.item.ItemStack;
-import net.minecraft.registry.Registries;
-import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.text.MutableText;
-import net.minecraft.text.Style;
-import net.minecraft.text.Text;
-import net.minecraft.util.Formatting;
-import net.minecraft.util.Identifier;
-import net.minecraft.util.math.Vec3i;
+import net.minecraft.ChatFormatting;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
@@ -30,32 +30,32 @@ import java.util.List;
 import java.util.UUID;
 
 public class Utils {
-    public static MutableText prefix(ServerPlayerEntity player) {
-        MutableText cog = Text.literal("⛭").setStyle(Style.EMPTY.withBold(true)).formatted(Formatting.GOLD); // "group.kryeitor"
-        MutableText camera = Text.literal("📷").formatted(Formatting.GREEN); // group.photographer
-        MutableText anchor = Text.literal("⚓").formatted(Formatting.RED); // group.postbuilder
-        MutableText diamond = Text.literal("♢").formatted(Formatting.LIGHT_PURPLE); // group.booster
-        MutableText pig1 = Text.literal("\uD83D\uDC3D").formatted(Formatting.LIGHT_PURPLE); // group.potato-war.winner
-        MutableText pig2 = Text.literal("\uD83D\uDC3D").formatted(Formatting.GRAY); // group.potato-war.2nd
-        MutableText pig3 = Text.literal("\uD83D\uDC3D").styled(s -> s.withColor(0xa95b0e)); // group.potato-war.3rd
+    public static MutableComponent prefix(ServerPlayer player) {
+        Component cog = Component.literal("⛭").withStyle(style -> style.withBold(true)).withStyle(ChatFormatting.GOLD); // "group.kryeitor"
+        Component camera = Component.literal("📷").withStyle(ChatFormatting.GREEN); // group.photographer
+        Component anchor = Component.literal("⚓").withStyle(ChatFormatting.RED); // group.postbuilder
+        Component diamond = Component.literal("♢").withStyle(ChatFormatting.LIGHT_PURPLE); // group.booster
+        Component pig1 = Component.literal("\uD83D\uDC3D").withStyle(ChatFormatting.LIGHT_PURPLE); // group.potato-war.winner
+        Component pig2 = Component.literal("\uD83D\uDC3D").withStyle(ChatFormatting.GRAY); // group.potato-war.2nd
+        Component pig3 = Component.literal("\uD83D\uDC3D").withStyle(s -> s.withColor(0xa95b0e)); // group.potato-war.3rd
 
-        return Stuff.GERENTE.getCachedJoinInfo(player.getUuid())
+        return Stuff.GERENTE.getCachedJoinInfo(player.getUUID())
                 .map(info -> {
-                    MutableText text = Text.literal("");
+                    MutableComponent text = Component.literal("");
                     boolean isEmpty = true;
                     for (GerenteClient.Role role : info.roles()) {
                         if (role.prefix() != null) {
-                            text.append(Text.literal(role.prefix()));
+                            text = text.append(Component.literal(role.prefix()));
                             isEmpty = false;
                         }
                     }
-                    return isEmpty ? Text.empty() : text.append(" ");
+                    return isEmpty ? Component.empty() : text.append(" ");
                 })
-                .orElse(Text.empty());
+                .orElse(Component.empty());
     }
 
-    public static String getMapLink(ServerPlayerEntity player) {
-        return getMapLink(player.getBlockPos());
+    public static String getMapLink(ServerPlayer player) {
+        return getMapLink(player.blockPosition());
     }
 
     public static float getTPS() {
@@ -68,7 +68,7 @@ public class Utils {
 
     }
 
-    public static String getMapLink(Vec3i position) {
+    public static String getMapLink(BlockPos position) {
         // example link https://map.kryeit.com/#overworld:-3664:0:8222:58252:-0.39:0:0:0:perspective
         int x = position.getX();
         int z = position.getZ();
@@ -76,28 +76,29 @@ public class Utils {
         return "https://map.kryeit.com/#overworld:" + x + ":0:" + z + ":0:0:0:0:0:perspective";
     }
 
-    public static List<ServerPlayerEntity> getAfkPlayers() {
-        List<ServerPlayerEntity> afkPlayers = new ArrayList<>();
-        MinecraftServerSupplier.getServer().getPlayerManager().getPlayerList().forEach(player -> {
+    public static List<ServerPlayer> getAfkPlayers() {
+        List<ServerPlayer> afkPlayers = new ArrayList<>();
+        MinecraftServerSupplier.getServer().getPlayerList().getPlayers().forEach(player -> {
             AfkPlayer afkPlayer = (AfkPlayer) player;
-            if (afkPlayer != null && afkPlayer.idler$isAfk() && !Stuff.checkPermission(player.getUuid(), "stuff.afk")) {
+            if (afkPlayer != null && afkPlayer.idler$isAfk() && !Stuff.checkPermission(player.getUUID(), "stuff.afk")) {
                 afkPlayers.add(player);
             }
         });
         return afkPlayers;
     }
 
-    public static List<ServerPlayerEntity> getAfkPlayersSorted() {
-        List<ServerPlayerEntity> players = getAfkPlayers();
-        players.sort(Comparator.comparingLong(ServerPlayerEntity::getLastActionTime));
+    public static List<ServerPlayer> getAfkPlayersSorted() {
+        List<ServerPlayer> players = getAfkPlayers();
+        players.sort(Comparator.comparingLong(ServerPlayer::getLastActionTime));
         return players;
     }
 
     public static ItemStack getItemStack(String namespace, String path) {
-        return Registries.ITEM.getOrEmpty(Identifier.of(namespace, path)).map(ItemStack::new).orElse(ItemStack.EMPTY);
+        Item item = BuiltInRegistries.ITEM.get(ResourceLocation.fromNamespaceAndPath(namespace, path));
+        return item != null ? new ItemStack(item) : ItemStack.EMPTY;
     }
 
-    public static JsonObject getStatsJson(ServerPlayerEntity player) {
+    public static JsonObject getStatsJson(ServerPlayer player) {
         JsonObject stats = getMinecraftStats(player);
 
         User user = GriefDefender.getCore().getUser(player.getUuid());
@@ -110,7 +111,7 @@ public class Utils {
         return stats;
     }
 
-    private static JsonObject getMinecraftStats(@Nullable ServerPlayerEntity player) {
+    private static JsonObject getMinecraftStats(@Nullable ServerPlayer player) {
         System.out.println("getStatsJson called for player: " + (player != null ? player.getName().getString() : "null"));
 
         if (player == null) {
@@ -119,7 +120,7 @@ public class Utils {
         }
 
         try {
-            UUID playerUuid = player.getUuid();
+            UUID playerUuid = player.getUUID();
             System.out.println("Player UUID: " + playerUuid);
 
             Path statsPath = Paths.get("world/stats/" + playerUuid + ".json");

@@ -3,20 +3,20 @@ package com.kryeit.stuff.listener;
 import com.kryeit.idler.afk.AfkPlayer;
 import com.kryeit.stuff.GerenteClient;
 import com.kryeit.stuff.Stuff;
-import net.minecraft.network.packet.s2c.play.PlayerListHeaderS2CPacket;
+import net.minecraft.ChatFormatting;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.network.protocol.game.ClientboundTabListPacket;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.text.MutableText;
-import net.minecraft.text.Text;
-import net.minecraft.util.Formatting;
 
 import java.util.List;
 
 public class JoinDisconnectHandler {
     public static void onJoin(MinecraftServer server) {
-        int current = server.getCurrentPlayerCount();
-        int max = server.getMaxPlayerCount();
+        int current = server.getPlayerCount();
+        int max = server.getMaxPlayers();
 
-        server.getPlayerManager().sendToAll(getPacket(current, max));
+        server.getPlayerList().broadcastSystemMessage(getPacket(current, max).footer(), false);
         updateServerStatus(server);
     }
 
@@ -25,19 +25,19 @@ public class JoinDisconnectHandler {
     }
 
     private static void updateServerStatus(MinecraftServer server) {
-        List<GerenteClient.StatusPlayer> players = server.getPlayerManager().getPlayerList().stream()
-                .map(p -> new GerenteClient.StatusPlayer(((AfkPlayer) p).idler$isAfk(), p.getUuid(), p.getEntityName()))
+        List<GerenteClient.StatusPlayer> players = server.getPlayerList().getPlayers().stream()
+                .map(p -> new GerenteClient.StatusPlayer(((AfkPlayer) p).idler$isAfk(), p.getUUID(), p.getName().getString()))
                 .toList();
         Stuff.runActionAsync(() -> Stuff.GERENTE.updateServerStatus(true, "Online", players));
     }
 
-    private static PlayerListHeaderS2CPacket getPacket(int current, int max) {
-        MutableText text = Text.literal("\n      ").formatted(Formatting.GRAY)
-                .append(Text.literal(String.valueOf(current)).formatted(Formatting.WHITE))
-                .append(Text.literal(" / ").formatted(Formatting.GRAY))
-                .append(Text.literal(String.valueOf(max)).formatted(Formatting.WHITE))
-                .append(Text.literal(" players online      ").formatted(Formatting.GRAY));
+    private static ClientboundTabListPacket getPacket(int current, int max) {
+        MutableComponent text = Component.literal("\n      ").withStyle(ChatFormatting.GRAY)
+                .append(Component.literal(String.valueOf(current)).withStyle(ChatFormatting.WHITE))
+                .append(Component.literal(" / ").withStyle(ChatFormatting.GRAY))
+                .append(Component.literal(String.valueOf(max)).withStyle(ChatFormatting.WHITE))
+                .append(Component.literal(" players online      ").withStyle(ChatFormatting.GRAY));
 
-        return new PlayerListHeaderS2CPacket(Text.empty(), text);
+        return new ClientboundTabListPacket(Component.empty(), text);
     }
 }
