@@ -10,13 +10,9 @@ import me.lucko.spark.api.SparkProvider;
 import me.lucko.spark.api.statistic.StatisticWindow;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.item.Item;
-import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
@@ -25,7 +21,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
 import java.util.UUID;
 
@@ -87,21 +82,10 @@ public class Utils {
         return afkPlayers;
     }
 
-    public static List<ServerPlayer> getAfkPlayersSorted() {
-        List<ServerPlayer> players = getAfkPlayers();
-        players.sort(Comparator.comparingLong(ServerPlayer::getLastActionTime));
-        return players;
-    }
-
-    public static ItemStack getItemStack(String namespace, String path) {
-        Item item = BuiltInRegistries.ITEM.get(ResourceLocation.fromNamespaceAndPath(namespace, path));
-        return item != null ? new ItemStack(item) : ItemStack.EMPTY;
-    }
-
     public static JsonObject getStatsJson(ServerPlayer player) {
         JsonObject stats = getMinecraftStats(player);
 
-        User user = GriefDefender.getCore().getUser(player.getUuid());
+        User user = GriefDefender.getCore().getUser(player.getUUID());
         int claimBlocks = user == null ? 0 : user.getPlayerData().getInitialClaimBlocks() + user.getPlayerData().getAccruedClaimBlocks() + user.getPlayerData().getBonusClaimBlocks();
 
         JsonObject custom = new JsonObject();

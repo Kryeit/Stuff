@@ -13,7 +13,7 @@ import net.minecraft.commands.Commands;
 import net.minecraft.network.chat.Component;
 
 import java.sql.Timestamp;
-import java.util.function.Supplier;
+import java.util.List;
 
 public class LastSeen {
 
@@ -23,7 +23,7 @@ public class LastSeen {
 
         Stuff.runActionAsync(() -> {
             if (source.getServer().getPlayerList().getPlayerByName(name) != null) {
-                return new GerenteClient.LastSeenResponse(true, 0);
+                return new LastSeenResponse(true, 0);
             }
 
             return Stuff.GERENTE.searchPlayers(name, true).stream()

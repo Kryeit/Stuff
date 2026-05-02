@@ -6,6 +6,7 @@ import com.google.gson.reflect.TypeToken;
 import com.kryeit.stuff.command.*;
 import com.kryeit.stuff.config.StaticConfig;
 import com.kryeit.stuff.storage.DragonKillers;
+import com.kryeit.stuff.storage.ModStats;
 import com.mojang.brigadier.CommandDispatcher;
 import net.luckperms.api.LuckPermsProvider;
 import net.luckperms.api.model.user.User;
@@ -19,8 +20,14 @@ import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 import net.neoforged.neoforge.event.server.ServerStartedEvent;
 import net.neoforged.neoforge.event.server.ServerStoppingEvent;
 import net.neoforged.neoforge.event.tick.ServerTickEvent;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
+import java.util.Map;
 import java.util.Queue;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
@@ -119,7 +126,7 @@ public class Stuff {
         CommandDispatcher<CommandSourceStack> dispatcher = event.getDispatcher();
 
         Kofi.register(dispatcher);
-        Map.register(dispatcher);
+        CommandMap.register(dispatcher);
         Rules.register(dispatcher);
         SendCoords.register(dispatcher);
         TPS.register(dispatcher);

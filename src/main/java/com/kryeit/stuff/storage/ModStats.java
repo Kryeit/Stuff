@@ -1,16 +1,17 @@
 package com.kryeit.stuff.storage;
 
-import net.minecraft.registry.Registries;
-import net.minecraft.registry.Registry;
-import net.minecraft.stat.StatFormatter;
-import net.minecraft.stat.Stats;
-import net.minecraft.util.Identifier;
+
+import net.minecraft.core.Registry;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.stats.StatFormatter;
+import net.minecraft.stats.Stats;
 
 public class ModStats {
-    public static final Identifier AFK_TIME = new Identifier("stuff", "afk_time");
+    public static final ResourceLocation AFK_TIME = ResourceLocation.fromNamespaceAndPath("stuff", "afk_time");
 
     public static void registerStats() {
-        Registry.register(Registries.CUSTOM_STAT, "missions_rerolled", AFK_TIME);
-        Stats.CUSTOM.getOrCreateStat(AFK_TIME, StatFormatter.TIME);
+        Registry.register(BuiltInRegistries.CUSTOM_STAT, "afk_time", AFK_TIME);
+        Stats.CUSTOM.get(AFK_TIME, StatFormatter.TIME);
     }
 }
