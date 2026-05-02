@@ -28,7 +28,6 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import javax.annotation.Nullable;
 import java.net.InetSocketAddress;
 import java.util.Set;
 import java.util.UUID;
@@ -45,12 +44,13 @@ public class ServerLoginNetworkHandlerMixin {
     @Final
     MinecraftServer server;
 
-    @Shadow @Nullable private GameProfile authenticatedProfile;
-
-    @Inject(at = @At("RETURN"), method = "handleHello")
-    private void init(CallbackInfo ci) {
-        UUID id = this.authenticatedProfile.getId();
-        String name = this.authenticatedProfile.getName();
+    @Inject(
+            at = {@At("HEAD")},
+            method = {"verifyLoginAndFinishConnectionSetup"}
+    )
+    private void init(GameProfile profile, CallbackInfo ci) {
+        UUID id = profile.getId();
+        String name = profile.getName();
 
         GerenteClient.PlayerJoinInfo joinInfo = Stuff.GERENTE.handlePlayerJoin(id, name);
 
