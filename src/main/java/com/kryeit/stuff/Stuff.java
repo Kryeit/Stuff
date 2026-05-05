@@ -12,6 +12,7 @@ import net.luckperms.api.LuckPermsProvider;
 import net.luckperms.api.model.user.User;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.server.level.ServerPlayer;
+import net.neoforged.bus.api.IEventBus;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.neoforge.common.NeoForge;
@@ -57,7 +58,7 @@ public class Stuff {
     }
 
     @SubscribeEvent
-    public static void serverStarted(ServerStartedEvent event) {
+    public void serverStarted(ServerStartedEvent event) {
         GERENTE.updateServerStatus(true, "Online", List.of());
     }
 
@@ -76,6 +77,7 @@ public class Stuff {
         });
 
         Stuff.GERENTE.updateServerStatus(false, "Offline", List.of());
+        Stuff.GERENTE.close();
     }
 
     @SubscribeEvent

@@ -23,14 +23,14 @@ import java.util.function.Consumer;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
-public class GerenteClient {
+public class GerenteClient implements AutoCloseable {
     private static final Logger LOGGER = LoggerFactory.getLogger(GerenteClient.class);
     private static final Gson gson = new Gson();
     private final String internalApiKey;
     private final String baseUrl;
     private final HttpClient httpClient = HttpClient.newHttpClient();
     private final Map<UUID, PlayerJoinInfo> playerInfos = new ConcurrentHashMap<>();
-    private final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
+    private final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(0);
     private final Supplier<Float> tpsSupplier;
     private ScheduledFuture<?> nextUpdate;
     private final Map<WebSocketEventType, Set<Consumer<Object>>> webSocketListeners = new HashMap<>();
@@ -323,6 +323,11 @@ public class GerenteClient {
             throw new InvalidResponseCodeException("Gerente HTTP request failed: HTTP error code: " + response.statusCode() + ", body: " + response.body());
         }
         return response.body();
+    }
+
+    @Override
+    public void close() {
+        scheduler.close();
     }
 
     public record ConnectionResult(boolean success, String message) {
