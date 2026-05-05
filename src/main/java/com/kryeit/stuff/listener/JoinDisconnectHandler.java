@@ -16,7 +16,7 @@ public class JoinDisconnectHandler {
         int current = server.getPlayerCount();
         int max = server.getMaxPlayers();
 
-        server.getPlayerList().broadcastSystemMessage(getPacket(current, max).footer(), false);
+        server.getPlayerList().broadcastAll(getPacket(current, max));
         updateServerStatus(server);
     }
 
