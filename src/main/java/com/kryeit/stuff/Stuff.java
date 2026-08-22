@@ -5,8 +5,8 @@ import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.kryeit.stuff.command.*;
 import com.kryeit.stuff.config.StaticConfig;
+import com.kryeit.stuff.storage.AfkTimeTracker;
 import com.kryeit.stuff.storage.DragonKillers;
-import com.kryeit.stuff.storage.ModStats;
 import com.mojang.brigadier.CommandDispatcher;
 import net.luckperms.api.LuckPermsProvider;
 import net.luckperms.api.model.user.User;
@@ -33,7 +33,7 @@ import java.util.Queue;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentLinkedQueue;
-import java.util.concurrent.Executor;
+import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
@@ -47,14 +47,15 @@ public class Stuff {
     //    public static final GerenteClient GERENTE = new GerenteClient("internal", "http://localhost:8080", Utils::getTPS);
     public static DragonKillers dragonKillers = new DragonKillers();
     private static final Queue<Runnable> toRunNextTick = new ConcurrentLinkedQueue<>();
-    private static final Executor asyncExecutor = Executors.newSingleThreadExecutor();
+    private static final ExecutorService asyncExecutor = Executors.newSingleThreadExecutor();
     public static Map<String, Integer> statisticModifiers;
+    private final AfkTimeTracker afkTimeTracker = new AfkTimeTracker();
 
-
-    public Stuff() {
+    public Stuff(IEventBus modBus) {
         NeoForge.EVENT_BUS.register(this);
+        // modBus.addListener(ModStats::registerStats);
+
         statisticModifiers = readStatisticMultiplierConfig();
-        ModStats.registerStats();
     }
 
     @SubscribeEvent
@@ -65,7 +66,7 @@ public class Stuff {
     @SubscribeEvent
     public void onPlayerDisconnect(PlayerEvent.PlayerLoggedOutEvent event) {
         if (event.getEntity() instanceof ServerPlayer player) {
-            GERENTE.updatePlayerStats(player.getUUID(), Utils.getStatsJson(player));
+            GERENTE.updatePlayerStats(player.getUUID(), Utils.getStatsJson(player, afkTimeTracker));
         }
     }
 
@@ -77,7 +78,10 @@ public class Stuff {
         });
 
         Stuff.GERENTE.updateServerStatus(false, "Offline", List.of());
+
         Stuff.GERENTE.close();
+        afkTimeTracker.close();
+        asyncExecutor.close();
     }
 
     @SubscribeEvent
@@ -87,6 +91,8 @@ public class Stuff {
             if (action == null) break;
             action.run();
         }
+
+        afkTimeTracker.tick(event.getServer());
     }
 
     private static Map<String, Integer> readStatisticMultiplierConfig() {

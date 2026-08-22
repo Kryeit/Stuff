@@ -73,6 +73,7 @@ configurations {
 dependencies {
     implementation "net.neoforged:neoforge:${neo_version}"
 
+    // analytics
     implementation(jarJar("org.jdbi:jdbi3-core:3.45.1")) {
         jarJar.ranged(it, "[3.45.1,)")
     }
@@ -90,6 +91,10 @@ dependencies {
     }
     implementation(jarJar("org.postgresql:postgresql:42.7.4")) {
         jarJar.ranged(it, "[42.7.4,)")
+    }
+
+    implementation(jarJar("com.h2database:h2-mvstore:2.4.240")) {
+        jarJar.ranged(it, "[2.4.240,)")
     }
 
     implementation "net.luckperms:api:5.4"

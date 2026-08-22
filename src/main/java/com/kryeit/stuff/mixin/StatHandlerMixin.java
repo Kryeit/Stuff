@@ -2,7 +2,6 @@ package com.kryeit.stuff.mixin;
 
 import com.kryeit.idler.afk.AfkPlayer;
 import com.kryeit.stuff.Stuff;
-import com.kryeit.stuff.storage.ModStats;
 import com.llamalad7.mixinextras.sugar.Local;
 import com.llamalad7.mixinextras.sugar.ref.LocalIntRef;
 import net.minecraft.stats.Stat;
@@ -24,7 +23,7 @@ public class StatHandlerMixin {
 
         AfkPlayer afkPlayer = (AfkPlayer) player;
         if (afkPlayer.idler$isAfk() && statRef.getName().equals("minecraft.custom:minecraft.play_time")) {
-            player.awardStat(ModStats.AFK_TIME, valueRef.get());
+//            player.awardStat(ModStats.AFK_TIME, valueRef.get());
             valueRef.set(0);
         }
     }

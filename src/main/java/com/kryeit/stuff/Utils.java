@@ -4,7 +4,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.griefdefender.api.GriefDefender;
 import com.griefdefender.api.User;
-import com.kryeit.idler.afk.AfkPlayer;
+import com.kryeit.stuff.storage.AfkTimeTracker;
 import me.lucko.spark.api.Spark;
 import me.lucko.spark.api.SparkProvider;
 import me.lucko.spark.api.statistic.StatisticWindow;
@@ -20,8 +20,6 @@ import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.UUID;
 
 public class Utils {
@@ -71,25 +69,18 @@ public class Utils {
         return "https://map.kryeit.com/#overworld:" + x + ":0:" + z + ":0:0:0:0:0:perspective";
     }
 
-    public static List<ServerPlayer> getAfkPlayers() {
-        List<ServerPlayer> afkPlayers = new ArrayList<>();
-        MinecraftServerSupplier.getServer().getPlayerList().getPlayers().forEach(player -> {
-            AfkPlayer afkPlayer = (AfkPlayer) player;
-            if (afkPlayer != null && afkPlayer.idler$isAfk() && !Stuff.checkPermission(player.getUUID(), "stuff.afk")) {
-                afkPlayers.add(player);
-            }
-        });
-        return afkPlayers;
-    }
-
-    public static JsonObject getStatsJson(ServerPlayer player) {
+    public static JsonObject getStatsJson(ServerPlayer player, AfkTimeTracker afkTimeTracker) {
+        UUID uuid = player.getUUID();
         JsonObject stats = getMinecraftStats(player);
 
-        User user = GriefDefender.getCore().getUser(player.getUUID());
+        AfkTimeTracker.AfkTime afkTime = afkTimeTracker.getAfkStat(uuid);
+        User user = GriefDefender.getCore().getUser(uuid);
         int claimBlocks = user == null ? 0 : user.getPlayerData().getInitialClaimBlocks() + user.getPlayerData().getAccruedClaimBlocks() + user.getPlayerData().getBonusClaimBlocks();
 
         JsonObject custom = new JsonObject();
         custom.addProperty("kryeit:claim_blocks", claimBlocks);
+        custom.addProperty("kryeit:afk_time", afkTime.afkTime());
+        custom.addProperty("kryeit:play_time", afkTime.playtime());
 
         stats.add("kryeit:custom", custom);
         return stats;
