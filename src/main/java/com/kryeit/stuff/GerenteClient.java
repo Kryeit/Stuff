@@ -344,7 +344,7 @@ public class GerenteClient implements AutoCloseable {
     }
 
     public record PlayerJoinInfo(boolean firstJoin, Timestamp bannedUntil, String banReason, List<String> badges,
-                                 boolean muted, JsonObject preferences, List<Role> roles) {
+                                 boolean muted, JsonObject preferences, List<Role> roles, boolean afkLimited) {
     }
 
     public record PlayerSearchResult(String name, UUID uuid) {

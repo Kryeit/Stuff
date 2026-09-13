@@ -5,6 +5,7 @@ import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.kryeit.stuff.command.*;
 import com.kryeit.stuff.config.StaticConfig;
+import com.kryeit.stuff.feature.AfkLimiter;
 import com.kryeit.stuff.storage.AfkTimeTracker;
 import com.kryeit.stuff.storage.ClaimBlockShopTransactionStorage;
 import com.kryeit.stuff.storage.DragonKillers;
@@ -52,6 +53,7 @@ public class Stuff {
     public static Map<String, Integer> statisticModifiers;
     private final AfkTimeTracker afkTimeTracker = new AfkTimeTracker();
     public static final ClaimBlockShopTransactionStorage CB_SHOP_STORAGE = new ClaimBlockShopTransactionStorage();
+    private final AfkLimiter afkLimiter = new AfkLimiter();
 
     public Stuff(IEventBus modBus) {
         NeoForge.EVENT_BUS.register(this);
@@ -96,6 +98,7 @@ public class Stuff {
         }
 
         afkTimeTracker.tick(event.getServer());
+        afkLimiter.tick(event.getServer());
     }
 
     private static Map<String, Integer> readStatisticMultiplierConfig() {
