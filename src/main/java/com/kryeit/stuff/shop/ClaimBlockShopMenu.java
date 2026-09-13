@@ -19,14 +19,14 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 
 import java.util.Collection;
-import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 public class ClaimBlockShopMenu extends ChestMenu {
-    private static final List<ResourceLocation> COINS = List.of(
-            ResourceLocation.fromNamespaceAndPath("createdeco", "copper_coin"),
-            ResourceLocation.fromNamespaceAndPath("createdeco", "iron_coin"),
-            ResourceLocation.fromNamespaceAndPath("createdeco", "gold_coin")
+    private static final Map<ResourceLocation, Integer> COINS = Map.of(
+            ResourceLocation.fromNamespaceAndPath("createdeco", "iron_coin"), 1,
+            ResourceLocation.fromNamespaceAndPath("createdeco", "copper_coin"), 32,
+            ResourceLocation.fromNamespaceAndPath("createdeco", "brass_coin"), 512
     );
 
     private static final Set<Integer> PAYMENT_SLOTS = Set.of(10, 11, 12);
@@ -43,7 +43,7 @@ public class ClaimBlockShopMenu extends ChestMenu {
             Slot paymentSlot = new Slot(shopContainer, slotNumber, slotX(slotNumber), slotY(slotNumber)) {
                 @Override
                 public boolean mayPlace(ItemStack stack) {
-                    return COINS.contains(BuiltInRegistries.ITEM.getKey(stack.getItem()));
+                    return COINS.containsKey(BuiltInRegistries.ITEM.getKey(stack.getItem()));
                 }
             };
             paymentSlot.index = slotNumber;
@@ -189,15 +189,16 @@ public class ClaimBlockShopMenu extends ChestMenu {
 
     private static int computeBuyableClaimBlocks(int paymentValue, Player player) {
         long spentCoins = Stuff.CB_SHOP_STORAGE.getCoinsSpent(player.getUUID());
-        double coefficient = 536.007900577615; // 2902 scaled by 1/9th (formula was made for iron coins, lowest value coin is copper)
-        return (int) (coefficient * (Math.pow(spentCoins + paymentValue, 0.7687) - Math.pow(spentCoins, 0.7687)));
+        return (int) (3000 * (Math.pow((spentCoins + paymentValue), 0.525) - Math.pow((spentCoins), 0.525)));
     }
 
     private int computePaymentValue() {
         int paymentValue = 0;
         for (ItemStack item : getPaymentItems()) {
-            int coinIndex = COINS.indexOf(BuiltInRegistries.ITEM.getKey(item.getItem()));
-            paymentValue += (int) Math.pow(9, coinIndex) * item.getCount();
+            if (item.isEmpty()) continue;
+
+            int coinValue = COINS.get(BuiltInRegistries.ITEM.getKey(item.getItem()));
+            paymentValue += coinValue * item.getCount();
         }
         return paymentValue;
     }
