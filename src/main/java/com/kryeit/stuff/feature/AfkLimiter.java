@@ -9,6 +9,7 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
@@ -17,7 +18,9 @@ public class AfkLimiter {
     private final Map<UUID, Integer> afkTime = new HashMap<>();
 
     public void tick(MinecraftServer server) {
-        for (ServerPlayer player : server.getPlayerList().getPlayers()) {
+        List<ServerPlayer> players = List.copyOf(server.getPlayerList().getPlayers());
+
+        for (ServerPlayer player : players) {
             boolean isAfk = ((AfkPlayer) player).idler$isAfk() && !Stuff.checkPermission(player.getUUID(), "stuff.afk");
 
             if (isAfk) {
