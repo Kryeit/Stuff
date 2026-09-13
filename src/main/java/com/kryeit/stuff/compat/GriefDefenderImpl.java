@@ -15,7 +15,7 @@ public class GriefDefenderImpl {
         return ModList.get().isLoaded(ID);
     }
 
-    public static void giveClaimBlocks(UUID playerID, int amount) {
+    public static int giveClaimBlocks(UUID playerID, int amount) {
         IntSupplier supplier = () -> {
             User user = GriefDefender.getCore().getUser(playerID);
             if (user == null) {
@@ -24,6 +24,6 @@ public class GriefDefenderImpl {
             user.getPlayerData().setBonusClaimBlocks(user.getPlayerData().getBonusClaimBlocks() + amount);
             return user.getPlayerData().getInitialClaimBlocks() + user.getPlayerData().getAccruedClaimBlocks() + user.getPlayerData().getBonusClaimBlocks();
         };
-        supplier.getAsInt();
+        return supplier.getAsInt();
     }
 }

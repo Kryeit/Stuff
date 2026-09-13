@@ -6,6 +6,7 @@ import com.google.gson.reflect.TypeToken;
 import com.kryeit.stuff.command.*;
 import com.kryeit.stuff.config.StaticConfig;
 import com.kryeit.stuff.storage.AfkTimeTracker;
+import com.kryeit.stuff.storage.ClaimBlockShopTransactionStorage;
 import com.kryeit.stuff.storage.DragonKillers;
 import com.mojang.brigadier.CommandDispatcher;
 import net.luckperms.api.LuckPermsProvider;
@@ -50,6 +51,7 @@ public class Stuff {
     private static final ExecutorService asyncExecutor = Executors.newSingleThreadExecutor();
     public static Map<String, Integer> statisticModifiers;
     private final AfkTimeTracker afkTimeTracker = new AfkTimeTracker();
+    public static final ClaimBlockShopTransactionStorage CB_SHOP_STORAGE = new ClaimBlockShopTransactionStorage();
 
     public Stuff(IEventBus modBus) {
         NeoForge.EVENT_BUS.register(this);
@@ -81,6 +83,7 @@ public class Stuff {
 
         Stuff.GERENTE.close();
         afkTimeTracker.close();
+        CB_SHOP_STORAGE.close();
         asyncExecutor.close();
     }
 
@@ -146,6 +149,7 @@ public class Stuff {
         LastSeen.register(dispatcher);
         OTP.register(dispatcher);
         Link.register(dispatcher);
+        CBShopCommand.register(dispatcher);
     }
 
     public static boolean checkPermission(UUID playerUUID, String permission) {
