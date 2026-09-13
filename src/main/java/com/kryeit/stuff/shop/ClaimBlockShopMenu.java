@@ -102,9 +102,16 @@ public class ClaimBlockShopMenu extends ChestMenu {
     }
 
     private void updateClaimBlockCount(int count) {
-        ItemStack confirmStack = count > 0
-                ? named(new ItemStack(Items.LIME_DYE), "Click to buy " + count + " claim blocks")
-                : named(new ItemStack(Items.RED_DYE), "Place coins in the empty slots to buy claim blocks");
+        ItemStack confirmStack;
+        if (count > 0) {
+            MutableComponent name = Component.literal("Click to buy ").withStyle(ChatFormatting.GREEN)
+                    .append(Component.literal(format(count)).withStyle(ChatFormatting.GOLD))
+                    .append(Component.literal(" claim blocks").withStyle(ChatFormatting.GREEN));
+            confirmStack = named(new ItemStack(Items.LIME_DYE), name);
+        } else {
+            MutableComponent name = Component.literal("Place coins in the empty slots to buy claim blocks").withStyle(ChatFormatting.RED);
+            confirmStack = named(new ItemStack(Items.RED_DYE), name);
+        }
 
         shopContainer.setItem(BUY_SLOT, confirmStack);
     }
@@ -145,25 +152,31 @@ public class ClaimBlockShopMenu extends ChestMenu {
 
         int newClaimBlocks = GriefDefenderImpl.giveClaimBlocks(player.getUUID(), claimBlocks);
         if (newClaimBlocks == -1) {
-            player.sendSystemMessage(Component.literal("Something went wrong"));
+            player.sendSystemMessage(Component.literal("Failed to grant your claim blocks. Your coins have not been spent, please try again or contact staff.")
+                    .withStyle(ChatFormatting.RED));
             return;
         }
         Stuff.CB_SHOP_STORAGE.incrementCoinsSpent(player.getUUID(), paymentValue);
         for (Integer slot : PAYMENT_SLOTS) shopContainer.setItem(slot, ItemStack.EMPTY);
 
         MutableComponent successMessage = Component.literal("Purchased ").withStyle(ChatFormatting.GREEN)
-                .append(String.valueOf(claimBlocks))
+                .append(Component.literal(format(claimBlocks)).withStyle(ChatFormatting.GOLD))
                 .append(Component.literal(" claim blocks. You now have ").withStyle(ChatFormatting.GREEN))
-                .append(String.valueOf(newClaimBlocks));
+                .append(Component.literal(format(newClaimBlocks)).withStyle(ChatFormatting.GOLD))
+                .append(Component.literal(".").withStyle(ChatFormatting.GREEN));
 
         player.sendSystemMessage(successMessage);
         broadcastChanges();
         player.closeContainer();
     }
 
-    private static ItemStack named(ItemStack stack, String name) {
-        stack.set(DataComponents.CUSTOM_NAME, Component.literal(name).withStyle(style -> style.withItalic(false)));
+    private static ItemStack named(ItemStack stack, Component name) {
+        stack.set(DataComponents.CUSTOM_NAME, name.copy().withStyle(style -> style.withItalic(false)));
         return stack;
+    }
+
+    private static String format(int number) {
+        return String.format("%,d", number);
     }
 
     private static int slotX(int index) {
